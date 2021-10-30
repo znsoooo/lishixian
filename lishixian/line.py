@@ -4,7 +4,8 @@ import json
 import hashlib
 from threading import Thread
 
-__except = list(vars())
+__all__ = list(globals())
+
 
 md5 = lambda b: hashlib.md5(b).hexdigest()
 start = lambda func, *args, **kwargs: Thread(target=func, args=args, kwargs=kwargs).start()
@@ -23,4 +24,5 @@ raw2headers = str2dict = lambda s: dict(re.findall(r'(.*?):(.*)', s))
 # User-Agent: Mozilla/4.0 ****
 # Cookie: ****
 
-__all__ = [k for k in vars() if k not in __except]
+
+__all__ = [k for k in globals() if k not in __all__]

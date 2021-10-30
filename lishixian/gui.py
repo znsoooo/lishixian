@@ -1,5 +1,7 @@
 import wx
 
+__all__ = list(globals())
+
 
 def center(top):
     '''tkinter set center'''
@@ -36,3 +38,6 @@ class Mover:
             x, y = self.p.ClientToScreen(evt.GetPosition())
             fp = (x - self.dxy[0], y - self.dxy[1])
             self.p.Move(fp)
+
+
+__all__ = [k for k in globals() if k not in __all__]

@@ -4,6 +4,12 @@ import itertools
 from functools import partial
 from contextlib import suppress
 
+_open = open
+_print = print
+
+__all__ = list(globals())
+
+
 join = os.path.join
 infinity = itertools.count
 makedirs = partial(os.makedirs, exist_ok=True)
@@ -11,12 +17,9 @@ breakpoint = lambda: pdb.set_trace()
 # open = partial(open, encoding='u8')
 
 
-_print = print
-
-
-def print(*value):
-    s = print(' '.join(map(str, value)) + '\n')
-    _print(s, end='')
+def print(*value, **kwargs):
+    s = ' '.join(map(str, value)) + '\n'
+    _print(s, end='', **kwargs)
     return s
 
 
@@ -34,9 +37,6 @@ def walk(path, exts=()):
         for file in files:
             if not exts or os.path.splitext(file)[1] in exts:
                 yield os.path.join(root, file)
-
-
-_open = open
 
 
 class open:
@@ -65,3 +65,5 @@ class open:
     def append(self, data):
         self.write(data, 'a')
 
+
+__all__ = [k for k in globals() if k not in __all__]

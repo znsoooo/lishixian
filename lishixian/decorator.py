@@ -5,6 +5,7 @@ from functools import wraps
 
 from .refact import print
 
+__all__ = list(globals())
 
 def timeit(f):
     @wraps(f)
@@ -43,3 +44,6 @@ def protect(f):
             print(msg, file=sys.stderr)
             return msg
     return wrapper
+
+
+__all__ = [k for k in globals() if k not in __all__]

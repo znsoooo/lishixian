@@ -5,6 +5,9 @@ import pyautogui
 import pyperclip
 
 
+__all__ = list(globals())
+
+
 PAUSE = pyautogui.PAUSE
 
 
@@ -102,3 +105,6 @@ if __name__ == '__main__':
 
 
 # todo 全局快捷键（组合键）
+
+
+__all__ = [k for k in globals() if k not in __all__]

@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
 
+__all__ = list(globals())
+
 
 def imread(file):
     return cv2.imdecode(np.fromfile(file, np.uint8), -1)
@@ -27,3 +29,6 @@ def imiter(cap):
 # cap = cv2.VideoCapture('VID_20191211_162134.mp4')
 # for img in imiter(cap):
 #     ...
+
+
+__all__ = [k for k in globals() if k not in __all__]

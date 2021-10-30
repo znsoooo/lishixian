@@ -7,6 +7,7 @@ import xlwt
 from xlutils.filter import process, XLRDReader, XLWTWriter
 from win32com import client
 
+__all__ = list(globals())
 
 # ---------------------------------------------------------------------------
 # Text
@@ -235,3 +236,6 @@ def Unique(arr):
 
 # for test
 # print(ReadWord('../test_docx.docx'))
+
+
+__all__ = [k for k in globals() if k not in __all__]

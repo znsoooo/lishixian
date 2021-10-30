@@ -10,6 +10,7 @@ from .refact import print
 # LOG = time.strftime('RECORD_%Y%m%d_%H%M%S.log')
 LOG = time.strftime('LOG_%Y%m%d_%H%M%S.txt')
 
+__all__ = list(globals())
 
 # ---------------------------------------------------------------------------
 # Debug
@@ -97,12 +98,15 @@ def input_wait(msg):
 input_default = lambda msg, default: input('input <%s>, keep <%s> press enter: ' % (msg, default)) or default
 
 
-class MultiThread:
+class MaxThread:
     def __init__(self, max):
-        self.cnt = threading.BoundedSemaphore(max)
+        self.counter = threading.BoundedSemaphore(max)
 
     def append(self):
-        self.cnt.acquire()
+        self.counter.acquire()
 
     def pop(self):
-        self.cnt.release()
+        self.counter.release()
+
+
+__all__ = [k for k in globals() if k not in __all__]

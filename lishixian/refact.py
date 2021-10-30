@@ -1,10 +1,23 @@
 import os
+import pdb
+import itertools
 from functools import partial
 from contextlib import suppress
 
 join = os.path.join
+infinity = itertools.count
 makedirs = partial(os.makedirs, exist_ok=True)
+breakpoint = lambda: pdb.set_trace()
 # open = partial(open, encoding='u8')
+
+
+_print = print
+
+
+def print(*value):
+    s = print(' '.join(map(str, value)) + '\n')
+    _print(s, end='')
+    return s
 
 
 def split(p):
@@ -14,6 +27,9 @@ def split(p):
 
 
 def walk(path, exts=()):
+    if os.path.isfile(path):
+        if not exts or os.path.splitext(path)[1] in exts:
+            yield os.path.abspath(path)
     for root, folders, files in os.walk(path):
         for file in files:
             if not exts or os.path.splitext(file)[1] in exts:
@@ -48,3 +64,4 @@ class open:
 
     def append(self, data):
         self.write(data, 'a')
+

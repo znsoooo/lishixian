@@ -3,7 +3,7 @@ import time
 import traceback
 from functools import wraps
 
-from .line import pprint as print
+from .refact import print
 
 
 def timeit(f):

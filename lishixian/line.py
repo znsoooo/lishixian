@@ -24,5 +24,9 @@ raw2headers = str2dict = lambda s: dict(re.findall(r'(.*?):(.*)', s))
 # User-Agent: Mozilla/4.0 ****
 # Cookie: ****
 
+# todo 函数重名
+unique = lambda arr: sorted(list(set(arr)), key=arr.index)
+unique = lambda arr: [item for i, item in enumerate(arr) if arr.index(item) == i]
+
 
 __all__ = [k for k in globals() if k not in __all__]

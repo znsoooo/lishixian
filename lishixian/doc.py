@@ -4,7 +4,8 @@ import csv
 import docx
 import xlrd
 import xlwt
-from xlutils.filter import process, XLRDReader, XLWTWriter
+import xlutils.filter
+# from xlutils.filter import process, XLRDReader, XLWTWriter
 from win32com import client
 
 __all__ = list(globals())
@@ -39,8 +40,8 @@ def OpenExcel(file):
     rb = xlrd.open_workbook(file, formatting_info=True)
 
     # 参考xlutils.copy库内的用法 参考xlutils.filter内的参数定义style_list
-    w = XLWTWriter()
-    process(XLRDReader(rb, 'unknown.xls'), w)
+    w = xlutils.filter.XLWTWriter()
+    xlutils.filter.process(xlutils.filter.XLRDReader(rb, 'unknown.xls'), w)
     wb = w.output[0][1]
     style_list = w.style_list
 
@@ -158,35 +159,37 @@ def ReadWordTexts(file):
 
 
 def ReadWord(file):
-    doc = docx.Document(file)
-    data = []
-    for table in doc.tables:
-        table_data = []
-        for row in table.rows:
-            row_cells = row.cells
-            # unique list
-            # row_cells_nui = sorted(list(set(row_cells)), key=row_cells.index) # Good!
-            row_cells = [item.text for i, item in enumerate(row_cells) if row_cells.index(item) == i]  # Slower but Good!
-            table_data.append(row_cells)
-        data.append(table_data)
-    return data
-
-
-def ReadWord(file):
     if file.endswith('.doc'):
         file = Doc2Docx(file)
 
-    doc = docx.Document(file)
     data = []
+    merge = []
+    doc = docx.Document(file)
     for table in doc.tables:
-        sheet_data = []
-        for r, row in enumerate(table.rows):
-            # sheet_data.append([cell.text for cell in row.cells])
-            row_cells = row.cells
-            index = Unique(row_cells)  # 去重
-            sheet_data.append([row_cells[id].text for id in index])
-        data.append(sheet_data)
-    return data
+        cells  = table._cells  # see usage at `docx.table.Table._cells`
+        cols   = table._column_count
+        length = len(cells)
+
+        data.append([])
+        for i, cell in enumerate(cells):
+            r, c = divmod(i, cols)
+            if c == 0:  # create new row
+                data[-1].append([])
+            data[-1][-1].append(cell.text)
+
+        merge.append([])
+        for i, cell in enumerate(cells):
+            if cell in cells[:i]:  # only find first repeated cell
+                continue
+            for j in range(length - 1, 0, -1):  # find last repeated cell
+                if cell is cells[j]:  # always can be found
+                    break
+            if i != j:  # first != last -> merged cells
+                r1, c1 = divmod(i, cols)
+                r2, c2 = divmod(j, cols)
+                merge[-1].append((r1, r2, c1, c2))
+
+        return data, merge
 
 
 def OpenDocx(file):
@@ -224,18 +227,23 @@ def Word2Csv(file):
 
 
 def Unique(arr):
-    return [i for i, item in enumerate(arr) if arr.index(item) == i] # todo 再次仔细检查一下
-    arr2 = []
-    index = []
-    for i, one in enumerate(arr):
-        if one not in arr2:
-            arr2.append(one)
-            index.append(i)
-    return index
-
-
-# for test
-# print(ReadWord('../test_docx.docx'))
+    return [i for i, item in enumerate(arr) if arr.index(item) == i]
 
 
 __all__ = [k for k in globals() if k not in __all__]
+
+
+if __name__ == '__main__':
+    from pprint import pprint
+
+    # data, merge = ReadExcel('../test.xls')
+    # pprint(merge)
+    # pprint(data)
+
+    print(ReadWord('../test.docx'))
+
+    # for table in data:
+    #     for row in table:
+    #         row.pop(0)
+    # data2 = MergeCell(data, merge)
+    # pprint(data2)

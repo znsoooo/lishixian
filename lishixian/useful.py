@@ -1,9 +1,13 @@
 import os
 import html
+import socket
 import threading
 import time
 import urllib.parse
 import urllib.request
+import re
+import uuid
+import getpass
 
 from .refact import print
 
@@ -86,8 +90,20 @@ def urlopen(url, timeout=5):
 # ---------------------------------------------------------------------------
 
 
-def install(path):
-    os.popen('pip install "%s"' % path)
+pc_mac = lambda: '-'.join(re.findall('..', uuid.uuid1().hex[-12:].upper()))
+pc_user = lambda: getpass.getuser()
+pc_ip = lambda: socket.gethostbyname(socket.gethostname())
+
+# def pc_ip():
+#     for addr in os.popen('route print').readlines():
+#         if '0.0.0.0' in addr:
+#             return addr.split()[-2]
+
+
+def install(path, block=False):
+    p = os.popen('pip install "%s"' % path)
+    if block:
+        return p.read()
 
 
 def input_wait(msg):

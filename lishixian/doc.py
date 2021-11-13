@@ -201,22 +201,6 @@ def OpenDocx(file):
     return data
 
 
-def OpenDocx(file): # todo ?这是在干嘛？
-    doc = docx.Document(file)
-    data = []
-    for table in doc.tables:
-        table_data = []
-        for row in table.rows:
-            table_data.append([cell.text for cell in row.cells])
-        data.append(table_data)
-
-        for r, row in enumerate(table.rows):
-            for c, cell in enumerate(row.cells):
-                cell.text = '%d,%d' % (r, c)
-
-    return data
-
-
 def Word2Csv(file):
     root, ext = os.path.splitext(file)
     if file.endswith('.doc'):

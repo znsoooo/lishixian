@@ -1,6 +1,7 @@
 import os
 import pdb
 import itertools
+import subprocess
 from functools import partial
 from contextlib import suppress
 
@@ -15,6 +16,7 @@ infinity = itertools.count
 makedirs = partial(os.makedirs, exist_ok=True)
 breakpoint = lambda: pdb.set_trace()
 # open = partial(open, encoding='u8')
+popen = lambda cmd: subprocess.Popen(cmd, -1, None, -1, -1, -1, shell=True).stdout
 
 
 def print(*value, **kwargs):

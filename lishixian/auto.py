@@ -1,3 +1,4 @@
+import time
 from threading import Thread
 
 import pynput
@@ -44,64 +45,55 @@ class Monitor:
         pynput.mouse.Listener.stop(self.ml)
 
 
+class Recoder:
+    def __init__(self, complete=False):
+        self.complete = complete
+        print('import pyautogui\n')
 
+        self.clock = time.time()
+        self.monitor = Monitor(self.callback)
+        self.stop = self.monitor.stop
 
-class Monitor:
-    def __init__(self):
-        self.time = time.time()
-        t1 = Thread(target=self.MouseListener)
-        t2 = Thread(target=self.KeyboardListener)
-        t1.start()
-        t2.start()
+    def callback(self, typ, *args):
+        if typ == 'move':
+            if self.complete:
+                x, y = args
+                self.log('pyautogui.moveTo(%d, %d)' % (x, y))
 
-    def on_move(self, x, y):
-        return
-        self.DelayPrint('pyautogui.moveTo(x=%d, y=%d)' % (x, y))
+        elif typ == 'click':
+            x, y, button, pressed = args
+            if self.complete:
+                event = 'mouseDown' if pressed else 'mouseUp'
+                self.log("pyautogui.%s(%d, %d, '%s')" % (event, x, y, button.name))
+            elif pressed:
+                self.log("pyautogui.click(%d, %d)" % (x, y))
 
-    def on_click(self, x, y, button, pressed):
-        event = 'mouseDown' if pressed else 'mouseUp'
-        self.DelayPrint("pyautogui.%s(x=%d, y=%d, button='%s')" % (event, x, y, button.name))
+        elif typ == 'scroll':
+            x, y, dx, dy = args
+            self.log('Scrolled {0}'.format((x, y))) # todo
 
-    def on_click_simple(self, x, y, button, pressed):
-        if pressed:
-            self.DelayPrint("pyautogui.click(x=%d, y=%d)" % (x, y))
+        elif typ in ('press', 'release'):
+            key, = args
+            event = 'keyDown' if typ == 'press' else 'keyUp'
+            self.log("pyautogui.%s(%s)" % (event, key))
 
-    def on_scroll(self, x, y, dx, dy):
-        self.DelayPrint('Scrolled {0}'.format((x, y)))
-
-    def on_press(self, key):
-        self.DelayPrint("pyautogui.keyDown(%s)" % key)
-
-    def on_release(self, key):
-        self.DelayPrint("pyautogui.keyUp(%s)" % key)
-
-    def MouseListener(self):
-        with pynput.mouse.Listener(on_move=self.on_move, on_click=self.on_click_simple,
-                                   on_scroll=self.on_scroll) as self.mouse_listener:
-            self.mouse_listener.join()
-
-    def KeyboardListener(self):
-        with pynput.keyboard.Listener(on_press=self.on_press, on_release=self.on_release) as self.keyboard_listener:
-            self.keyboard_listener.join()
-
-    def Stop(self):
-        self.mouse_listener.stop()
-        self.keyboard_listener.stop()
-
-    def Clock(self):
-        t1 = time.time()
-        pprint('time.sleep(%.3f)' % (t1 - self.time))
-        self.time = t1
-
-    def DelayPrint(self, s):
-        self.Clock()
-        pprint(s)
+    def log(self, msg):
+        dt = time.time() - self.clock
+        if self.complete:
+            print('time.sleep(%.3f)' % dt)
+            self.clock += dt
+        elif dt > 0.5:
+            dt = dt - dt % 0.5
+            print('time.sleep(%.1f)' % dt)
+            self.clock += dt
+        print(msg)
 
 
 if __name__ == '__main__':
-    m = Monitor()
+    m = Recoder()
+    # m = Recoder(complete=True)
     time.sleep(2)
-    m.Stop()
+    m.stop()
 
 
 # todo 全局快捷键（组合键）

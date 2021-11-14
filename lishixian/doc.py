@@ -4,11 +4,12 @@ import csv
 import docx
 import xlrd
 import xlwt
+import xlutils.copy
 import xlutils.filter
-# from xlutils.filter import process, XLRDReader, XLWTWriter
 from win32com import client
 
 __all__ = list(globals())
+
 
 # ---------------------------------------------------------------------------
 # Text
@@ -20,12 +21,12 @@ def WriteTxt(data, file, encoding='utf-8-sig'):
         f.write('\n'.join(','.join(str(cell) for cell in row) for row in data))
 
 
-def OpenCsv(file, encoding='utf-8-sig'):
+def ReadCsv(file, encoding='utf-8-sig'):
     with open(file, encoding=encoding) as f:
         return list(csv.reader(f))
 
 
-def WriteCsv(data, file, errors='ignore', encoding='utf-8-sig'):
+def WriteCsv(data, file, encoding='utf-8-sig', errors='ignore'):
     with open(file, 'w', newline='', encoding=encoding, errors=errors) as f:
         writer = csv.writer(f)
         writer.writerows(data)
@@ -36,6 +37,15 @@ def WriteCsv(data, file, errors='ignore', encoding='utf-8-sig'):
 # ---------------------------------------------------------------------------
 
 
+def WriteExcel(data, file, new_sheet='sheet1'):
+    xls = xlwt.Workbook('u8')
+    sheet = xls.add_sheet(new_sheet, True)
+    for r, row in enumerate(data):
+        for c, cell in enumerate(row):
+            sheet.write(r, c, cell)
+    xls.save(file)
+
+
 def OpenExcel(file):
     rb = xlrd.open_workbook(file, formatting_info=True)
 
@@ -43,18 +53,14 @@ def OpenExcel(file):
     w = xlutils.filter.XLWTWriter()
     xlutils.filter.process(xlutils.filter.XLRDReader(rb, 'unknown.xls'), w)
     wb = w.output[0][1]
-    style_list = w.style_list
+    wb.style_list = w.style_list
+    wb.sheets = rb.sheets()
 
-    return wb, style_list
+    # quick `style` reach, and `write` with copied style.
+    wb.style = lambda n, r, c: wb.style_list[wb.sheets[n].cell_xf_index(r, c)]
+    wb.swrite = lambda n, r, c, value: wb.get_sheet(n).write(r, c, value, wb.style(n, r, c))
 
-    # for n, sheet in enumerate(rb.sheets()):
-    #     sheet2 = wb.get_sheet(n)
-    #     for r in range(sheet.nrows):
-    #         for c, cell in enumerate(sheet.row_values(r)):
-    #             style = style_list[sheet.cell_xf_index(r, c)]
-    #             sheet2.write(r, c, sheet.cell_xf_index(r, c), style)
-    #
-    # wb.save('save.xls')
+    return wb
 
 
 def MergeCell(data, merge, merge_x=True, merge_y=True, strip_x=False):
@@ -79,10 +85,10 @@ def MergeCell(data, merge, merge_x=True, merge_y=True, strip_x=False):
     return data2
 
 
-def ReadExcel(file, merge_x=False, merge_y=False):
+def ReadExcel(file, merge_x=True, merge_y=True, strip_x=False):
     try:
         xls = xlrd.open_workbook(file, formatting_info=True)
-    except:
+    except xlrd.biffh.XLRDError:
         xls = xlrd.open_workbook(file)
 
     data = []
@@ -102,38 +108,8 @@ def ReadExcel(file, merge_x=False, merge_y=False):
 
     # only ".xls" type contain merge_info
     merge = [sheet.merged_cells for sheet in xls.sheets()]
-
-    return data, merge
-
-
-def ReadExcels(files):
-    data = []
-    success = []
-    for file in files:
-        path, filename = os.path.split(file)
-        data += [[path, filename] + row for row in ReadExcel(file)]
-        success.append(file)
-    return data
-
-
-def WriteExcel(data, file, new_sheet='sheet1'):
-    xls = xlwt.Workbook('u8')
-    sheet = xls.add_sheet(new_sheet, True)
-    for r, row in enumerate(data):
-        for c, cell in enumerate(row):
-            sheet.write(r, c, cell)
-    xls.save(file)
-
-
-def Excel2Csv(file):
-    root, ext = os.path.splitext(file)
-    if ext == '.xlsx':
-        file2 = root + '.xls'  # only ".xls" type contain merge_info
-        ...
-        file = file2
-    data = MergeCell(*ReadExcel(file))
-    WriteTxt(data, root + '.csv')
-    return data
+    data2 = MergeCell(data, merge, merge_x, merge_y, strip_x)
+    return data2
 
 
 # ---------------------------------------------------------------------------
@@ -152,18 +128,7 @@ def Doc2Docx(file, overwrite=False):
     return file2
 
 
-def ReadWordTexts(file):
-    if file.endswith('.doc'):
-        file = Doc2Docx(file)
-
-    doc = docx.Document(file)
-    return [p.text for p in doc.paragraphs]
-
-
-def ReadWord(file, merge_x, merge_y, strip_x):
-    if file.endswith('.doc'):
-        file = Doc2Docx(file)
-
+def OpenDocx(file):
     data = []
     merge = []
     doc = docx.Document(file)
@@ -172,6 +137,7 @@ def ReadWord(file, merge_x, merge_y, strip_x):
         cols   = table._column_count
         length = len(cells)
 
+        # read text
         data.append([])
         for i, cell in enumerate(cells):
             r, c = divmod(i, cols)
@@ -179,6 +145,7 @@ def ReadWord(file, merge_x, merge_y, strip_x):
                 data[-1].append([])
             data[-1][-1].append(cell.text)
 
+        # find merged
         merge.append([])
         for i, cell in enumerate(cells):
             if cell in cells[:i]:  # only find first repeated cell
@@ -191,26 +158,51 @@ def ReadWord(file, merge_x, merge_y, strip_x):
                 r2, c2 = divmod(j, cols)
                 merge[-1].append((r1, r2, c1, c2))
 
-    data2 = MergeCell(data, merge, merge_x, merge_y, strip_x)
+    return data, merge
 
+
+def ReadWordTexts(file):
+    if file.endswith('.doc'):
+        file = Doc2Docx(file)
+    doc = docx.Document(file)
+    return [p.text for p in doc.paragraphs]
+
+
+def ReadWord(file, merge_x=True, merge_y=True, strip_x=False):
+    if file.endswith('.doc'):
+        file = Doc2Docx(file)
+    data, merge = OpenDocx(file)
+    data2 = MergeCell(data, merge, merge_x, merge_y, strip_x)
     return data2
 
 
-def OpenDocx(file):
-    doc = docx.Document(file)
-    data = []
-    for table in doc.tables:
-        for row in table.rows:
-            data.append([cell.text for cell in row.cells])
+# ---------------------------------------------------------------------------
+# Other
+# ---------------------------------------------------------------------------
+
+
+def ReadFile(file, merge_x=True, merge_y=True, strip_x=False):
+    ext = os.path.splitext(file)[1]
+    if ext in ('.csv', '.txt'):
+        return ReadCsv(file)
+    elif ext in ('.xls', '.xlsx'):
+        return ReadExcel(file, merge_x, merge_y, strip_x)
+    elif ext in ('.doc', '.docx'):
+        return ReadWord(file, merge_x, merge_y, strip_x)
+
+
+def File2Csv(file, merge_x=True, merge_y=True, strip_x=False):
+    root, ext = os.path.splitext(file)
+    data = ReadFile(file, merge_x, merge_y, strip_x)
+    WriteCsv(data, root + '.csv')
     return data
 
 
-def Word2Csv(file):
-    root, ext = os.path.splitext(file)
-    if file.endswith('.doc'):
-        file = Doc2Docx(file)
-    data = ReadWord(file)
-    WriteTxt(data, root + '.csv')
+def ReadFiles(files, merge_x=True, merge_y=True, strip_x=False):
+    data = []
+    for file in files:
+        path, filename = os.path.split(file)
+        data.extend([[path, filename] + row for row in ReadFile(file, merge_x, merge_y, strip_x)])
     return data
 
 
@@ -224,8 +216,8 @@ __all__ = [k for k in globals() if k not in __all__]
 if __name__ == '__main__':
     from pprint import pprint
 
-    # data, merge = ReadExcel('../test.xls')
-    # pprint(merge)
+    # test read
+    data = ReadExcel('../test.xls')
     # pprint(data)
 
     pprint(ReadWord('../test.docx', 0, 0, 0))
@@ -233,8 +225,12 @@ if __name__ == '__main__':
     pprint(ReadWord('../test.docx', 1, 0, 0))
     pprint(ReadWord('../test.docx', 1, 1, 0))
 
-    # for table in data:
-    #     for row in table:
-    #         row.pop(0)
-    # data2 = MergeCell(data, merge)
-    # pprint(data2)
+    # test read/write with keep style
+    wb = OpenExcel('../test2.xls')
+    sheet2 = wb.get_sheet(0)
+    for r in range(3):
+        for c in range(3):
+            sheet2.write(r, c, 'T%d%d' % (r, c), wb.style(0, r, c))
+            # wb.swrite(0, r, c, 'V%d%d' % (r, c))
+
+    wb.save('save2.xls')

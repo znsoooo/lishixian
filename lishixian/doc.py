@@ -57,23 +57,25 @@ def OpenExcel(file):
     # wb.save('save.xls')
 
 
-def MergeCell(data, merge):
+def MergeCell(data, merge, merge_x=True, merge_y=True, strip_x=False):
     data2 = []
     for sheet_data, sheet_merge in zip(data, merge):
-        # only merge vertical
+        # merge cell
         for r1, r2, c1, c2 in sheet_merge:
-            for r in range(r1, r2):
-                sheet_data[r][c1] = sheet_data[r1][c1]
-                for c in range(c1 + 1, c2):
-                    sheet_data[r][c] = None
-        # remove merge horizontal
-        sheet_data2 = [[cell for cell in row if cell is not None] for row in sheet_data]
+            for r in range(r1, r2 + 1):
+                for c in range(c1, c2 + 1):
+                    if (not merge_x and c > c1) or (not merge_y and r > r1):
+                        sheet_data[r][c] = None if strip_x else ''
+                    else:
+                        sheet_data[r][c] = sheet_data[r1][c1]
+        # strip x
+        if strip_x:
+            sheet_data = [[cell for cell in row if cell is not None] for row in sheet_data]
+        data2.append(sheet_data)
         # remove blanks in tail
-        for row in sheet_data2:
-            while len(row) and row[-1] == '':  # Good!
-                row.pop()
-        data2.append(sheet_data2)
-
+        # for row in sheet_data:
+        #     while len(row) and row[-1] == '':  # Good!
+        #         row.pop()
     return data2
 
 
@@ -158,7 +160,7 @@ def ReadWordTexts(file):
     return [p.text for p in doc.paragraphs]
 
 
-def ReadWord(file):
+def ReadWord(file, merge_x, merge_y, strip_x):
     if file.endswith('.doc'):
         file = Doc2Docx(file)
 
@@ -189,7 +191,9 @@ def ReadWord(file):
                 r2, c2 = divmod(j, cols)
                 merge[-1].append((r1, r2, c1, c2))
 
-        return data, merge
+    data2 = MergeCell(data, merge, merge_x, merge_y, strip_x)
+
+    return data2
 
 
 def OpenDocx(file):
@@ -224,7 +228,10 @@ if __name__ == '__main__':
     # pprint(merge)
     # pprint(data)
 
-    print(ReadWord('../test.docx'))
+    pprint(ReadWord('../test.docx', 0, 0, 0))
+    pprint(ReadWord('../test.docx', 0, 1, 0))
+    pprint(ReadWord('../test.docx', 1, 0, 0))
+    pprint(ReadWord('../test.docx', 1, 1, 0))
 
     # for table in data:
     #     for row in table:

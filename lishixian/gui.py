@@ -11,7 +11,28 @@ def center(top):
     top.geometry('+%d+%d'%(x, y))
 
 
-# todo staticbox = ?
+def WrapBox(parent, w, lalbel=''):
+    box = wx.StaticBoxSizer(wx.VERTICAL, parent, lalbel)
+    box.Add(w)
+    return box
+
+
+def GetClipboard():
+    do = wx.TextDataObject()
+    if wx.TheClipboard.Open():
+        ret = wx.TheClipboard.GetData(do)
+        wx.TheClipboard.Close()
+        if ret:
+            return do.GetText()
+
+
+def SetClipboard(text):
+    do = wx.TextDataObject()
+    do.SetText(text)
+    if wx.TheClipboard.Open():
+        wx.TheClipboard.SetData(do)
+        wx.TheClipboard.Close()
+
 
 class Mover:
     def __init__(self, parent, widget):

@@ -7,6 +7,7 @@ from .refact import print
 
 __all__ = list(globals())
 
+
 def timeit(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
@@ -44,6 +45,19 @@ def protect(f):
             print(msg, file=sys.stderr)
             return msg
     return wrapper
+
+
+def surround(before=(), after=()):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            # print(func.__name__) # for test
+            [f() for f in before]
+            ret = func(*args, **kwargs)
+            [f() for f in after]
+            return ret
+        return wrapper
+    return decorator
 
 
 __all__ = [k for k in globals() if k not in __all__]

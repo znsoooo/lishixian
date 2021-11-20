@@ -1,13 +1,16 @@
 import os
+import re
+import sys
 import html
-import socket
-import threading
 import time
+import uuid
+import socket
+import getpass
+import threading
 import urllib.parse
 import urllib.request
-import re
-import uuid
-import getpass
+
+import winshell
 
 from .refact import print
 
@@ -68,6 +71,16 @@ def unique(p, dash='-'):
     return p
 
 
+def shortcut(p=winshell.desktop(), make=True):  # get_path: desktop/programs/startup/...
+    path = sys.argv[0]
+    name = os.path.splitext(os.path.basename(path))[0]
+    target = os.path.join(p, name)
+    if make:
+        winshell.CreateShortcut(path, target)
+    elif os.path.exists(target): # no use
+        os.remove(target)
+
+
 # ---------------------------------------------------------------------------
 # Web
 # ---------------------------------------------------------------------------
@@ -88,16 +101,6 @@ def urlopen(url, timeout=5):
 # ---------------------------------------------------------------------------
 # ...
 # ---------------------------------------------------------------------------
-
-
-pc_mac = lambda: '-'.join(re.findall('..', uuid.uuid1().hex[-12:].upper()))
-pc_user = lambda: getpass.getuser()
-pc_ip = lambda: socket.gethostbyname(socket.gethostname())
-
-# def pc_ip():
-#     for addr in os.popen('route print').readlines():
-#         if '0.0.0.0' in addr:
-#             return addr.split()[-2]
 
 
 def install(path, block=False):

@@ -1,6 +1,9 @@
 import re
 import sys
 import json
+import uuid
+import socket
+import getpass
 import hashlib
 from threading import Thread
 
@@ -9,8 +12,8 @@ __all__ = list(globals())
 
 md5 = lambda b: hashlib.md5(b).hexdigest()
 start = lambda func, *args, **kwargs: Thread(target=func, args=args, kwargs=kwargs).start()
-# pprint = lambda *value, file=sys.stdout: print(' '.join(map(str, value)) + '\n', end='', file=file)
 create = lambda file: open(file).close()
+pprint = lambda *value, file=sys.stdout: print(' '.join(map(str, value)) + '\n', end='', file=file)
 
 dumps = lambda data: json.dumps(data, ensure_ascii=False, indent=2)
 
@@ -27,6 +30,15 @@ raw2headers = str2dict = lambda s: dict(re.findall(r'(.*?):(.*)', s))
 # todo 函数重名
 unique = lambda arr: sorted(list(set(arr)), key=arr.index)
 unique = lambda arr: [item for i, item in enumerate(arr) if arr.index(item) == i]
+
+pc_ip = lambda: socket.gethostbyname(socket.gethostname())
+pc_mac = lambda: '-'.join(re.findall('..', uuid.uuid1().hex[-12:].upper()))
+pc_user = lambda: getpass.getuser()
+
+# def pc_ip():
+#     for addr in os.popen('route print').readlines():
+#         if '0.0.0.0' in addr:
+#             return addr.split()[-2]
 
 
 __all__ = [k for k in globals() if k not in __all__]

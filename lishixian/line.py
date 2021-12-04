@@ -2,6 +2,7 @@ import re
 import sys
 import json
 import uuid
+import random
 import socket
 import getpass
 import hashlib
@@ -34,6 +35,8 @@ unique = lambda arr: [item for i, item in enumerate(arr) if arr.index(item) == i
 pc_ip = lambda: socket.gethostbyname(socket.gethostname())
 pc_mac = lambda: '-'.join(re.findall('..', uuid.uuid1().hex[-12:].upper()))
 pc_user = lambda: getpass.getuser()
+
+randombytes = lambda n: bytes(random.randint(0, 255) for i in range(n))
 
 # def pc_ip():
 #     for addr in os.popen('route print').readlines():

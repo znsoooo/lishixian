@@ -24,7 +24,7 @@ def imsave(file): # for test
     folder = os.path.splitext(file)[0]
     os.makedirs(folder, exist_ok=True)
     for n, img in enumerate(imiter(file)):
-        cv2.imwrite(f'{folder}/img_{n:04}.png', img)
+        cv2.imwrite('%s/img_%04d.png' % (folder, n), img)
 
 
 def imiter(file_or_id, st=None, ed=None):

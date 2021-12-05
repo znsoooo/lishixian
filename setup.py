@@ -2,11 +2,13 @@ import os
 import shutil
 import setuptools
 
+pkg = setuptools.find_packages()
+
 keys = ['readme', 'license', 'todo', 'version']
-os.makedirs('lishixian/docs', exist_ok=True)
+os.makedirs(pkg[0] + '/docs', exist_ok=True)
 for file in os.listdir():
     if any(file.lower().startswith(k) for k in keys):
-        shutil.copy(file, 'lishixian/docs/' + file.lower())
+        shutil.copy(file, pkg[0] + '/docs/' + file.lower())
 
 with open('VERSION.txt') as f:
     version = f.read().strip()
@@ -15,7 +17,7 @@ with open('README.md', encoding='u8') as f:
     long_description = f.read()
 
 setuptools.setup(
-    name='lishixian',
+    name=pkg[0],
     version=version,
     author='Lishixian(znsoooo)',
     author_email='lsx7@sina.com',
@@ -28,14 +30,13 @@ setuptools.setup(
     },
     classifiers=[
         'Programming Language :: Python :: 3',
-        'Framework :: IDLE',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
     ],
-    packages=setuptools.find_packages(),
+    packages=pkg,
 
-    # install_requires=['windnd'], # for drag-open file feature
-    # extras_requires={'windnd': ['windnd']},
+    # install_requires=['pkg_name'],
+    # extras_requires={'pkg_name': ['pkg_name']},
     license='MIT License',
     package_data={'': ['*.*']},
     keywords='lishixian lsx',

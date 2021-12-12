@@ -1,18 +1,20 @@
+from threading import Thread
+
 import wx
 
 __all__ = list(globals())
 
 
 def center(top):
-    '''tkinter set center'''
+    """tkinter set center"""
     top.update_idletasks()
     x = (top.winfo_screenwidth()  - top.winfo_reqwidth())  / 2
     y = (top.winfo_screenheight() - top.winfo_reqheight()) / 2
     top.geometry('+%d+%d'%(x, y))
 
 
-def WrapBox(parent, w, lalbel=''):
-    box = wx.StaticBoxSizer(wx.VERTICAL, parent, lalbel)
+def WrapBox(parent, w, label=''):
+    box = wx.StaticBoxSizer(wx.VERTICAL, parent, label)
     box.Add(w)
     return box
 
@@ -59,6 +61,25 @@ class Mover:
             x, y = self.p.ClientToScreen(evt.GetPosition())
             fp = (x - self.dxy[0], y - self.dxy[1])
             self.p.Move(fp)
+
+
+class EventThread(Thread):
+    """
+    Usage:
+    widget.Bind(wx.PyEventBinder(id), lambda e: print(e.data))
+    EventThread(widget, id, int, 7)
+    """
+
+    def __init__(self, parent, id, target=bool, *args, **kwargs):
+        Thread.__init__(self, target=target, args=args, kwargs=kwargs)
+        self.parent = parent
+        self.id = id
+        self.start()
+
+    def run(self):
+        event = wx.PyEvent(0, self.id)
+        event.data = self._target(*self._args, **self._kwargs)
+        wx.PostEvent(self.parent, event)
 
 
 __all__ = [k for k in globals() if k not in __all__]

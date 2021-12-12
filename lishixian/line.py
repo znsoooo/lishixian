@@ -18,7 +18,8 @@ pprint = lambda *value, file=sys.stdout: print(' '.join(map(str, value)) + '\n',
 
 dumps = lambda data: json.dumps(data, ensure_ascii=False, indent=2)
 
-sort_key = lambda d, reverse=False: sorted(d.items(), key=lambda item: item[1], reverse=reverse)
+sort_kv  = lambda d, reverse=False: sorted(d.items(), key=lambda item: item[1], reverse=reverse)
+sort_key = lambda d, reverse=False: sorted(d, key=d.__getitem__, reverse=reverse)
 sort_num = lambda s: [(s, int(n)) for s, n in re.findall(r'(\D+)(\d+)', 'a%s0' % s)]
 
 raw2headers = str2dict = lambda s: dict(re.findall(r'(.*?):(.*)', s))

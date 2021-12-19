@@ -4,8 +4,8 @@ _print = print
 __keep__ = list(globals()) # Don't use word `__all__`, its will rewrite many times below.
 
 
+from .cls import *
 from .line import *
-from .long import *
 from .refact import *
 from .useful import *
 from .decorator import *

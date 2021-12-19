@@ -75,8 +75,9 @@ class Tcp:
         assert len(data) < 1 << 32  # max 4GB
         self.client.send(struct.pack('I', len(data)) + data)
 
-    def recv(self):
-        length = struct.unpack('I', self.client.recv(4))[0]  # max 4GB
+    def recv(self, length=-1):
+        if length == -1:
+            length = struct.unpack('I', self.recv(4))[0]  # max 4GB
         s = bytearray()
         while len(s) < length:
             s.extend(self.client.recv(length-len(s)))

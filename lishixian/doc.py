@@ -68,8 +68,8 @@ def MergeCell(data, merge, merge_x=True, merge_y=True, strip_x=False):
     for sheet_data, sheet_merge in zip(data, merge):
         # merge cell
         for r1, r2, c1, c2 in sheet_merge:
-            for r in range(r1, r2 + 1):
-                for c in range(c1, c2 + 1):
+            for r in range(r1, r2):
+                for c in range(c1, c2):
                     if (not merge_x and c > c1) or (not merge_y and r > r1):
                         sheet_data[r][c] = None if strip_x else ''
                     else:
@@ -107,9 +107,9 @@ def ReadExcel(file, merge_x=True, merge_y=True, strip_x=False):
         data.append(sheet_data)
 
     # only ".xls" type contain merge_info
-    merge = [sheet.merged_cells for sheet in xls.sheets()]
+    merge = [sorted(sheet.merged_cells) for sheet in xls.sheets()]
     data2 = MergeCell(data, merge, merge_x, merge_y, strip_x)
-    return data2
+    return data, merge
 
 
 # ---------------------------------------------------------------------------
@@ -156,7 +156,7 @@ def OpenDocx(file):
             if i != j:  # first != last -> merged cells
                 r1, c1 = divmod(i, cols)
                 r2, c2 = divmod(j, cols)
-                merge[-1].append((r1, r2, c1, c2))
+                merge[-1].append((r1, r2 + 1, c1, c2 + 1))
 
     return data, merge
 

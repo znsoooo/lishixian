@@ -103,6 +103,16 @@ def urlopen(url, timeout=5):
 # ---------------------------------------------------------------------------
 
 
+def format_bytes(data, cols=64):
+    '''TEST: print_bytes(bytes(range(128)))'''
+    s = ''.join('\\x%02x' % c for c in data)
+    return '\\\n'.join(s[i:i+cols] for i in range(0, len(s), cols))
+
+
+def print_bytes(data, cols=64):
+    print(format_bytes(data, cols))
+
+
 def argv_run(func, *defaults):
     sys.argv.extend(defaults)
     for file in sys.argv[1:]:

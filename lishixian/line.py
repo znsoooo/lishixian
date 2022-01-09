@@ -10,6 +10,10 @@ from threading import Thread
 
 __all__ = list(globals())
 
+s128 = bytes(range(128)).decode()
+s127 = bytes(range(32, 127)).decode()
+
+empty = lambda *v, **kv: None
 
 md5 = lambda b: hashlib.md5(b).hexdigest()
 start = lambda func, *args, **kwargs: Thread(target=func, args=args, kwargs=kwargs).start()

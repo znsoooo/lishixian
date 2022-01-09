@@ -28,4 +28,4 @@ def help():
 # __all__ = [k for k in globals() if k not in __keep__]
 __all__ = [k for k, v in globals().items() if k not in __keep__ and callable(v)]
 
-_print(len(__all__))
+_print('functions:', len(__all__))

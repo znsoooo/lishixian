@@ -1,4 +1,5 @@
 import os
+import re
 import pdb
 import itertools
 import subprocess
@@ -18,6 +19,8 @@ breakpoint = lambda: pdb.set_trace()
 # open = partial(open, encoding='u8')
 popen = lambda cmd: subprocess.Popen(cmd, -1, None, -1, -1, -1, shell=True).stdout
 listdir = lambda *paths: os.listdir(os.path.join(*paths))
+findall = lambda pattern, string, flags=0: [(m.start(), m.end(), m.group()) for m in re.finditer(pattern, string, flags)]
+split = lambda arr, cols: [arr[i:i+cols] for i in range(0, len(arr), cols)]
 
 
 def print(*value, **kwargs):
@@ -26,7 +29,7 @@ def print(*value, **kwargs):
     return s
 
 
-def split(p):
+def splitpath(p):
     root, file = os.path.split(p)
     name, ext = os.path.splitext(file)
     return root, name, ext

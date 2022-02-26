@@ -2,7 +2,6 @@
 
 from threading import Thread
 
-import wx
 
 __all__ = list(globals())
 
@@ -16,12 +15,14 @@ def center(top):
 
 
 def WrapBox(parent, w, label=''):
+    import wx
     box = wx.StaticBoxSizer(wx.VERTICAL, parent, label)
     box.Add(w)
     return box
 
 
 def GetClipboard():
+    import wx
     do = wx.TextDataObject()
     if wx.TheClipboard.Open():
         ret = wx.TheClipboard.GetData(do)
@@ -31,6 +32,7 @@ def GetClipboard():
 
 
 def SetClipboard(text):
+    import wx
     do = wx.TextDataObject()
     do.SetText(text)
     if wx.TheClipboard.Open():
@@ -40,6 +42,7 @@ def SetClipboard(text):
 
 class Mover:
     def __init__(self, parent, widget):
+        import wx
         self.p = parent
         self.dxy = (0, 0)
         widget.Bind(wx.EVT_LEFT_DOWN, self.OnLeftDown)
@@ -79,6 +82,7 @@ class EventThread(Thread):
         self.start()
 
     def run(self):
+        import wx
         event = wx.PyEvent(0, self.id)
         event.data = self._target(*self._args, **self._kwargs)
         wx.PostEvent(self.parent, event)

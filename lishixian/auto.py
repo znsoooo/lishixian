@@ -5,19 +5,16 @@ import sys
 import time
 from threading import Thread
 
-import pynput
-import winshell
-import pyautogui
-import pyperclip
-
 
 __all__ = list(globals())
 
 
-PAUSE = pyautogui.PAUSE
+# PAUSE = pyautogui.PAUSE
 
 
-def shortcut(p=winshell.desktop(), make=True):  # get_path: desktop/programs/startup/...
+def shortcut(p=None, make=True):  # get_path: desktop/programs/startup/...
+    import winshell
+    p = p or winshell.desktop()
     path = sys.argv[0]
     name = os.path.splitext(os.path.basename(path))[0]
     target = os.path.join(p, name)
@@ -28,6 +25,8 @@ def shortcut(p=winshell.desktop(), make=True):  # get_path: desktop/programs/sta
 
 
 def copy(word, tab=0):
+    import pyautogui
+    import pyperclip
     for i in range(tab):
         pyautogui.press('tab')
     bak = pyperclip.paste()
@@ -39,6 +38,8 @@ def copy(word, tab=0):
 
 class Monitor:
     def __init__(self, func):
+        import pynput
+        self.pynput = pynput
         self.func = func
         Thread(target=self.mouser).start()
         Thread(target=self.keyboarder).start()
@@ -48,22 +49,21 @@ class Monitor:
             yield (lambda typ: (lambda *args: self.func(typ, *args)))(name)
 
     def mouser(self):
-        with pynput.mouse.Listener(*self.hook('move', 'click', 'scroll')) as self.ml:
+        with self.pynput.mouse.Listener(*self.hook('move', 'click', 'scroll')) as self.ml:
             self.ml.join()
 
     def keyboarder(self):
-        with pynput.keyboard.Listener(*self.hook('press', 'release')) as self.kl:
+        with self.pynput.keyboard.Listener(*self.hook('press', 'release')) as self.kl:
             self.kl.join()
 
     def stop(self):
-        pynput.keyboard.Listener.stop(self.kl)
-        pynput.mouse.Listener.stop(self.ml)
+        self.pynput.keyboard.Listener.stop(self.kl)
+        self.pynput.mouse.Listener.stop(self.ml)
 
 
 class Recoder:
     def __init__(self, complete=False):
         self.complete = complete
-        print('import pyautogui\n')
 
         self.clock = time.time()
         self.monitor = Monitor(self.callback)

@@ -2,27 +2,30 @@
 
 import os
 
-import cv2
-import numpy as np
 
 __all__ = list(globals())
 
 
 def imread(file):
+    import cv2
+    import numpy as np
     return cv2.imdecode(np.fromfile(file, np.uint8), -1)
 
 
 def imwrite(file, im):
+    import cv2
     cv2.imencode('.jpg', im)[1].tofile(file)
 
 
 def imshow(img, delay=50, title=''): # for test
+    import cv2
     cv2.namedWindow(title)
     cv2.imshow(title, img)
     cv2.waitKey(delay)
 
 
 def imsave(file): # for test
+    import cv2
     folder = os.path.splitext(file)[0]
     os.makedirs(folder, exist_ok=True)
     for n, img in enumerate(imiter(file)):
@@ -30,6 +33,7 @@ def imsave(file): # for test
 
 
 def imiter(file_or_id, st=None, ed=None):
+    import cv2
     cap = cv2.VideoCapture(file_or_id)
     while cap.isOpened():
         ret, img = cap.read()

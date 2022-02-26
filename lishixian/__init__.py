@@ -3,20 +3,18 @@ _print = print
 
 __keep__ = list(globals()) # Don't use word `__all__`, its will rewrite many times below.
 
-
+# base on built-in library
 from .cls import *
 from .line import *
 from .refact import *
 from .useful import *
 from .decorator import *
 
-try:
-    from .np import *
-    from .doc import *
-    from .gui import *
-    from .auto import *
-except ImportError as e:
-    _print(e)
+# 3rd-library needed
+from .np import *
+from .doc import *
+from .gui import *
+from .auto import *
 
 
 def help():

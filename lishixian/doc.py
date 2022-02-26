@@ -3,12 +3,6 @@
 import os
 import csv
 
-import docx
-import xlrd
-import xlwt
-import xlutils.copy
-import xlutils.filter
-from win32com import client
 
 __all__ = list(globals())
 
@@ -40,6 +34,7 @@ def WriteCsv(data, file, encoding='utf-8-sig', errors='ignore'):
 
 
 def WriteExcel(data, file, new_sheet='sheet1'):
+    import xlwt
     xls = xlwt.Workbook('u8')
     sheet = xls.add_sheet(new_sheet, True)
     for r, row in enumerate(data):
@@ -49,6 +44,9 @@ def WriteExcel(data, file, new_sheet='sheet1'):
 
 
 def OpenExcel(file):
+    import xlrd
+    import xlutils.filter
+
     rb = xlrd.open_workbook(file, formatting_info=True)
 
     # 参考xlutils.copy库内的用法 参考xlutils.filter内的参数定义style_list
@@ -88,6 +86,7 @@ def MergeCell(data, merge, merge_x=True, merge_y=True, strip_x=False):
 
 
 def ReadExcel(file, merge_x=True, merge_y=True, strip_x=False):
+    import xlrd
     try:
         xls = xlrd.open_workbook(file, formatting_info=True)
     except xlrd.biffh.XLRDError:
@@ -123,6 +122,7 @@ def Doc2Docx(file, overwrite=False):
     root, ext = os.path.splitext(file)
     file2 = root + '.docx.temp'
     if overwrite or not os.path.exists(file2):
+        from win32com import client
         word = client.Dispatch('Word.Application')
         doc = word.Documents.Open(file)
         doc.SaveAs(file2, 16)
@@ -131,6 +131,7 @@ def Doc2Docx(file, overwrite=False):
 
 
 def OpenDocx(file):
+    import docx
     data = []
     merge = []
     doc = docx.Document(file)
@@ -164,6 +165,7 @@ def OpenDocx(file):
 
 
 def ReadWordTexts(file):
+    import docx
     if file.endswith('.doc'):
         file = Doc2Docx(file)
     doc = docx.Document(file)
@@ -222,10 +224,10 @@ if __name__ == '__main__':
     data = ReadExcel('../test.xls')
     # pprint(data)
 
-    pprint(ReadWord('../test.docx', 0, 0, 0))
-    pprint(ReadWord('../test.docx', 0, 1, 0))
-    pprint(ReadWord('../test.docx', 1, 0, 0))
-    pprint(ReadWord('../test.docx', 1, 1, 0))
+    pprint(ReadWord('../test.docx', False, False, False))
+    pprint(ReadWord('../test.docx', False, True,  False))
+    pprint(ReadWord('../test.docx', True,  False, False))
+    pprint(ReadWord('../test.docx', True,  True,  False))
 
     # test read/write with keep style
     wb = OpenExcel('../test2.xls')

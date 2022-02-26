@@ -1,7 +1,10 @@
+import os
+import sys
 import time
 from threading import Thread
 
 import pynput
+import winshell
 import pyautogui
 import pyperclip
 
@@ -10,6 +13,16 @@ __all__ = list(globals())
 
 
 PAUSE = pyautogui.PAUSE
+
+
+def shortcut(p=winshell.desktop(), make=True):  # get_path: desktop/programs/startup/...
+    path = sys.argv[0]
+    name = os.path.splitext(os.path.basename(path))[0]
+    target = os.path.join(p, name)
+    if make:
+        winshell.CreateShortcut(path, target)
+    elif os.path.exists(target): # no use
+        os.remove(target)
 
 
 def copy(word, tab=0):

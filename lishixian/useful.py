@@ -1,16 +1,11 @@
 import os
-import re
 import sys
 import html
 import time
-import uuid
-import socket
-import getpass
 import threading
 import urllib.parse
 import urllib.request
 
-import winshell
 
 from .refact import print
 
@@ -69,16 +64,6 @@ def unique(p, dash='-'):
         n += 1
         p = '%s%s%d%s' % (root, dash, n, ext)
     return p
-
-
-def shortcut(p=winshell.desktop(), make=True):  # get_path: desktop/programs/startup/...
-    path = sys.argv[0]
-    name = os.path.splitext(os.path.basename(path))[0]
-    target = os.path.join(p, name)
-    if make:
-        winshell.CreateShortcut(path, target)
-    elif os.path.exists(target): # no use
-        os.remove(target)
 
 
 # ---------------------------------------------------------------------------

@@ -8,6 +8,7 @@ from .cls import *
 from .line import *
 from .refact import *
 from .useful import *
+from .windll import *
 from .decorator import *
 
 # 3rd-library needed

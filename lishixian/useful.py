@@ -3,9 +3,9 @@ import sys
 import html
 import time
 import threading
+import traceback
 import urllib.parse
 import urllib.request
-
 
 from .refact import print
 
@@ -13,6 +13,7 @@ from .refact import print
 LOG = time.strftime('LOG_%Y%m%d_%H%M%S.txt')
 
 __all__ = list(globals())
+
 
 # ---------------------------------------------------------------------------
 # Debug
@@ -88,14 +89,30 @@ def urlopen(url, timeout=5):
 # ---------------------------------------------------------------------------
 
 
-def format_bytes(data, cols=64):
-    '''TEST: print_bytes(bytes(range(128)))'''
+def findpair(s, p1='(', p2=')', st=0):
+    n1 = n2 = 0
+    for n, c in enumerate(s[st:]):
+        n1 += c in p1
+        n2 += c in p2
+        if n1 and n1 == n2:
+            return st + n
+
+
+def bytes_format(data, n=16):
+    '''TEST: bytes_format(bytes(range(128)))'''
     s = ''.join('\\x%02x' % c for c in data)
-    return '\\\n'.join(s[i:i+cols] for i in range(0, len(s), cols))
+    return "(b'%s')" % "'\n b'".join(s[i:i+n*4] for i in range(0, len(s), n * 4))
 
 
-def print_bytes(data, cols=64):
-    print(format_bytes(data, cols))
+def bytes_print(data, n=16):
+    print(bytes_format(data, n))
+
+
+def bytes_hex(data, offset=0, length=-1, slice=-1):
+    s = ' '.join('%02X' % c for c in data)
+    s = ['%08X ' % i + s[i*3:(i+16)*3] for i in range(0, len(data), 16)]
+    s = '\n'.join(s)
+    return s
 
 
 def argv_run(func, *defaults):
@@ -116,6 +133,14 @@ def input_wait(msg):
 
 
 input_default = lambda msg, default: input('input <%s>, keep <%s> press enter: ' % (msg, default)) or default
+
+
+
+def tracelog(log='log.txt'):
+    error = traceback.format_exc()
+    tt = time.strftime('[%Y-%m-%d %H:%M:%S] ')
+    with open(log, 'a', encoding='u8') as f:
+        f.write(tt + error + '\n')
 
 
 class MaxThread:

@@ -2,6 +2,7 @@ import re
 import sys
 import json
 import uuid
+import ctypes
 import random
 import socket
 import getpass
@@ -48,5 +49,10 @@ randombytes = lambda n: bytes(random.randint(0, 255) for i in range(n))
 #         if '0.0.0.0' in addr:
 #             return addr.split()[-2]
 
+tuple2item = lambda item: item if len(item) > 1 else item[0]
+
+join = lambda *s, sp='': sp.join(s)
+
+messagebox = lambda info, title='Message', style=0: ctypes.windll.user32.MessageBoxW(0, str(info), str(title), style)
 
 __all__ = [k for k in globals() if k not in __all__]

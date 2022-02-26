@@ -14,6 +14,7 @@ from .refact import print
 # LOG = time.strftime('RECORD_%Y%m%d_%H%M%S.log')
 LOG = time.strftime('LOG_%Y%m%d_%H%M%S.txt')
 
+
 __all__ = list(globals())
 
 

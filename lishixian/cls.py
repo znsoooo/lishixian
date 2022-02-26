@@ -86,6 +86,9 @@ class Tcp:
         return bytes(s)
 
 
+__all__ = [k for k in globals() if k not in __all__]
+
+
 if __name__ == '__main__':
     import time
 
@@ -105,5 +108,3 @@ if __name__ == '__main__':
     print(ThreadFunction(1.5, f))
     print(ThreadFunction(3.5, f))
 
-
-__all__ = [k for k in globals() if k not in __all__]

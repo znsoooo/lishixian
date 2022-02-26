@@ -1,3 +1,5 @@
+"""Useful Classes"""
+
 import ctypes
 import socket
 import struct

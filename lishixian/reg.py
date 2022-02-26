@@ -1,3 +1,5 @@
+"""Regedit"""
+
 import winreg
 
 

@@ -1,3 +1,5 @@
+"""Image Library Functions"""
+
 import os
 
 import cv2

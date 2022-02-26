@@ -1,3 +1,5 @@
+"""Useful Functions with Built-in Library"""
+
 import os
 import sys
 import html

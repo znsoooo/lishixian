@@ -1,3 +1,5 @@
+"""Decorators"""
+
 import sys
 import time
 import traceback

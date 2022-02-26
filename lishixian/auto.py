@@ -1,3 +1,5 @@
+"""Office Automation"""
+
 import os
 import sys
 import time

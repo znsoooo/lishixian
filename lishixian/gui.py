@@ -1,3 +1,5 @@
+"""GUI Functions"""
+
 from threading import Thread
 
 import wx

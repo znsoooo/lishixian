@@ -4,7 +4,7 @@ import ctypes
 from ctypes.wintypes import DWORD, WORD, LPARAM, LPVOID, HWND, HINSTANCE
 
 LPOFNHOOKPROC = ctypes.c_void_p
-LPCTSTR = LPTSTR = ctypes.c_wchar_p
+LPCSTR = LPSTR = ctypes.c_wchar_p
 
 OFN_ENABLESIZING    = 0x00800000
 OFN_PATHMUSTEXIST   = 0x00000800
@@ -20,33 +20,33 @@ class OPENFILENAME(ctypes.Structure):
     _fields_ = [('lStructSize',       DWORD),
                 ('hwndOwner',         HWND),
                 ('hInstance',         HINSTANCE),
-                ('lpstrFilter',       LPCTSTR),
-                ('lpstrCustomFilter', LPTSTR),
+                ('lpstrFilter',       LPCSTR),
+                ('lpstrCustomFilter', LPSTR),
                 ('nMaxCustFilter',    DWORD),
                 ('nFilterIndex',      DWORD),
-                ('lpstrFile',         LPTSTR),
+                ('lpstrFile',         LPSTR),
                 ('nMaxFile',          DWORD),
-                ('lpstrFileTitle',    LPTSTR),
+                ('lpstrFileTitle',    LPSTR),
                 ('nMaxFileTitle',     DWORD),
-                ('lpstrInitialDir',   LPCTSTR),
-                ('lpstrTitle',        LPCTSTR),
-                ('flags',             DWORD),
+                ('lpstrInitialDir',   LPCSTR),
+                ('lpstrTitle',        LPCSTR),
+                ('Flags',             DWORD),
                 ('nFileOffset',       WORD),
                 ('nFileExtension',    WORD),
-                ('lpstrDefExt',       LPCTSTR),
+                ('lpstrDefExt',       LPCSTR),
                 ('lCustData',         LPARAM),
                 ('lpfnHook',          LPOFNHOOKPROC),
-                ('lpTemplateName',    LPCTSTR),
+                ('lpTemplateName',    LPCSTR),
                 ('pvReserved',        LPVOID),
                 ('dwReserved',        DWORD),
-                ('flagsEx',           DWORD)]
+                ('FlagsEx',           DWORD)]
 
 
 def BuildOFN(title, filter, buf):
     ofn = OPENFILENAME()
     ofn.lStructSize = ctypes.sizeof(OPENFILENAME)
     ofn.lpstrTitle = title
-    ofn.lpstrFile = ctypes.cast(buf, LPTSTR)
+    ofn.lpstrFile = ctypes.cast(buf, LPSTR)
     ofn.nMaxFile = MAX_PATH
     ofn.lpstrFilter = filter # 'All types (*.*)\0*.*\0'
     ofn.Flags = OFN_ENABLESIZING | OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT | OFN_NOCHANGEDIR

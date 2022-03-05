@@ -3,6 +3,11 @@
 import ctypes
 from ctypes.wintypes import DWORD, WORD, LPARAM, LPVOID, HWND, HINSTANCE
 
+__all__ = ['MessageBox', 'DirDialog', 'OpenFileDialog', 'SaveFileDialog']
+
+MessageBox = lambda info, title='Message', style=0: ctypes.windll.user32.MessageBoxW(0, str(info), str(title), style)
+
+
 LPOFNHOOKPROC = ctypes.c_void_p
 LPCSTR = LPSTR = ctypes.c_wchar_p
 
@@ -16,30 +21,34 @@ GetOpenFileName = ctypes.windll.comdlg32.GetOpenFileNameW
 GetSaveFileName = ctypes.windll.comdlg32.GetSaveFileNameW
 
 
+# Ref: https://gist.github.com/nicomgd/1097a0b7ca3715da4e71
+
 class OPENFILENAME(ctypes.Structure):
-    _fields_ = [('lStructSize',       DWORD),
-                ('hwndOwner',         HWND),
-                ('hInstance',         HINSTANCE),
-                ('lpstrFilter',       LPCSTR),
-                ('lpstrCustomFilter', LPSTR),
-                ('nMaxCustFilter',    DWORD),
-                ('nFilterIndex',      DWORD),
-                ('lpstrFile',         LPSTR),
-                ('nMaxFile',          DWORD),
-                ('lpstrFileTitle',    LPSTR),
-                ('nMaxFileTitle',     DWORD),
-                ('lpstrInitialDir',   LPCSTR),
-                ('lpstrTitle',        LPCSTR),
-                ('Flags',             DWORD),
-                ('nFileOffset',       WORD),
-                ('nFileExtension',    WORD),
-                ('lpstrDefExt',       LPCSTR),
-                ('lCustData',         LPARAM),
-                ('lpfnHook',          LPOFNHOOKPROC),
-                ('lpTemplateName',    LPCSTR),
-                ('pvReserved',        LPVOID),
-                ('dwReserved',        DWORD),
-                ('FlagsEx',           DWORD)]
+    _fields_ = [
+        ('lStructSize',       DWORD),
+        ('hwndOwner',         HWND),
+        ('hInstance',         HINSTANCE),
+        ('lpstrFilter',       LPCSTR),
+        ('lpstrCustomFilter', LPSTR),
+        ('nMaxCustFilter',    DWORD),
+        ('nFilterIndex',      DWORD),
+        ('lpstrFile',         LPSTR),
+        ('nMaxFile',          DWORD),
+        ('lpstrFileTitle',    LPSTR),
+        ('nMaxFileTitle',     DWORD),
+        ('lpstrInitialDir',   LPCSTR),
+        ('lpstrTitle',        LPCSTR),
+        ('Flags',             DWORD),
+        ('nFileOffset',       WORD),
+        ('nFileExtension',    WORD),
+        ('lpstrDefExt',       LPCSTR),
+        ('lCustData',         LPARAM),
+        ('lpfnHook',          LPOFNHOOKPROC),
+        ('lpTemplateName',    LPCSTR),
+        ('pvReserved',        LPVOID),
+        ('dwReserved',        DWORD),
+        ('FlagsEx',           DWORD)
+    ]
 
 
 def BuildOFN(title, filter, buf):
@@ -63,12 +72,6 @@ def FileDialog(call, title, filter, path):
         return buf[:].split('\0', 1)[0]
 
 
-__all__ = list(globals())
-
-
-messagebox = lambda info, title='Message', style=0: ctypes.windll.user32.MessageBoxW(0, str(info), str(title), style)
-
-
 def OpenFileDialog(title=None, filter='', path=''):
     return FileDialog(GetOpenFileName, title, filter, path)
 
@@ -77,11 +80,53 @@ def SaveFileDialog(title=None, filter='', path=''):
     return FileDialog(GetSaveFileName, title, filter, path)
 
 
-__all__ = [k for k in globals() if k not in __all__]
+ole32 = ctypes.windll.ole32
+shell32 = ctypes.windll.shell32
+
+BIF_EDITBOX        = 0x0010
+BIF_NEWDIALOGSTYLE = 0x0040
+BIF_USENEWUI       = 0x0050
+
+LPCTSTR = ctypes.c_char_p
+LPTSTR = ctypes.c_char_p
+
+
+# Ref: https://github.com/Nolanlemahn/ProjectExist/blob/master/game/EasyDialogsWin.py
+# Ref: https://github.com/apprenticeharper/DeDRM_tools/blob/master/DeDRM_plugin/askfolder_ed.py
+
+class BROWSEINFO(ctypes.Structure):
+    _fields_ = [
+        ('hwndOwner',      HWND),
+        ('pidlRoot',       LPVOID),
+        ('pszDisplayName', LPTSTR),
+        ('lpszTitle',      LPCTSTR),
+        ('ulFlags',        ctypes.c_uint),
+        ('lpfn',           LPVOID),
+        ('lParam',         LPARAM),
+        ('iImage',         ctypes.c_int)
+    ]
+
+
+def DirDialog(message=None):
+    bi = BROWSEINFO()
+    bi.pszDisplayName = ctypes.c_char_p(b'\0' * (MAX_PATH+1))
+    if message:
+        bi.lpszTitle = message.encode('gbk')
+    bi.ulFlags = BIF_USENEWUI
+
+    pidl = shell32.SHBrowseForFolder(ctypes.byref(bi))
+    if pidl:
+        path = ctypes.c_char_p(b'\0' * (MAX_PATH+1))
+        shell32.SHGetPathFromIDList(pidl, path)
+        ole32.CoTaskMemFree(pidl)
+        result = path.value.decode('gbk')
+        return result
 
 
 if __name__ == '__main__':
+    path = DirDialog()
+    MessageBox(path)
     path = OpenFileDialog()
-    print(path)
+    MessageBox(path)
     path = SaveFileDialog()
-    print(path)
+    MessageBox(path)

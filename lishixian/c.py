@@ -1,58 +1,152 @@
 """C Program Interface"""
 
-# todo dll接口
+'''File: dll.dll
 
+typedef struct Matrix {
+    int height;
+    int width;
+    int value[16][16];
+} mat;
 
-# --------------
+mat* MatMul(mat m1, mat m2) {
+    mat* mp = (mat*)malloc(sizeof(mat));
+    int i, j, k;
+    int sum;
 
+	mp->height = m1.height;
+	mp->width = m2.width;
+    for(i = 0; i < m1.height; i++)
+        for(j = 0; j < m2.width; j++) {
+            sum = 0;
+            for(k = 0; k < m1.width; k++)
+                sum += m1.value[i][k] * m2.value[k][j];
+            mp->value[i][j] = sum;
+        }
+    return mp;
+}
+
+mat* MatNew(int height, int width) {
+    mat* mp = (mat*)malloc(sizeof(mat));
+    int i, j;
+    int sum = 0;
+
+	mp->height = height;
+	mp->width = width;
+    for(i = 0; i < height; i++)
+        for(j = 0; j < width; j++)
+            mp->value[i][j] = sum++;
+    return mp;
+}
+
+int MatSum(mat m) {
+    int i, j;
+    int sum = 0;
+    for(i = 0; i < m.height; i++)
+        for(j = 0; j < m.width; j++)
+            sum += m.value[i][j];
+    return sum;
+}
+'''
 
 import ctypes
+from ctypes import POINTER
 
-# a = ctypes.CDLL('dll3.dll')
-# b = a.Fun('123')
-# print(b)
-
-
-dll = ctypes.CDLL('dll.dll')
+__all__ = []
 
 
-class StructPointer(ctypes.Structure):  # Structure在ctypes中是基于类的结构体
-    _fields_ = [("name", ctypes.c_char * 20),  # 定义一维数组
-                ("age", ctypes.c_int),
-                ("arr", ctypes.c_int * 3),  # 定义一维数组
-                ("arrTwo", (ctypes.c_int * 3) * 2)]  # 定义二维数组
+class Type:
+    def __init__(self, value):
+        self.value = value
+
+    def __getitem__(self, item):
+        return Type(self.value * item)
 
 
-# 设置导出函数返回类型
-dll.test.restype = ctypes.POINTER(StructPointer)  # POINTER(StructPointer)表示一个结构体指针
-# 调用导出函数
-p = dll.test()
-
-print(p.contents.name.decode())  # p.contents返回要指向点的对象   #返回的字符串是utf-8编码的数据，需要解码
-print(p.contents.age)
-print(p.contents.arr[0])  # 返回一维数组第一个元素
-print(p.contents.arr[:])  # 返回一维数组所有元素
-print(p.contents.arrTwo[0][:])  # 返回二维数组第一行所有元素
-print(p.contents.arrTwo[1][:])  # 返回二维数组第二行所有元素
+def struct(fields):
+    class Struct(ctypes.Structure):
+        _fields_ = fields
+    return Struct
 
 
-# ----------
-
-class StructPointer(ctypes.Structure):  # Structure在ctypes中是基于类的结构体
-    _fields_ = [('size', ctypes.c_int),
-                ('data', (ctypes.c_int * 53) * 53)]
+def fields(cls):
+    return [(k, v.value) for k, v in cls.__dict__.items() if isinstance(v, Type)]
 
 
-dll = ctypes.CDLL('qrdll.dll')
-dll.qrencode.restype = ctypes.POINTER(StructPointer)  # 设置导出函数返回类型 # POINTER(StructPointer)表示一个结构体指针
+def wrap(func, argtype=None, restype=None):
+    if argtype:
+        func.argtype = argtype
+    if restype:
+        func.restype = POINTER(restype)
+        return lambda *args: func(*args).contents
+    else:
+        return func
 
 
+if __name__ == '__main__':
+    CINT = Type(ctypes.c_int)
 
+    class Mat:
+        height = CINT
+        width  = CINT
+        value  = CINT[16][16]
 
-def qrencode(s):
-    if isinstance(s, str):
-        s = s.encode()
-    p = dll.qrencode(s).contents
-    data = numpy.array(p.data)[:p.size, :p.size]
-    return data.astype(numpy.uint8)
+    print(fields(Mat))
+    Mat = struct(fields(Mat))
+    print(Mat)
 
+    dll = ctypes.CDLL('dll.dll')
+
+    # - Normal style ---------------------------------------
+
+    class Mat(ctypes.Structure):
+        _fields_ = [
+            ('height', ctypes.c_int),
+            ('width', ctypes.c_int),
+            ('value', ((ctypes.c_int * 16) * 16)),
+        ]
+
+    dll.MatMul.argtype = (Mat, Mat)
+    dll.MatMul.restype = POINTER(Mat)
+
+    m1 = Mat()
+    m1.height = 3
+    m1.width = 3
+    for i in range(3):
+        for j in range(3):
+            m1.value[i][j] = i * 3 + j
+
+    ret = dll.MatMul(m1, m1).contents
+    print([row[:ret.width] for row in ret.value[:ret.height]])
+
+    # - (int, int) -> Mat ---------------------------------------
+
+    MatNew = wrap(dll.MatNew, restype=Mat)
+    ret = MatNew(3, 4)
+    print([row[:ret.width] for row in ret.value[:ret.height]])
+
+    # - (Mat, Mat) -> Mat ---------------------------------------
+
+    MatMul = wrap(dll.MatMul, argtype=(Mat, Mat), restype=Mat)
+    m1 = Mat()
+    m1.height = 3
+    m1.width = 3
+    for i in range(3):
+        for j in range(3):
+            m1.value[i][j] = i * 3 + j
+
+    ret = MatMul(m1, m1)
+    print([row[:ret.width] for row in ret.value[:ret.height]])
+
+    # - Mat -> int ---------------------------------------
+
+    MatSum = wrap(dll.MatSum, argtype=Mat)
+
+    m1 = Mat()
+    m1.height = 3
+    m1.width = 3
+    for i in range(3):
+        for j in range(3):
+            m1.value[i][j] = i * 3 + j
+
+    ret = MatSum(m1)
+    print(ret)

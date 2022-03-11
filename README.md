@@ -1,16 +1,5 @@
 # Lishixian
-Lishixian useful functions package.
-
-## Install
-```bash
-pip install lishixian --upgrade
-```
-
-## Useage
-```python
-import lishixian as lsx
-lsx.help()
-```
+Lishixian useful tools package. (90 functions / classes / decorators)
 
 ## About
 - __Author:__ Lishixian
@@ -19,6 +8,17 @@ lsx.help()
 - __Github:__ https://github.com/znsoooo/lishixian
 - __License:__ MIT License. Copyright (c) 2022 Lishixian (znsoooo). All Rights Reserved.
 
+## Install
+```bash
+pip install lishixian --upgrade
+```
+
+## Usage
+```python
+import lishixian as lsx
+lsx.help()
+```
+
 ## Note
-1. Lib `lsx` in `pypi.org` is same as lib `lishixian`.
-2. If you really need `lsx` as domain in `pypi.org`, please contact me with `Email`.
+1. Lib `lsx` is same as `lishixian` in `pypi.org`.
+2. If you **really** need domain `lsx` in `pypi.org`, contact me with `Email`.

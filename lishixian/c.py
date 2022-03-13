@@ -13,8 +13,8 @@ mat* MatMul(mat m1, mat m2) {
     int i, j, k;
     int sum;
 
-	mp->height = m1.height;
-	mp->width = m2.width;
+    mp->height = m1.height;
+    mp->width = m2.width;
     for(i = 0; i < m1.height; i++)
         for(j = 0; j < m2.width; j++) {
             sum = 0;
@@ -30,8 +30,8 @@ mat* MatNew(int height, int width) {
     int i, j;
     int sum = 0;
 
-	mp->height = height;
-	mp->width = width;
+    mp->height = height;
+    mp->width = width;
     for(i = 0; i < height; i++)
         for(j = 0; j < width; j++)
             mp->value[i][j] = sum++;

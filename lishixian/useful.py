@@ -138,12 +138,24 @@ def input_wait(msg):
 input_default = lambda msg, default: input('input <%s>, keep <%s> press enter: ' % (msg, default)) or default
 
 
+class Catch:
+    def __init__(self, log='log.txt'):
+        self.log = log
 
-def tracelog(log='log.txt'):
-    error = traceback.format_exc()
-    tt = time.strftime('[%Y-%m-%d %H:%M:%S] ')
-    with open(log, 'a', encoding='u8') as f:
-        f.write(tt + error + '\n')
+    def __enter__(self):
+        pass
+
+    def __exit__(self, *args):
+        if any(args):
+            traceback.print_exc()
+            error = traceback.format_exc()
+            tt = time.strftime('[%Y-%m-%d %H:%M:%S] ')
+            with open(self.log, 'a', encoding='u8') as f:
+                f.write(tt + error + '\n')
+        return True
+
+
+catch = Catch()
 
 
 class MaxThread:

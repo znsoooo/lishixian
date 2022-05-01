@@ -17,6 +17,8 @@ s127 = bytes(range(32, 127)).decode()
 
 empty = lambda *v, **kv: None
 
+t = lambda arr: list(zip(*arr))
+
 md5 = lambda b: hashlib.md5(b).hexdigest()
 start = lambda func, *args, **kwargs: Thread(target=func, args=args, kwargs=kwargs).start()
 create = lambda file: open(file).close()

@@ -113,6 +113,13 @@ def ReadExcel(file, merge_x=True, merge_y=True, strip_x=False):
     return data, merge
 
 
+def ReadSheet(file, index=0):
+    import xlrd
+    xls = xlrd.open_workbook(file)
+    sheet = xls.sheet_by_index(index)
+    return [list(map(_wash, sheet.row_values(row))) for row in range(sheet.nrows)]
+
+
 # ---------------------------------------------------------------------------
 # Word
 # ---------------------------------------------------------------------------

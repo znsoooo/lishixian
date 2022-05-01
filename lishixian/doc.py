@@ -4,6 +4,12 @@ import os
 import csv
 
 
+def _wash(cell):
+    if isinstance(cell, float) and cell.is_integer():
+        cell = int(cell)
+    return str(cell)
+
+
 __all__ = list(globals())
 
 
@@ -98,13 +104,7 @@ def ReadExcel(file, merge_x=True, merge_y=True, strip_x=False):
         sheet_data = []
         for row in range(sheet.nrows):
             rows = [sheet_name] + sheet.row_values(row)
-            for c, cell in enumerate(rows):
-                if isinstance(cell, float):
-                    if cell.is_integer():
-                        rows[c] = str(int(cell))
-                    else:
-                        rows[c] = str(cell)
-            sheet_data.append(rows)
+            sheet_data.append(list(map(_wash, rows)))
         data.append(sheet_data)
 
     # only ".xls" type contain merge_info

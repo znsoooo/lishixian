@@ -24,17 +24,17 @@ def help():
 
 # base on built-in library
 from .cls import *
+from .decorator import *
 from .line import *
 from .refact import *
 from .useful import *
 from .windll import *
-from .decorator import *
 
 # 3rd-library needed
-from .np import *
+from .auto import *
 from .doc import *
 from .gui import *
-from .auto import *
+from .np import *
 
 # __all__ = [k for k in globals() if k not in __keep__]
 __all__ = [k for k, v in globals().items() if k not in __keep__ and callable(v)]

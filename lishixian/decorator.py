@@ -5,8 +5,6 @@ import time
 import traceback
 from functools import wraps
 
-from .refact import print
-
 
 __all__ = list(globals())
 

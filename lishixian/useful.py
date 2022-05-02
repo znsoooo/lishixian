@@ -9,8 +9,6 @@ import traceback
 import urllib.parse
 import urllib.request
 
-from .refact import print
-
 # LOG = time.strftime('RECORD_%Y%m%d_%H%M%S.log')
 LOG = time.strftime('LOG_%Y%m%d_%H%M%S.txt')
 
@@ -28,7 +26,7 @@ def tag():
 
 
 def log(*value):
-    s = tag() + print(*value)
+    s = tag() + ' '.join(map(str, value))
     with open(LOG, 'a', encoding='u8') as f:
         f.write(s)
 

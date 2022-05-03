@@ -4,6 +4,7 @@ import sys
 import time
 import traceback
 from functools import wraps
+from threading import Thread
 
 
 __all__ = list(globals())
@@ -58,6 +59,21 @@ def surround(before=(), after=()):
             [f() for f in after]
             return ret
         return wrapper
+    return decorator
+
+
+def hotkey(key='F12'):
+    key = key.lower()
+    def decorator(f):
+        def press(key2):
+            if key == str(key2).split('.')[-1].lower():
+                f()
+        def th():
+            import pynput
+            with pynput.keyboard.Listener(press) as kl:
+                kl.join()
+        Thread(target=th).start()
+        return f
     return decorator
 
 

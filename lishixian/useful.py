@@ -116,12 +116,6 @@ def bytes_hex(data, offset=0, length=-1, slice=-1):
     return s
 
 
-def argv_run(func, *defaults):
-    sys.argv.extend(defaults)
-    for file in sys.argv[1:]:
-        func(file)
-
-
 def install(path, block=False):
     p = os.popen('pip install "%s"' % path)
     if block:

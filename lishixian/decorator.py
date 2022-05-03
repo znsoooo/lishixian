@@ -10,6 +10,14 @@ from threading import Thread
 __all__ = list(globals())
 
 
+def main(f):
+    if len(sys.argv) == 1:
+        f()
+    for v in sys.argv[1:]:
+        f(v)
+    return f
+
+
 def timeit(f):
     @wraps(f)
     def wrapper(*args, **kwargs):

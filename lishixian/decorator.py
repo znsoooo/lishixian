@@ -92,8 +92,12 @@ def threads(cnt):
         @wraps(f)
         def wrapper(*args, **kwargs):
             def th():
-                f(*args, **kwargs)
-                counter.release()
+                try:
+                    f(*args, **kwargs)
+                except:
+                    raise
+                finally:
+                    counter.release()
             counter.acquire()
             threading.Thread(target=th).start()
         return wrapper
@@ -109,6 +113,7 @@ if __name__ == '__main__':
     @threads(10)
     def delay():
         t = 1 + random.random() / 5
+        assert t < 1.19
         time.sleep(t)
         print(t)
 

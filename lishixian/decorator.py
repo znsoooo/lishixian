@@ -85,4 +85,32 @@ def hotkey(key='F12'):
     return decorator
 
 
+def threads(cnt):
+    import threading
+    counter = threading.BoundedSemaphore(cnt)
+    def decorator(f):
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            def th():
+                f(*args, **kwargs)
+                counter.release()
+            counter.acquire()
+            threading.Thread(target=th).start()
+        return wrapper
+    return decorator
+
+
 __all__ = [k for k in globals() if k not in __all__]
+
+
+if __name__ == '__main__':
+    import random
+
+    @threads(10)
+    def delay():
+        t = 1 + random.random() / 5
+        time.sleep(t)
+        print(t)
+
+    while 1:
+        delay()

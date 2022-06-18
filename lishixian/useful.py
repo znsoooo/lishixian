@@ -150,15 +150,4 @@ class Catch:
 catch = Catch()
 
 
-class MaxThread:
-    def __init__(self, max):
-        self.counter = threading.BoundedSemaphore(max)
-
-    def append(self):
-        self.counter.acquire()
-
-    def pop(self):
-        self.counter.release()
-
-
 __all__ = [k for k in globals() if k not in __all__]

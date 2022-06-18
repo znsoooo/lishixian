@@ -87,8 +87,7 @@ BIF_EDITBOX        = 0x0010
 BIF_NEWDIALOGSTYLE = 0x0040
 BIF_USENEWUI       = 0x0050
 
-LPCTSTR = ctypes.c_char_p
-LPTSTR = ctypes.c_char_p
+LPCTSTR = LPTSTR = ctypes.c_char_p
 
 
 # Ref: https://github.com/Nolanlemahn/ProjectExist/blob/master/game/EasyDialogsWin.py
@@ -109,14 +108,15 @@ class BROWSEINFO(ctypes.Structure):
 
 def DirDialog(message=None):
     bi = BROWSEINFO()
-    bi.pszDisplayName = ctypes.c_char_p(b'\0' * (MAX_PATH+1))
+    bi.pszDisplayName = ctypes.c_char_p(b'\0' * MAX_PATH)
     if message:
         bi.lpszTitle = message.encode('gbk')
     bi.ulFlags = BIF_USENEWUI
 
-    pidl = shell32.SHBrowseForFolder(ctypes.byref(bi))
+    shell32.SHBrowseForFolder.restype = LPVOID
+    pidl = LPVOID(shell32.SHBrowseForFolder(ctypes.byref(bi)))
     if pidl:
-        path = ctypes.c_char_p(b'\0' * (MAX_PATH+1))
+        path = ctypes.c_char_p(b'\0' * MAX_PATH)
         shell32.SHGetPathFromIDList(pidl, path)
         ole32.CoTaskMemFree(pidl)
         result = path.value.decode('gbk')

@@ -3,18 +3,19 @@
 import os
 import re
 import pdb
+import sys
 import itertools
 import subprocess
 from functools import partial
 from contextlib import suppress
 
 _open = open
-_print = print
 
 
 __all__ = list(globals())
 
 
+_print, print = print, lambda *value, file=sys.stdout: _print(' '.join(map(str, value)) + '\n', end='', file=file)
 join = os.path.join
 infinity = itertools.count
 makedirs = partial(os.makedirs, exist_ok=True)
@@ -24,12 +25,6 @@ popen = lambda cmd: subprocess.Popen(cmd, -1, None, -1, -1, -1, shell=True).stdo
 listdir = lambda *paths: os.listdir(os.path.join(*paths))
 findall = lambda pattern, string, flags=0: [(m.start(), m.end(), m.group()) for m in re.finditer(pattern, string, flags)]
 split = lambda arr, cols: [arr[i:i+cols] for i in range(0, len(arr), cols)]
-
-
-def print(*value, **kwargs):
-    s = ' '.join(map(str, value)) + '\n'
-    _print(s, end='', **kwargs)
-    return s
 
 
 def splitpath(p):

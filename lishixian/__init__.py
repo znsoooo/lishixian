@@ -1,8 +1,8 @@
 # base on built-in library
 from .cls import *
-from .decorator import *
+from .dec import *
+from .new import *
 from .line import *
-from .refact import *
 from .useful import *
 from .windll import *
 

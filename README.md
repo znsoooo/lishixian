@@ -19,6 +19,7 @@ pip install lishixian --upgrade
 ## Modules
 
 ### Top module
+- all()
 - help()
 
 ### Module 'cls'
@@ -26,11 +27,24 @@ pip install lishixian --upgrade
 - MyThread(target, *args, **kwargs)
 - Tcp(addr='localhost', port=7010)
 
-### Module 'decorator'
+### Module 'dec'
 - timeit(f)
 - tracer(f)
 - protect(f)
 - surround(before=(), after=())
+
+### Module 'new'
+- infinity = <class 'itertools.count'>
+- makedirs(name, mode=511, *, exist_ok=True)
+- breakpoint()
+- popen(cmd)
+- listdir(*paths)
+- findall(pattern, string, flags=0)
+- split(arr, cols)
+- print(*value, **kwargs)
+- splitpath(p)
+- walk(path, exts=())
+- open(file)
 
 ### Module 'line'
 - s128 = bytes(range(128)).decode()
@@ -54,19 +68,6 @@ pip install lishixian --upgrade
 - randombytes(n)
 - tuple2item(item)
 - join(path, *paths)
-
-### Module 'refact'
-- infinity = <class 'itertools.count'>
-- makedirs(name, mode=511, *, exist_ok=True)
-- breakpoint()
-- popen(cmd)
-- listdir(*paths)
-- findall(pattern, string, flags=0)
-- split(arr, cols)
-- print(*value, **kwargs)
-- splitpath(p)
-- walk(path, exts=())
-- open(file)
 
 ### Module 'useful'
 - tag()

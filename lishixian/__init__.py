@@ -1,12 +1,23 @@
-_help = help
-_print = print
+# base on built-in library
+from .cls import *
+from .decorator import *
+from .line import *
+from .refact import *
+from .useful import *
+from .windll import *
+
+# 3rd-library needed
+from .auto import *
+from .doc import *
+from .gui import *
+from .np import *
 
 
 def all():
     import sys
     import inspect
     table = {}
-    for module, obj in list(globals().items()):
+    for module, obj in globals().items():
         if inspect.ismodule(obj) and obj.__name__.count('.') == 1:
             for name in obj.__all__:
                 if name not in table:
@@ -32,21 +43,6 @@ def help():
                     print("- %s%s" % (k, argspec))
                 except (TypeError, ValueError) as e:
                     print("- %s = %r" % (k, v))
-
-
-# base on built-in library
-from .cls import *
-from .decorator import *
-from .line import *
-from .refact import *
-from .useful import *
-from .windll import *
-
-# 3rd-library needed
-from .auto import *
-from .doc import *
-from .gui import *
-from .np import *
 
 
 __all__ = all()

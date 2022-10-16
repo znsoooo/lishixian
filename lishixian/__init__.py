@@ -1,7 +1,19 @@
 _help = help
 _print = print
 
-__keep__ = list(globals()) # Don't use word `__all__`, its will rewrite many times below.
+
+def all():
+    import sys
+    import inspect
+    table = {}
+    for module, obj in list(globals().items()):
+        if inspect.ismodule(obj) and obj.__name__.count('.') == 1:
+            for name in obj.__all__:
+                if name not in table:
+                    table[name] = module
+                elif name != '__all__':
+                    print("Warnning: '%s.%s' exist in '%s.%s'" % (module, name, table[name], name), file=sys.stderr)
+    return list(table) + ['all', 'help']
 
 
 def help():
@@ -36,5 +48,5 @@ from .doc import *
 from .gui import *
 from .np import *
 
-# __all__ = [k for k in globals() if k not in __keep__]
-__all__ = [k for k, v in globals().items() if k not in __keep__ and callable(v)]
+
+__all__ = all()

@@ -45,9 +45,33 @@ def check(obj, rule=bool):  # rule=lambda s: s.startswith('Get')
                 print('value callable:', attr, 'TypeError:', e)
 
 
+fps_n = -1
+fps_t1 = 0
+def fps():
+    import time
+    global fps_n, fps_t1
+    fps_n += 1
+    fps_t2 = time.time()
+    if fps_t1 == 0:
+        fps_t1 = fps_t2
+    if fps_t2 - fps_t1 > 1:
+        print('fps: %.1f' % (fps_n / (fps_t2 - fps_t1)))
+        fps_t1 = fps_t2
+        fps_n = 0
+    return True
+
+
 # ---------------------------------------------------------------------------
 # File system
 # ---------------------------------------------------------------------------
+
+
+select = lambda path: os.popen('explorer /select, "%s"' % os.path.abspath(path))
+
+
+def path_mark(path, mark='.bak'):
+    root, ext = os.path.splitext(path)
+    return root + mark + ext
 
 
 def path_quote(p, repl=None):  # not include path

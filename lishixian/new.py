@@ -36,17 +36,14 @@ def splitpath(p):
 def walk(paths, exts=''):
     paths = paths if isinstance(paths, (list, tuple)) else [paths]
     exts = [exts] if isinstance(exts, str) else exts
-
-    def filter(p):
-        if any(p.endswith(ext) for ext in exts): # Match: 'file.zip', 'file.tar.gz', 'file'
-            yield p
-
     for path in paths:
         if os.path.isfile(path):
-            yield from filter(os.path.abspath(path))
+            if any(path.endswith(ext) for ext in exts):
+                yield os.path.abspath(path)
         for root, folders, files in os.walk(path):
             for file in files:
-                yield from filter(os.path.join(root, file))
+                if any(file.endswith(ext) for ext in exts):
+                    yield os.path.join(root, file)
 
 
 class open:

@@ -33,12 +33,12 @@ def splitpath(p):
     return root, name, ext
 
 
-def walk(paths, exts=None):
+def walk(paths, exts=''):
     paths = paths if isinstance(paths, (list, tuple)) else [paths]
     exts = [exts] if isinstance(exts, str) else exts
 
     def filter(p):
-        if not exts or os.path.splitext(p)[1] in exts:
+        if any(p.endswith(ext) for ext in exts): # Match: 'file.zip', 'file.tar.gz', 'file'
             yield p
 
     for path in paths:

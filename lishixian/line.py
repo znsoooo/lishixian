@@ -31,13 +31,8 @@ sort_key = lambda d, reverse=False: sorted(d, key=d.__getitem__, reverse=reverse
 sort_num = lambda s: [(s, int(n)) for s, n in re.findall(r'(\D+)(\d+)', 'a%s0' % s)]
 
 raw2headers = str2dict = lambda s: dict(re.findall(r'(.*?):(.*)', s))
-# Accept: image/gif, image/jpeg, image/pjpeg, */*
-# Referer: ****
-# Accept-Language: zh-cn
-# User-Agent: Mozilla/4.0 ****
-# Cookie: ****
+tuple2item = lambda item: item if len(item) > 1 else item[0]
 
-# todo 函数重名
 unique = lambda arr: sorted(list(set(arr)), key=arr.index)
 unique = lambda arr: [item for i, item in enumerate(arr) if arr.index(item) == i]
 
@@ -52,7 +47,6 @@ randombytes = lambda n: bytes(random.randint(0, 255) for i in range(n))
 #         if '0.0.0.0' in addr:
 #             return addr.split()[-2]
 
-tuple2item = lambda item: item if len(item) > 1 else item[0]
 
 join = lambda *s, sp='': sp.join(s)
 

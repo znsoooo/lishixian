@@ -50,16 +50,20 @@ def check(obj, rule=bool):  # rule=lambda s: s.startswith('Get')
 # ---------------------------------------------------------------------------
 
 
-def safe_name(filename, repl=' '):  # not include path
+def path_quote(p, repl=None):  # not include path
     for c in '\r\n\t\\/:*?"<>|':
-        if repl is None:
-            filename = filename.replace(c, urllib.parse.quote(c, ''))
-        else:
-            filename = filename.replace(c, repl)
-    return filename
+        new = repl if repl is not None else urllib.parse.quote_plus(c)
+        p = p.replace(c, new)
+    return p
 
 
-def unique(p, dash='-'):
+def path_split(p):
+    root, file = os.path.split(p)
+    name, ext = os.path.splitext(file)
+    return root, name, ext
+
+
+def path_unique(p, dash='-'):
     root, ext = os.path.splitext(p)
     n = 0
     while os.path.exists(p):

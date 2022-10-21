@@ -16,7 +16,6 @@ __all__ = list(globals())
 
 
 _print, print = print, lambda *value, file=sys.stdout: _print(' '.join(map(str, value)) + '\n', end='', file=file)
-join = os.path.join
 infinity = itertools.count
 makedirs = partial(os.makedirs, exist_ok=True)
 breakpoint = lambda: pdb.set_trace()
@@ -25,12 +24,6 @@ popen = lambda cmd: subprocess.Popen(cmd, -1, None, -1, -1, -1, shell=True).stdo
 listdir = lambda *paths: os.listdir(os.path.join(*paths))
 findall = lambda pattern, string, flags=0: [(m.start(), m.end(), m.group()) for m in re.finditer(pattern, string, flags)]
 split = lambda arr, cols: [arr[i:i+cols] for i in range(0, len(arr), cols)]
-
-
-def splitpath(p):
-    root, file = os.path.split(p)
-    name, ext = os.path.splitext(file)
-    return root, name, ext
 
 
 def walk(paths, exts=''):

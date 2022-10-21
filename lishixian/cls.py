@@ -60,12 +60,12 @@ class Tcp:
 
     def connect(self):
         if self.host:
-            self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.server = socket.socket()
             self.server.bind(('', self.port))
             self.server.listen(5)
             self.client, (addr, port) = self.server.accept()
         else:
-            self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.client = socket.socket()
             self.client.connect((self.addr, self.port))
 
     def close(self):

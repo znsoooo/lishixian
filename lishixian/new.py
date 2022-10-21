@@ -33,14 +33,20 @@ def splitpath(p):
     return root, name, ext
 
 
-def walk(path, exts=()):
-    if os.path.isfile(path):
-        if not exts or os.path.splitext(path)[1] in exts:
-            yield os.path.abspath(path)
-    for root, folders, files in os.walk(path):
-        for file in files:
-            if not exts or os.path.splitext(file)[1] in exts:
-                yield os.path.join(root, file)
+def walk(paths, exts=None):
+    paths = paths if isinstance(paths, (list, tuple)) else [paths]
+    exts = [exts] if isinstance(exts, str) else exts
+
+    def filter(p):
+        if not exts or os.path.splitext(p)[1] in exts:
+            yield p
+
+    for path in paths:
+        if os.path.isfile(path):
+            yield from filter(os.path.abspath(path))
+        for root, folders, files in os.walk(path):
+            for file in files:
+                yield from filter(os.path.join(root, file))
 
 
 class open:

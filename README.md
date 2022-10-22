@@ -1,5 +1,5 @@
 # Lishixian Library
-Contain 92 functions.
+Contain 105 functions.
 
 
 ## About
@@ -23,17 +23,21 @@ pip install lishixian --upgrade
 - help()
 
 ### Module 'cls'
-- MyConfigParser(path, section)
-- MyThread(target, *args, **kwargs)
+- Config(path, section)
+- Thread(target, *args, **kwargs)
 - Tcp(addr='localhost', port=7010)
 
 ### Module 'dec'
+- main(f)
 - timeit(f)
 - tracer(f)
 - protect(f)
 - surround(before=(), after=())
+- hotkey(key='F12')
+- threads(cnt)
 
 ### Module 'new'
+- print(*value, file=sys.stdout)
 - infinity = <class 'itertools.count'>
 - makedirs(name, mode=511, *, exist_ok=True)
 - breakpoint()
@@ -41,9 +45,7 @@ pip install lishixian --upgrade
 - listdir(*paths)
 - findall(pattern, string, flags=0)
 - split(arr, cols)
-- print(*value, **kwargs)
-- splitpath(p)
-- walk(path, exts=())
+- walk(paths, exts='')
 - open(file)
 
 ### Module 'line'
@@ -61,19 +63,24 @@ pip install lishixian --upgrade
 - sort_num(s)
 - raw2headers(s)
 - str2dict(s)
-- unique(p, dash='-')
+- tuple2item(item)
+- unique(arr)
 - pc_ip()
 - pc_mac()
 - pc_user()
 - randombytes(n)
-- tuple2item(item)
-- join(path, *paths)
+- join(*s, sp='')
 
 ### Module 'useful'
 - tag()
 - log(*value)
 - check(obj, rule=<class 'bool'>)
-- safe_name(filename, repl=' ')
+- fps()
+- select(path)
+- path_mark(path, mark='.bak')
+- path_quote(p, repl=None)
+- path_split(p)
+- path_unique(p, dash='-')
 - escape(s, quote=True)
 - unescape(s)
 - quote(string, safe='', encoding=None, errors=None)
@@ -83,13 +90,11 @@ pip install lishixian --upgrade
 - bytes_format(data, n=16)
 - bytes_print(data, n=16)
 - bytes_hex(data, offset=0, length=-1, slice=-1)
-- argv_run(func, *defaults)
 - install(path, block=False)
 - input_wait(msg)
 - input_default(msg, default)
 - Catch(log='log.txt')
 - catch = <Catch object>
-- MaxThread(max)
 
 ### Module 'windll'
 - MessageBox(info, title='Message', style=0)

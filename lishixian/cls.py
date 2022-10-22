@@ -4,13 +4,13 @@ import ctypes
 import socket
 import struct
 import configparser
-from threading import Thread
+from threading import Thread as _Thread
 
 
 __all__ = list(globals())
 
 
-class MyConfigParser(configparser.ConfigParser):
+class Config(configparser.ConfigParser):
     def __init__(self, path, section):
         configparser.ConfigParser.__init__(self)
         self.path = path
@@ -33,9 +33,9 @@ class MyConfigParser(configparser.ConfigParser):
         self.write(open(self.path, 'w'))
 
 
-class MyThread(Thread):
+class Thread(_Thread):
     def __init__(self, target, *args, **kwargs):
-        Thread.__init__(self, target=target, args=args, kwargs=kwargs)
+        _Thread.__init__(self, target=target, args=args, kwargs=kwargs)
 
         self.result = None
         self.finish = False

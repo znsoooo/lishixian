@@ -31,9 +31,11 @@ def log(*value):
         f.write(s)
 
 
-def check(obj, rule=bool):  # rule=lambda s: s.startswith('Get')
+def check(obj, patt='.*'):
+    import re
+    patt = re.compile(patt)
     print('\nobj:', obj)
-    for key in filter(rule, dir(obj)):
+    for key in filter(patt.fullmatch, dir(obj)):
         attr = getattr(obj, key)
         print('\nkey:', key)
         if not callable(attr):

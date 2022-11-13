@@ -52,7 +52,7 @@ class Thread(_Thread):
 
 
 class Tcp:
-    def __init__(self, addr='localhost', port=7010):
+    def __init__(self, addr, port):
         self.host = not addr
         self.addr = addr
         self.port = port
@@ -74,16 +74,12 @@ class Tcp:
             self.server.close()
 
     def send(self, data):
-        assert len(data) < 1 << 32  # max 4GB
-        self.client.send(struct.pack('I', len(data)) + data)
+        if isinstance(data, str):
+            data = data.encode()
+        self.client.send(data)
 
-    def recv(self, length=-1):
-        if length == -1:
-            length = struct.unpack('I', self.recv(4))[0]  # max 4GB
-        s = bytearray()
-        while len(s) < length:
-            s.extend(self.client.recv(length-len(s)))
-        return bytes(s)
+    def recv(self, length):
+        return self.client.recv(length)
 
 
 __all__ = [k for k in globals() if k not in __all__]

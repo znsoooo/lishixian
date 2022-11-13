@@ -11,10 +11,12 @@ __all__ = list(globals())
 
 
 def main(f):
-    if len(sys.argv) == 1:
-        f()
-    for v in sys.argv[1:]:
-        f(v)
+    import inspect
+    if '__main__' == inspect.currentframe().f_back.f_globals['__name__']:
+        if len(sys.argv) == 1:
+            f()
+        for v in sys.argv[1:]:
+            f(v)
     return f
 
 

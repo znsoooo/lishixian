@@ -29,13 +29,14 @@ split = lambda arr, cols: [arr[i:i+cols] for i in range(0, len(arr), cols)]
 def walk(paths, exts=''):
     paths = paths if isinstance(paths, (list, tuple)) else [paths]
     exts = [exts] if isinstance(exts, str) else exts
+    exts = [ext.lower() for ext in exts]
     for path in paths:
         if os.path.isfile(path):
-            if any(path.endswith(ext) for ext in exts):
-                yield os.path.abspath(path)
+            if any(path.lower().endswith(ext) for ext in exts):
+                yield path
         for root, folders, files in os.walk(path):
             for file in files:
-                if any(file.endswith(ext) for ext in exts):
+                if any(file.lower().endswith(ext) for ext in exts):
                     yield os.path.join(root, file)
 
 

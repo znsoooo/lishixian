@@ -1,5 +1,5 @@
 # Lishixian Library
-Contain 105 functions.
+Contain 111 functions.
 
 
 ## About
@@ -23,9 +23,9 @@ pip install lishixian --upgrade
 - help()
 
 ### Module 'cls'
-- Config(path, section)
+- Config(path, section='default', encoding='u8')
 - Thread(target, *args, **kwargs)
-- Tcp(addr='localhost', port=7010)
+- Tcp(addr, port)
 
 ### Module 'dec'
 - main(f)
@@ -45,6 +45,7 @@ pip install lishixian --upgrade
 - listdir(*paths)
 - findall(pattern, string, flags=0)
 - split(arr, cols)
+- detect(file)
 - walk(paths, exts='')
 - open(file)
 
@@ -52,8 +53,10 @@ pip install lishixian --upgrade
 - s128 = bytes(range(128)).decode()
 - s127 = bytes(range(32, 127)).decode()
 - empty(*v, **kv)
+- freeze(fn, *v, **kv)
 - t(arr)
 - md5(b)
+- mask(p)
 - start(func, *args, **kwargs)
 - create(file)
 - pprint(*value, file=sys.stdout)
@@ -61,7 +64,6 @@ pip install lishixian --upgrade
 - sort_kv(d, reverse=False)
 - sort_key(d, reverse=False)
 - sort_num(s)
-- raw2headers(s)
 - str2dict(s)
 - tuple2item(item)
 - unique(arr)
@@ -74,7 +76,7 @@ pip install lishixian --upgrade
 ### Module 'useful'
 - tag()
 - log(*value)
-- check(obj, rule=<class 'bool'>)
+- check(obj, patt='.*')
 - fps()
 - select(path)
 - path_mark(path, mark='.bak')
@@ -109,10 +111,14 @@ pip install lishixian --upgrade
 - Recoder(complete=False)
 
 ### Module 'doc'
-- WriteTxt(data, file, encoding='utf-8-sig')
+- read(file)
+- write(file, data)
+- ReadIni(file, encoding='u8')
+- WriteIni(file, dic, encoding='u8')
+- WriteTxt(file, data, encoding='utf-8-sig')
 - ReadCsv(file, encoding='utf-8-sig')
-- WriteCsv(data, file, encoding='utf-8-sig', errors='ignore')
-- WriteExcel(data, file, new_sheet='sheet1')
+- WriteCsv(file, data, encoding='utf-8-sig', errors='ignore')
+- WriteExcel(file, data, new_sheet='sheet1')
 - OpenExcel(file)
 - MergeCell(data, merge, merge_x=True, merge_y=True, strip_x=False)
 - ReadExcel(file, merge_x=True, merge_y=True, strip_x=False)
@@ -124,7 +130,6 @@ pip install lishixian --upgrade
 - ReadFile(file, merge_x=True, merge_y=True, strip_x=False)
 - File2Csv(file, merge_x=True, merge_y=True, strip_x=False)
 - ReadFiles(files, merge_x=True, merge_y=True, strip_x=False)
-- Unique(arr)
 
 ### Module 'gui'
 - center(top)

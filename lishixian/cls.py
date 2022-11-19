@@ -10,27 +10,57 @@ from threading import Thread as _Thread
 __all__ = list(globals())
 
 
-class Config(configparser.ConfigParser):
-    def __init__(self, path, section):
-        configparser.ConfigParser.__init__(self)
-        self.path = path
-        self.s = section
-        self.read(path)
-        if not self.has_section(section):
-            self.add_section(section)
+class Config:
+    def __init__(self, path, section='default', encoding='u8'):
+        self._data = {}
+        self._path = path
+        self._section = section
+        self._encoding = encoding
 
-    def getkey(self, key, default=None):
-        self.read(self.path)
-        if self.has_option(self.s, key):
-            return self.get(self.s, key)
-        elif default:
-            self.set(self.s, key, str(default))
-            self.write(open(self.path, 'w'))
-            return default
+    def __iter__(self):
+        yield from self.data
 
-    def setkey(self, key, value):
-        self.set(self.s, key, str(value))
-        self.write(open(self.path, 'w'))
+    def __len__(self):
+        return len(self.data)
+
+    def __contains__(self, name):
+        return name in self.data
+
+    def __delattr__(self, name):
+        if name in self.data:
+            del self.data[name]
+            self.save()
+
+    def __getattr__(self, name):
+        if name in self.data:
+            return self.data[name]
+
+    def __setattr__(self, name, value):
+        if name.startswith('_'):
+            super().__setattr__(name, value)
+        else:
+            self.data[name] = value
+            self.save()
+
+    def __repr__(self):
+        return '''Config('%s', '%s', '%s')%s''' % (
+            self._path, self._section, self._encoding,
+            ''.join('\n.%s=%s' % item for item in self.data.items()))
+
+    @property
+    def data(self):
+        p = configparser.ConfigParser()
+        p.read(self._path, encoding=self._encoding)
+        if not p.has_section(self._section):
+            p.add_section(self._section)
+        self._data = dict(p.items(self._section))
+        return self._data
+
+    def save(self):
+        p = configparser.ConfigParser()
+        p.read_dict({self._section: self._data})
+        with open(self._path, 'w', encoding=self._encoding) as f:
+            p.write(f, False)
 
 
 class Thread(_Thread):

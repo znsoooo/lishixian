@@ -4,10 +4,22 @@ import os
 import csv
 
 
-def _wash(cell):
+def num2str(cell):
     if isinstance(cell, float) and cell.is_integer():
         cell = int(cell)
     return str(cell)
+
+
+def str2value(s):
+    try:
+        v = float(s)
+        if v.is_integer():
+            v = int(v)
+    except ValueError:
+        v = {'none': None, 'null': None, '': None,
+             'true': True, 'flase': False
+        }.get(s.lower(), s)
+    return v
 
 
 __all__ = list(globals())
@@ -16,6 +28,38 @@ __all__ = list(globals())
 # ---------------------------------------------------------------------------
 # Text
 # ---------------------------------------------------------------------------
+
+
+def read(path):
+    try:
+        with open(path, encoding='u8') as f:
+            return f.read()
+    except UnicodeDecodeError:
+        with open(path) as f:
+            return f.read()
+
+
+def write(path, data):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, 'w', encoding='u8') as f:
+        f.write(data)
+
+
+def ReadIni(path, encoding='u8'):
+    import configparser
+    p = configparser.ConfigParser()
+    p.optionxform = str  # fix opinion can't read key with upper case
+    p.read(path, encoding=encoding)
+    return {s: dict(p.items(s)) for s in p.sections()}
+
+
+def WriteIni(path, dic, encoding='u8'):
+    import configparser
+    p = configparser.ConfigParser()
+    p.optionxform = str  # fix opinion can't read key with upper case
+    p.read_dict(dic)
+    with open(path, 'w', encoding=encoding) as f:
+        p.write(f, False)
 
 
 def WriteTxt(data, file, encoding='utf-8-sig'):
@@ -104,7 +148,7 @@ def ReadExcel(file, merge_x=True, merge_y=True, strip_x=False):
         sheet_data = []
         for row in range(sheet.nrows):
             rows = [sheet_name] + sheet.row_values(row)
-            sheet_data.append(list(map(_wash, rows)))
+            sheet_data.append(list(map(num2str, rows)))
         data.append(sheet_data)
 
     # only ".xls" type contain merge_info
@@ -117,7 +161,7 @@ def ReadSheet(file, index=0):
     import xlrd
     xls = xlrd.open_workbook(file)
     sheet = xls.sheet_by_index(index)
-    return [list(map(_wash, sheet.row_values(row))) for row in range(sheet.nrows)]
+    return [list(map(num2str, sheet.row_values(row))) for row in range(sheet.nrows)]
 
 
 # ---------------------------------------------------------------------------

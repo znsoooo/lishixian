@@ -26,6 +26,13 @@ findall = lambda pattern, string, flags=0: [(m.start(), m.end(), m.group()) for 
 split = lambda arr, cols: [arr[i:i+cols] for i in range(0, len(arr), cols)]
 
 
+def detect(file):
+    import chardet
+    with _open(file, 'rb') as f:
+        b = f.read()
+    return chardet.detect(b)['encoding'] or 'utf-8'
+
+
 def walk(paths, exts=''):
     paths = paths if isinstance(paths, (list, tuple)) else [paths]
     exts = [exts] if isinstance(exts, str) else exts

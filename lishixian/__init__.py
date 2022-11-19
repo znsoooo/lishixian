@@ -1,3 +1,6 @@
+# top module functions
+all = help = None
+
 # base on built-in library
 from .cls import *
 from .dec import *
@@ -24,7 +27,7 @@ def all():
                     table[name] = module
                 elif name != '__all__':
                     print("Warnning: '%s.%s' exist in '%s.%s'" % (module, name, table[name], name), file=sys.stderr)
-    return list(table) + ['all', 'help']
+    return ['all', 'help'] + list(table)
 
 
 def help():

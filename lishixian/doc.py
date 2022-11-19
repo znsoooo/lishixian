@@ -30,39 +30,39 @@ __all__ = list(globals())
 # ---------------------------------------------------------------------------
 
 
-def read(path):
+def read(file):
     try:
-        with open(path, encoding='u8') as f:
+        with open(file, encoding='u8') as f:
             return f.read()
     except UnicodeDecodeError:
-        with open(path) as f:
+        with open(file) as f:
             return f.read()
 
 
-def write(path, data):
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, 'w', encoding='u8') as f:
+def write(file, data):
+    os.makedirs(os.path.dirname(file), exist_ok=True)
+    with open(file, 'w', encoding='u8') as f:
         f.write(data)
 
 
-def ReadIni(path, encoding='u8'):
+def ReadIni(file, encoding='u8'):
     import configparser
     p = configparser.ConfigParser()
     p.optionxform = str  # fix opinion can't read key with upper case
-    p.read(path, encoding=encoding)
+    p.read(file, encoding=encoding)
     return {s: dict(p.items(s)) for s in p.sections()}
 
 
-def WriteIni(path, dic, encoding='u8'):
+def WriteIni(file, dic, encoding='u8'):
     import configparser
     p = configparser.ConfigParser()
     p.optionxform = str  # fix opinion can't read key with upper case
     p.read_dict(dic)
-    with open(path, 'w', encoding=encoding) as f:
+    with open(file, 'w', encoding=encoding) as f:
         p.write(f, False)
 
 
-def WriteTxt(data, file, encoding='utf-8-sig'):
+def WriteTxt(file, data, encoding='utf-8-sig'):
     with open(file, 'w', encoding=encoding) as f:
         f.write('\n'.join(','.join(str(cell) for cell in row) for row in data))
 
@@ -72,7 +72,7 @@ def ReadCsv(file, encoding='utf-8-sig'):
         return list(csv.reader(f))
 
 
-def WriteCsv(data, file, encoding='utf-8-sig', errors='ignore'):
+def WriteCsv(file, data, encoding='utf-8-sig', errors='ignore'):
     with open(file, 'w', newline='', encoding=encoding, errors=errors) as f:
         writer = csv.writer(f)
         writer.writerows(data)
@@ -83,7 +83,7 @@ def WriteCsv(data, file, encoding='utf-8-sig', errors='ignore'):
 # ---------------------------------------------------------------------------
 
 
-def WriteExcel(data, file, new_sheet='sheet1'):
+def WriteExcel(file, data, new_sheet='sheet1'):
     import xlwt
     xls = xlwt.Workbook('u8')
     sheet = xls.add_sheet(new_sheet, True)
@@ -259,10 +259,6 @@ def ReadFiles(files, merge_x=True, merge_y=True, strip_x=False):
         path, filename = os.path.split(file)
         data.extend([[path, filename] + row for row in ReadFile(file, merge_x, merge_y, strip_x)])
     return data
-
-
-def Unique(arr):
-    return [i for i, item in enumerate(arr) if arr.index(item) == i]
 
 
 __all__ = [k for k in globals() if k not in __all__]

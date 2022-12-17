@@ -33,18 +33,29 @@ def log(*value):
 
 def check(obj, patt='.*'):
     import re
+    import sys
+    import inspect
     patt = re.compile(patt)
     print('\nobj:', obj)
-    for key in filter(patt.fullmatch, dir(obj)):
+    for key in sorted(dir(obj)):
         attr = getattr(obj, key)
-        print('\nkey:', key)
-        if not callable(attr):
-            print('value:', attr)
-        else:
-            try:
-                print('value call:', attr())
-            except TypeError as e:
-                print('value callable:', attr, 'TypeError:', e)
+        try:
+            key += str(inspect.signature(attr))
+        except (TypeError, ValueError):
+            pass
+        if patt.fullmatch(key):
+            key = '.' + key
+            if not callable(attr):
+                result = repr(attr)
+                key += ' = '
+            else:
+                try:
+                    result = repr(attr())
+                    key += ' = '
+                except Exception:
+                    result = ''
+            print(key, end='')
+            print(result, file=sys.stderr)
 
 
 fps_n = -1

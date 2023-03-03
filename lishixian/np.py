@@ -32,7 +32,7 @@ def imsave(file): # for test
         cv2.imwrite('%s/img_%04d.png' % (folder, n), img)
 
 
-def imiter(file_or_id, st=None, ed=None):
+def imiter(file_or_id):
     import cv2
     cap = cv2.VideoCapture(file_or_id)
     while cap.isOpened():
@@ -40,12 +40,7 @@ def imiter(file_or_id, st=None, ed=None):
         if not ret:
             cap.release()
             return
-        yield img[st:ed]
-
-
-# cap = cv2.VideoCapture('VID_20191211_162134.mp4')
-# for img in imiter(cap):
-#     ...
+        yield img
 
 
 __all__ = [k for k in globals() if k not in __all__]

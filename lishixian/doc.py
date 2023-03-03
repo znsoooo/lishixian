@@ -30,19 +30,26 @@ __all__ = list(globals())
 # ---------------------------------------------------------------------------
 
 
-def read(file):
+def read(file, encoding='u8'):
+    if not encoding:
+        with open(file, 'rb') as f:
+            return f.read()
     try:
-        with open(file, encoding='u8') as f:
+        with open(file, encoding=encoding) as f:
             return f.read()
     except UnicodeDecodeError:
         with open(file) as f:
             return f.read()
 
 
-def write(file, data):
+def write(file, data, encoding='u8'):
     os.makedirs(os.path.dirname(file), exist_ok=True)
-    with open(file, 'w', encoding='u8') as f:
-        f.write(data)
+    if isinstance(data, str):
+        with open(file, 'w', encoding=encoding) as f:
+            f.write(data)
+    else:
+        with open(file, 'wb') as f:
+            f.write(data)
 
 
 def ReadIni(file, encoding='u8'):

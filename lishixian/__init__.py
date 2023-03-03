@@ -19,20 +19,29 @@ from .np import *
 def all():
     import sys
     import inspect
-    table = {}
-    for module, obj in globals().items():
-        if inspect.ismodule(obj) and obj.__name__.count('.') == 1:
-            for name in obj.__all__:
-                if name not in table:
-                    table[name] = module
+
+    module_names = {}
+    for module_name, module in globals().items():
+        if inspect.ismodule(module) and module.__name__.count('.') == 1:
+            for name in module.__all__:
+                if name not in module_names:
+                    module_names[name] = module_name
                 elif name != '__all__':
-                    print("Warnning: '%s.%s' exist in '%s.%s'" % (module, name, table[name], name), file=sys.stderr)
-    return ['all', 'help'] + list(table)
+                    print("Warning: '%s.%s' exist in '%s.%s'" % (module_name, name, module_names[name], name), file=sys.stderr)
+
+    for fun in globals().values():
+        if inspect.isfunction(fun):
+            if fun.__name__ == '<lambda>':
+                for k, v in inspect.currentframe().f_back.f_locals.items():
+                    if v is fun:
+                        fun.__name__ = k
+            fun.__qualname__ = fun.__module__ + '.' + fun.__name__
+
+    return ['all', 'help'] + list(module_names)
 
 
 def help():
     import inspect
-    import importlib
     print("\n# Lishixian Library")
     print("Contain %d functions." % len(__all__))
     print("\n## Top module")

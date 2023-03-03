@@ -132,7 +132,7 @@ if __name__ == '__main__':
     import time
 
     def ThreadFunction(timeout, fun, *args, **kwargs):
-        t = MyThread(fun, *args, **kwargs)
+        t = Thread(fun, *args, **kwargs)
         t.join(timeout)
         t.stop()
         return t.result

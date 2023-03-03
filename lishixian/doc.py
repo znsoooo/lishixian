@@ -43,7 +43,9 @@ def read(file, encoding='u8'):
 
 
 def write(file, data, encoding='u8'):
-    os.makedirs(os.path.dirname(file), exist_ok=True)
+    root = os.path.dirname(file)
+    if root and not os.path.exists(root):
+        os.makedirs(root)
     if isinstance(data, str):
         with open(file, 'w', encoding=encoding) as f:
             f.write(data)

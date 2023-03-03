@@ -64,7 +64,9 @@ class open:
             return f.read()
 
     def write(self, data, mode='w'):
-        os.makedirs(os.path.dirname(self.p), exist_ok=True)
+        root = os.path.dirname(self.p)
+        if root and not os.path.exists(root):
+            os.makedirs(root)
         if isinstance(data, bytes):
             mode += 'b'
         with _open(self.p, mode, encoding='u8') as f:

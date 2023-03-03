@@ -111,6 +111,19 @@ class Tcp:
     def recv(self, length):
         return self.client.recv(length)
 
+    def send_with_header(self, data):
+        if isinstance(data, str):
+            data = data.encode()
+        assert len(data) < 1 << 32  # max 4GB
+        self.client.send(struct.pack('I', len(data)) + data)
+
+    def recv_with_header(self):
+        length = struct.unpack('I', self.recv(4))[0]  # max 4GB
+        s = bytearray()
+        while len(s) < length:
+            s.extend(self.client.recv(length - len(s)))
+        return bytes(s)
+
 
 __all__ = [k for k in globals() if k not in __all__]
 

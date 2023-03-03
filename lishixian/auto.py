@@ -9,9 +9,6 @@ from threading import Thread
 __all__ = list(globals())
 
 
-# PAUSE = pyautogui.PAUSE
-
-
 def shortcut(p=None, make=True):  # get_path: desktop/programs/startup/...
     import winshell
     p = p or winshell.desktop()
@@ -32,7 +29,6 @@ def copy(word, tab=0):
     bak = pyperclip.paste()
     pyperclip.copy(word)
     pyautogui.hotkey('ctrl', 'v')
-    # time.sleep(PAUSE)
     pyperclip.copy(bak)
 
 

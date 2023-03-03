@@ -1,10 +1,8 @@
 """Useful Functions with Built-in Library"""
 
 import os
-import sys
 import html
 import time
-import threading
 import traceback
 import urllib.parse
 import urllib.request

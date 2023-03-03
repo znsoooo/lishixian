@@ -146,4 +146,3 @@ if __name__ == '__main__':
     print(ThreadFunction(0.5, f))
     print(ThreadFunction(1.5, f))
     print(ThreadFunction(3.5, f))
-

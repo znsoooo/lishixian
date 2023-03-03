@@ -79,6 +79,7 @@ def fps():
 # ---------------------------------------------------------------------------
 
 
+stem = lambda p: os.path.splitext(os.path.basename(p))[0]
 select = lambda path: os.popen('explorer /select, "%s"' % os.path.abspath(path))
 
 

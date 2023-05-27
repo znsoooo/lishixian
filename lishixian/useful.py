@@ -33,12 +33,13 @@ def progress(*value, interval=1):
         print(*value)
 
 
-def check(obj, patt='.*'):
+def check(obj, patt='.*', stdout=True):
     import re
     import sys
     import inspect
     patt = re.compile(patt)
-    print('\nobj:', obj)
+    stdout = {True: sys.stdout, False: sys.stderr}.get(stdout, stdout)
+    print('obj: %r' % obj, end='')
     for key in sorted(dir(obj)):
         attr = getattr(obj, key)
         try:
@@ -56,8 +57,9 @@ def check(obj, patt='.*'):
                     key += ' = '
                 except Exception:
                     result = ''
-            print(key, end='')
-            print(result, file=sys.stderr)
+            print('\n' + key, end='')
+            print(result, file=stdout, end='')
+    print()
 
 
 _fps_n = -1

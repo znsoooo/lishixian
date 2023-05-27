@@ -13,10 +13,15 @@ __all__ = list(globals())
 def main(f):
     import inspect
     if '__main__' == inspect.currentframe().f_back.f_globals['__name__']:
-        if len(sys.argv) == 1:
-            f()
-        for v in sys.argv[1:]:
-            f(v)
+        try:
+            if len(sys.argv) == 1:
+                f()
+            for v in sys.argv[1:]:
+                f(v)
+        except Exception:
+            import traceback
+            traceback.print_exc()
+        input('Press enter to exit: ')
     return f
 
 

@@ -8,6 +8,7 @@ import random
 import socket
 import getpass
 import hashlib
+import binascii
 from threading import Thread
 
 __all__ = list(globals())
@@ -20,7 +21,8 @@ freeze = lambda fn, *v, **kv: (lambda: fn(*v, **kv))
 
 t = lambda arr: list(zip(*arr))
 
-md5 = lambda b: hashlib.md5(b).hexdigest()
+crc = lambda b: '0x%04X' % binascii.crc_hqx(b if isinstance(b, bytes) else open(b, 'rb').read(), 0)
+md5 = lambda b: hashlib.md5(b if isinstance(b, bytes) else open(b, 'rb').read()).hexdigest()
 mask = lambda p: open(p + '.inv', 'wb').write(bytes(255 - b for b in open(p, 'rb').read()))
 start = lambda func, *args, **kwargs: Thread(target=func, args=args, kwargs=kwargs).start()
 create = lambda file: open(file, 'w').close()
@@ -36,6 +38,8 @@ str2dict = lambda s: dict(re.findall(r'(.*?):(.*)', s))
 tuple2item = lambda item: item if len(item) > 1 else item[0]
 
 unique = lambda arr: sorted(set(arr), key=arr.index)
+flatten = lambda arr: sum(arr[1:], arr[0])
+reshape = lambda arr, width: list(zip(*[iter(arr)]*width))
 
 pc_ip = lambda: socket.gethostbyname(socket.gethostname())
 pc_mac = lambda: '-'.join(re.findall('..', uuid.uuid1().hex[-12:].upper()))

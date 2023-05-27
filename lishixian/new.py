@@ -8,6 +8,7 @@ import itertools
 import subprocess
 from functools import partial
 from contextlib import suppress
+from time import time as _time
 
 _open = open
 
@@ -16,6 +17,7 @@ __all__ = list(globals())
 
 
 _print, print = print, lambda *value, file=sys.stdout: _print(' '.join(map(str, value)) + '\n', end='', file=file)
+time = lambda start=0: _time() - start
 infinity = itertools.count
 makedirs = partial(os.makedirs, exist_ok=True)
 breakpoint = lambda: pdb.set_trace()

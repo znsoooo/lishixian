@@ -7,9 +7,6 @@ import traceback
 import urllib.parse
 import urllib.request
 
-# LOG = time.strftime('RECORD_%Y%m%d_%H%M%S.log')
-LOG = time.strftime('LOG_%Y%m%d_%H%M%S.txt')
-
 
 __all__ = list(globals())
 
@@ -19,14 +16,21 @@ __all__ = list(globals())
 # ---------------------------------------------------------------------------
 
 
-def tag():
-    return time.strftime('[%Y-%m-%d %H:%M:%S] ')
+def log(*value, file='log.txt'):
+    string = ' '.join(map(str, value)) + '\n'
+    header = time.strftime('[%Y-%m-%d %H:%M:%S] ')
+    print(string, end='')
+    with open(file, 'a', encoding='u8') as f:
+        f.write(header + string)
 
 
-def log(*value):
-    s = tag() + ' '.join(map(str, value))
-    with open(LOG, 'a', encoding='u8') as f:
-        f.write(s)
+_last = 0
+def progress(*value, interval=1):
+    global _last
+    now = time.time()
+    if interval == 0 or now - _last > interval:
+        _last = now
+        print(*value)
 
 
 def check(obj, patt='.*'):
@@ -56,19 +60,19 @@ def check(obj, patt='.*'):
             print(result, file=sys.stderr)
 
 
-fps_n = -1
-fps_t1 = 0
+_fps_n = -1
+_fps_t1 = 0
 def fps():
     import time
-    global fps_n, fps_t1
-    fps_n += 1
+    global _fps_n, _fps_t1
+    _fps_n += 1
     fps_t2 = time.time()
-    if fps_t1 == 0:
-        fps_t1 = fps_t2
-    if fps_t2 - fps_t1 > 1:
-        print('fps: %.1f' % (fps_n / (fps_t2 - fps_t1)))
-        fps_t1 = fps_t2
-        fps_n = 0
+    if _fps_t1 == 0:
+        _fps_t1 = fps_t2
+    if fps_t2 - _fps_t1 > 1:
+        print('fps: %.1f' % (_fps_n / (fps_t2 - _fps_t1)))
+        _fps_t1 = fps_t2
+        _fps_n = 0
     return True
 
 
@@ -86,11 +90,10 @@ def path_mark(path, mark='.bak'):
     return root + mark + ext
 
 
-def path_quote(p, repl=None):  # not include path
-    for c in '\r\n\t\\/:*?"<>|':
-        new = repl if repl is not None else urllib.parse.quote_plus(c)
-        p = p.replace(c, new)
-    return p
+def path_safe(p, repl=None):  # not include path
+    from urllib.parse import quote_plus
+    map = {ord(c): quote_plus(c) if repl is None else repl for c in '\r\n\t\\/:*?"<>|'}
+    return p.translate(map)
 
 
 def path_split(p):
@@ -106,6 +109,21 @@ def path_unique(p, dash='-'):
         n += 1
         p = '%s%s%d%s' % (root, dash, n, ext)
     return p
+
+
+def file_mtime(path):
+    mtime = os.stat(path).st_mtime
+    return time.localtime(mtime)[:6]
+
+
+def file_ctime(path):
+    ctime = os.stat(path).st_ctime
+    return time.localtime(ctime)[:6]
+
+
+def file_utime(path, date):
+    mtime = time.mktime((tuple(date) + (0,) * 6)[:9])
+    os.utime(path, (mtime, mtime))
 
 
 # ---------------------------------------------------------------------------
@@ -128,6 +146,16 @@ def urlopen(url, timeout=5):
 # ---------------------------------------------------------------------------
 # ...
 # ---------------------------------------------------------------------------
+
+
+def scan(format, string):
+    import re
+    sp = re.split('(%d|%f|%s)', format, flags=re.I)
+    patt = ''.join('(.*)' if i % 2 else re.escape(s) for i, s in enumerate(sp))
+    match = re.fullmatch(patt, string)
+    fun_map = {'%d': int, '%f': float, '%s': str}
+    formats = re.findall('%d|%f|%s', format, flags=re.I)
+    return [fun_map[fmt.lower()](s) for fmt, s in zip(formats, match.groups())]
 
 
 def findpair(s, p1='(', p2=')', st=0):

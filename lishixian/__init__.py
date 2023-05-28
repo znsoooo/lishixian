@@ -1,3 +1,21 @@
+"""
+Lite Software eXtension
+
+Usage:
+    import lishixian as lsx
+    lsx.help()
+
+License:
+    MIT license.
+    Copyright (c) 2021-2023 by Shixian Li (znsoooo).  All rights reserved.
+"""
+
+__author__  = 'Shixian Li <lsx7@sina.com>'
+__credits__ = 'https://github.com/znsoooo/lishixian'
+__date__    = '2023'
+__version__ = '0.2.3'
+
+
 # top module functions
 all = help = None
 

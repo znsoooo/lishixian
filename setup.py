@@ -21,7 +21,7 @@ setuptools.setup(
     version=version,
     author='Lishixian(znsoooo)',
     author_email='lsx7@sina.com',
-    description='lishixian package',
+    description='Lite Software eXtension',
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/znsoooo/lishixian',

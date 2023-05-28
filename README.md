@@ -1,5 +1,6 @@
-# Lishixian Library
-Contain 111 functions.
+# Lite Software eXtension
+
+Contain 10 modules and 115 functions.
 
 
 ## About
@@ -13,6 +14,13 @@ Contain 111 functions.
 ## Install
 ```bash
 pip install lishixian --upgrade
+```
+
+
+## Usage
+```python
+import lishixian as lsx
+lsx.help()
 ```
 
 
@@ -38,6 +46,7 @@ pip install lishixian --upgrade
 
 ### Module 'new'
 - print(*value, file=sys.stdout)
+- time(start=0)
 - infinity = <class 'itertools.count'>
 - makedirs(name, mode=511, *, exist_ok=True)
 - breakpoint()
@@ -55,6 +64,7 @@ pip install lishixian --upgrade
 - empty(*v, **kv)
 - freeze(fn, *v, **kv)
 - t(arr)
+- crc(b)
 - md5(b)
 - mask(p)
 - start(func, *args, **kwargs)
@@ -67,6 +77,8 @@ pip install lishixian --upgrade
 - str2dict(s)
 - tuple2item(item)
 - unique(arr)
+- flatten(arr)
+- reshape(arr, width)
 - pc_ip()
 - pc_mac()
 - pc_user()
@@ -74,20 +86,25 @@ pip install lishixian --upgrade
 - join(*s, sp='')
 
 ### Module 'useful'
-- tag()
-- log(*value)
-- check(obj, patt='.*')
+- log(*value, file='log.txt')
+- progress(*value, interval=1)
+- check(obj, patt='.*', stdout=True)
 - fps()
+- stem(p)
 - select(path)
 - path_mark(path, mark='.bak')
-- path_quote(p, repl=None)
+- path_safe(p, repl=None)
 - path_split(p)
 - path_unique(p, dash='-')
+- file_mtime(path)
+- file_ctime(path)
+- file_utime(path, date)
 - escape(s, quote=True)
 - unescape(s)
 - quote(string, safe='', encoding=None, errors=None)
 - unquote(string, encoding='utf-8', errors='replace')
 - urlopen(url, timeout=5)
+- scan(format, string)
 - findpair(s, p1='(', p2=')', st=0)
 - bytes_format(data, n=16)
 - bytes_print(data, n=16)
@@ -111,8 +128,8 @@ pip install lishixian --upgrade
 - Recoder(complete=False)
 
 ### Module 'doc'
-- read(file)
-- write(file, data)
+- read(file, encoding='u8')
+- write(file, data, encoding='u8')
 - ReadIni(file, encoding='u8')
 - WriteIni(file, dic, encoding='u8')
 - WriteTxt(file, data, encoding='utf-8-sig')
@@ -144,7 +161,7 @@ pip install lishixian --upgrade
 - imwrite(file, im)
 - imshow(img, delay=50, title='')
 - imsave(file)
-- imiter(file_or_id, st=None, ed=None)
+- imiter(file_or_id)
 
 
 ## Comment

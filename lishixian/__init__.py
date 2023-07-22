@@ -23,6 +23,7 @@ all = help = None
 from .cls import *
 from .dec import *
 from .new import *
+from .reg import *
 from .line import *
 from .useful import *
 from .windll import *

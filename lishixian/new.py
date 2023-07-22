@@ -35,7 +35,7 @@ def detect(file):
     return chardet.detect(b)['encoding'] or 'utf-8'
 
 
-def walk(paths, exts=''):
+def walk(paths='.', exts=''):
     paths = paths if isinstance(paths, (list, tuple)) else [paths]
     exts = [exts] if isinstance(exts, str) else exts
     exts = [ext.lower() for ext in exts]

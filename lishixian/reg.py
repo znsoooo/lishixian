@@ -39,7 +39,7 @@ def SetKey(key, name='', val=''):
     winreg.SetValueEx(key2, name, 0, winreg.REG_SZ, val)
 
 
-def right_py():
+def NewFilePy():
     SetKey(r'HKEY_CURRENT_USER\Software\Classes\.py\ShellNew', 'FileName')
 
 

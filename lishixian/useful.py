@@ -16,6 +16,9 @@ __all__ = list(globals())
 # ---------------------------------------------------------------------------
 
 
+pause = lambda: input('Press enter to continue: ')
+
+
 def log(*value, file='log.txt'):
     string = ' '.join(map(str, value)) + '\n'
     header = time.strftime('[%Y-%m-%d %H:%M:%S] ')
@@ -82,7 +85,7 @@ def fps():
 # File system
 # ---------------------------------------------------------------------------
 
-
+ext = lambda p: os.path.splitext(p)[1].lower()
 stem = lambda p: os.path.splitext(os.path.basename(p))[0]
 select = lambda path: os.popen('explorer /select, "%s"' % os.path.abspath(path))
 

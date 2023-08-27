@@ -1,6 +1,6 @@
 # Lite Software eXtension
 
-Contain 10 modules and 115 functions.
+Contain 11 modules and 127 functions.
 
 
 ## About
@@ -34,6 +34,7 @@ lsx.help()
 - Config(path, section='default', encoding='u8')
 - Thread(target, *args, **kwargs)
 - Tcp(addr, port)
+- Udp(addr, port)
 
 ### Module 'dec'
 - main(f)
@@ -45,7 +46,7 @@ lsx.help()
 - threads(cnt)
 
 ### Module 'new'
-- print(*value, file=sys.stdout)
+- print(*value, file=<_io.TextIOWrapper name='<stdout>' mode='w' encoding='UTF-8'>)
 - time(start=0)
 - infinity = <class 'itertools.count'>
 - makedirs(name, mode=511, *, exist_ok=True)
@@ -54,9 +55,18 @@ lsx.help()
 - listdir(*paths)
 - findall(pattern, string, flags=0)
 - split(arr, cols)
+- pack(fmt, values)
+- unpack(fmt, string)
 - detect(file)
-- walk(paths, exts='')
+- walk(paths='.', exts='')
 - open(file)
+
+### Module 'reg'
+- GetDir(name, local=False)
+- DeleteRecu(key)
+- DeleteKey(key, name='')
+- SetKey(key, name='', val='')
+- NewFilePy()
 
 ### Module 'line'
 - s128 = bytes(range(128)).decode()
@@ -86,10 +96,12 @@ lsx.help()
 - join(*s, sp='')
 
 ### Module 'useful'
+- pause()
 - log(*value, file='log.txt')
 - progress(*value, interval=1)
 - check(obj, patt='.*', stdout=True)
 - fps()
+- ext(p)
 - stem(p)
 - select(path)
 - path_mark(path, mark='.bak')
@@ -99,6 +111,8 @@ lsx.help()
 - file_mtime(path)
 - file_ctime(path)
 - file_utime(path, date)
+- factorize(num)
+- primes(max)
 - escape(s, quote=True)
 - unescape(s)
 - quote(string, safe='', encoding=None, errors=None)

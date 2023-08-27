@@ -1,10 +1,8 @@
 """Useful Classes"""
 
 import ctypes
-import socket
-import struct
+import threading
 import configparser
-from threading import Thread as _Thread
 
 
 __all__ = list(globals())
@@ -63,9 +61,9 @@ class Config:
             p.write(f, False)
 
 
-class Thread(_Thread):
+class Thread(threading.Thread):
     def __init__(self, target, *args, **kwargs):
-        _Thread.__init__(self, target=target, args=args, kwargs=kwargs)
+        threading.Thread.__init__(self, target=target, args=args, kwargs=kwargs)
 
         self.result = None
         self.finish = False
@@ -82,6 +80,9 @@ class Thread(_Thread):
 
 
 class Tcp:
+    import socket
+    import struct
+
     def __init__(self, addr, port):
         self.host = not addr
         self.addr = addr
@@ -90,12 +91,12 @@ class Tcp:
 
     def connect(self):
         if self.host:
-            self.server = socket.socket()
+            self.server = self.socket.socket()
             self.server.bind(('', self.port))
             self.server.listen(5)
             self.client, (addr, port) = self.server.accept()
         else:
-            self.client = socket.socket()
+            self.client = self.socket.socket()
             self.client.connect((self.addr, self.port))
 
     def close(self):
@@ -104,25 +105,68 @@ class Tcp:
             self.server.close()
 
     def send(self, data):
-        if isinstance(data, str):
-            data = data.encode()
+        data = data.encode() if isinstance(data, str) else data
         self.client.send(data)
 
     def recv(self, length):
         return self.client.recv(length)
 
-    def send_with_header(self, data):
-        if isinstance(data, str):
-            data = data.encode()
+    def sendlong(self, data):
+        data = data.encode() if isinstance(data, str) else data
         assert len(data) < 1 << 32  # max 4GB
-        self.client.send(struct.pack('I', len(data)) + data)
+        self.client.send(self.struct.pack('I', len(data)) + data)
 
-    def recv_with_header(self):
-        length = struct.unpack('I', self.recv(4))[0]  # max 4GB
-        s = bytearray()
-        while len(s) < length:
-            s.extend(self.client.recv(length - len(s)))
-        return bytes(s)
+    def recvlong(self):
+        length = self.struct.unpack('I', self.recv(4))[0]  # max 4GB
+        data = bytearray()
+        while len(data) < length:
+            data.extend(self.client.recv(length - len(data)))
+        return bytes(data)
+
+
+class Udp:
+    import socket
+    import struct
+    from io import BytesIO
+
+    def __init__(self, addr, port):
+        self.host = not addr
+        self.addr = addr
+        self.port = port
+        self.buffsize = 64000
+        self.s = self.socket.socket(self.socket.AF_INET, self.socket.SOCK_DGRAM)
+        if self.host:
+            self.s.bind(('', port))
+
+    def close(self):
+        self.s.close()
+
+    def send(self, data):
+        data = data.encode() if isinstance(data, str) else data
+        self.s.sendto(data, (self.addr, self.port))
+
+    def recv(self, size):
+        data, (self.addr, self.port) = self.s.recvfrom(size)
+        return data
+
+    def sendlong(self, data):
+        data = data.encode() if isinstance(data, str) else data
+        count = -(-len(data) // self.buffsize)
+        self.send(self.struct.pack('I', count))
+        self.recv(4)
+        f = self.BytesIO(data)
+        for i in range(count):
+            self.send(f.read(self.buffsize))
+            self.recv(4)
+
+    def recvlong(self):
+        count = self.struct.unpack('I', self.recv(4))[0]
+        self.send(b'echo')
+        data = bytearray()
+        for i in range(count):
+            data.extend(self.recv(self.buffsize))
+            self.send(b'echo')
+        return bytes(data)
 
 
 __all__ = [k for k in globals() if k not in __all__]

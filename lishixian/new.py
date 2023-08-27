@@ -4,6 +4,7 @@ import os
 import re
 import pdb
 import sys
+import struct
 import itertools
 import subprocess
 from functools import partial
@@ -26,6 +27,8 @@ popen = lambda cmd: subprocess.Popen(cmd, -1, None, -1, -1, -1, shell=True).stdo
 listdir = lambda *paths: os.listdir(os.path.join(*paths))
 findall = lambda pattern, string, flags=0: [(m.start(), m.end(), m.group()) for m in re.finditer(pattern, string, flags)]
 split = lambda arr, cols: [arr[i:i+cols] for i in range(0, len(arr), cols)]
+pack = lambda fmt, values: struct.pack(fmt, *values)
+unpack = lambda fmt, string: struct.unpack_from(fmt, string) + (string[struct.calcsize(fmt):],)
 
 
 def detect(file):

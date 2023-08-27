@@ -132,6 +132,31 @@ def file_utime(path, date):
 
 
 # ---------------------------------------------------------------------------
+# Math
+# ---------------------------------------------------------------------------
+
+
+def factorize(num):
+    import math
+    divisor = 2
+    while divisor <= math.sqrt(num):
+        if num % divisor == 0:
+            print(divisor, '*', end=' ')
+            num //= divisor
+        else:
+            divisor += 1
+    print(num)
+
+
+def primes(max):
+    ps = []
+    for n in range(2, max):
+        if all(n % p for p in ps):
+            ps.append(n)
+    return ps
+
+
+# ---------------------------------------------------------------------------
 # Web
 # ---------------------------------------------------------------------------
 

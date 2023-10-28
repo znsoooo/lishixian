@@ -25,6 +25,27 @@ def main(f):
     return f
 
 
+def parser(f):
+    import inspect
+    import argparse
+    if '__main__' == inspect.currentframe().f_back.f_globals['__name__']:
+        def convert(var):
+            try:
+                return eval(var)
+            except Exception:
+                return var
+        varnames = f.__code__.co_varnames
+        defaults = f.__defaults__
+        defaults = (None,) * (len(varnames) - len(defaults)) + defaults
+        parser = argparse.ArgumentParser()
+        for varname, default in zip(varnames, defaults):
+            parser.add_argument('--' + varname, default=default)
+        opt = parser.parse_args()
+        kwargs = {k: convert(v) for k, v in vars(opt).items()}
+        f(**kwargs)
+    return f
+
+
 def timeit(f):
     @wraps(f)
     def wrapper(*args, **kwargs):

@@ -30,6 +30,9 @@ __all__ = list(globals())
 # ---------------------------------------------------------------------------
 
 
+readb = lambda p: (lambda f: [f.read(), f.close()][0])(open(p, 'rb'))
+
+
 def read(file, encoding='u8'):
     if not encoding:
         with open(file, 'rb') as f:

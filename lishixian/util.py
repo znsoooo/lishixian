@@ -81,9 +81,36 @@ def fps():
     return True
 
 
+_count_dict = {}
+def count(value=None, target=None):
+    if value not in _count_dict:
+        _count_dict[value] = 0
+    if target is None or value == target:
+        _count_dict[value] += 1
+    return _count_dict[value]
+
+
+def recent(iterable, max=0):
+    history = []
+    for item in iterable:
+        history.append(item)
+        yield history
+        if len(history) == max:
+            history.pop(0)
+
+
+def parser2opt(parser, opt='opt'):
+    actions = parser._actions[1:]
+    w1 = max(len(ac.dest) for ac in actions)
+    w2 = max(len(repr(ac.default)) for ac in actions)
+    for ac in actions:
+        print('%s.%s = %s  # %s' % (opt, ac.dest.ljust(w1), repr(ac.default).ljust(w2), ac.help))
+
+
 # ---------------------------------------------------------------------------
 # File system
 # ---------------------------------------------------------------------------
+
 
 ext = lambda p: os.path.splitext(p)[1].lower()
 stem = lambda p: os.path.splitext(os.path.basename(p))[0]

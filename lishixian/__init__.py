@@ -25,7 +25,7 @@ from .dec import *
 from .new import *
 from .reg import *
 from .line import *
-from .useful import *
+from .util import *
 from .windll import *
 
 # 3rd-library needed

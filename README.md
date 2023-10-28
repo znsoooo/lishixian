@@ -95,7 +95,7 @@ lsx.help()
 - randombytes(n)
 - join(*s, sp='')
 
-### Module 'useful'
+### Module 'util'
 - pause()
 - log(*value, file='log.txt')
 - progress(*value, interval=1)

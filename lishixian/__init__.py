@@ -7,13 +7,13 @@ Usage:
 
 License:
     MIT license.
-    Copyright (c) 2021-2023 by Shixian Li (znsoooo).  All rights reserved.
+    Copyright (c) 2021-2023 Shixian Li (znsoooo). All rights reserved.
 """
 
 __author__  = 'Shixian Li <lsx7@sina.com>'
 __credits__ = 'https://github.com/znsoooo/lishixian'
 __date__    = '2023'
-__version__ = '0.2.3'
+__version__ = '0.2.5'
 
 
 # top module functions

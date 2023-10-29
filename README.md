@@ -1,6 +1,6 @@
 # Lite Software eXtension
 
-Contain 11 modules and 127 functions.
+Contain 11 modules and 132 functions.
 
 
 ## About
@@ -8,7 +8,7 @@ Contain 11 modules and 127 functions.
 - __QQ:__ 11313213
 - __Email:__ lsx7@sina.com
 - __Github:__ https://github.com/znsoooo/lishixian
-- __License:__ MIT License. Copyright (c) 2022 Lishixian (znsoooo). All Rights Reserved.
+- __License:__ MIT License. Copyright (c) 2021-2023 Shixian Li (znsoooo). All rights reserved.
 
 
 ## Install
@@ -37,19 +37,20 @@ lsx.help()
 - Udp(addr, port)
 
 ### Module 'dec'
-- main(f)
-- timeit(f)
-- tracer(f)
-- protect(f)
+- main(fn)
+- parser(fn)
+- timeit(fn)
+- tracer(fn)
+- protect(fn)
 - surround(before=(), after=())
 - hotkey(key='F12')
 - threads(cnt)
 
 ### Module 'new'
-- print(*value, file=<_io.TextIOWrapper name='<stdout>' mode='w' encoding='UTF-8'>)
+- print(*value, file=sys.stdout)
 - time(start=0)
-- infinity = <class 'itertools.count'>
-- makedirs(name, mode=511, *, exist_ok=True)
+- infinity = itertools.count
+- makedirs(name, exist_ok=True)
 - breakpoint()
 - popen(cmd)
 - listdir(*paths)
@@ -101,6 +102,9 @@ lsx.help()
 - progress(*value, interval=1)
 - check(obj, patt='.*', stdout=True)
 - fps()
+- count(value=None, target=None)
+- recent(iterable, max=0)
+- parser2opt(parser, opt='opt')
 - ext(p)
 - stem(p)
 - select(path)
@@ -142,6 +146,7 @@ lsx.help()
 - Recoder(complete=False)
 
 ### Module 'doc'
+- readb(p)
 - read(file, encoding='u8')
 - write(file, data, encoding='u8')
 - ReadIni(file, encoding='u8')

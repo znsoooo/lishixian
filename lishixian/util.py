@@ -114,24 +114,15 @@ def parser2opt(parser, opt='opt'):
 
 ext = lambda p: os.path.splitext(p)[1].lower()
 stem = lambda p: os.path.splitext(os.path.basename(p))[0]
-select = lambda path: os.popen('explorer /select, "%s"' % os.path.abspath(path))
+select = lambda p: os.popen('explorer /select, "%s"' % os.path.abspath(p))
 
+file_mtime = lambda p: time.localtime(os.stat(p).st_mtime)[:6]
+file_ctime = lambda p: time.localtime(os.stat(p).st_ctime)[:6]
+file_utime = lambda p, date: os.utime(p, (time.mktime((tuple(date) + (0,) * 6)[:9]),) * 2)
 
-def path_mark(path, mark='.bak'):
-    root, ext = os.path.splitext(path)
-    return root + mark + ext
-
-
-def path_safe(p, repl=None):  # not include path
-    from urllib.parse import quote_plus
-    map = {ord(c): quote_plus(c) if repl is None else repl for c in '\r\n\t\\/:*?"<>|'}
-    return p.translate(map)
-
-
-def path_split(p):
-    root, file = os.path.split(p)
-    name, ext = os.path.splitext(file)
-    return root, name, ext
+path_mark = lambda p, mark='.bak': '{0}{2}{1}'.format(*os.path.splitext(p), mark)
+path_safe = lambda p, repl=None: p.translate({ord(c): urllib.parse.quote_plus(c) if repl is None else repl for c in '\r\n\t\\/:*?"<>|'})
+path_split = lambda p: (os.path.dirname(p), *os.path.splitext(os.path.basename(p)))
 
 
 def path_unique(p, dash='-'):
@@ -141,21 +132,6 @@ def path_unique(p, dash='-'):
         n += 1
         p = '%s%s%d%s' % (root, dash, n, ext)
     return p
-
-
-def file_mtime(path):
-    mtime = os.stat(path).st_mtime
-    return time.localtime(mtime)[:6]
-
-
-def file_ctime(path):
-    ctime = os.stat(path).st_ctime
-    return time.localtime(ctime)[:6]
-
-
-def file_utime(path, date):
-    mtime = time.mktime((tuple(date) + (0,) * 6)[:9])
-    os.utime(path, (mtime, mtime))
 
 
 # ---------------------------------------------------------------------------

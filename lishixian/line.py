@@ -23,7 +23,7 @@ t = lambda arr: list(zip(*arr))
 
 crc = lambda b: '0x%04X' % binascii.crc_hqx(b if isinstance(b, bytes) else open(b, 'rb').read(), 0)
 md5 = lambda b: hashlib.md5(b if isinstance(b, bytes) else open(b, 'rb').read()).hexdigest()
-mask = lambda p: open(p + '.inv', 'wb').write(bytes(255 - b for b in open(p, 'rb').read()))
+inv = lambda p: open(p + '.inv', 'wb').write(bytes(255 - b for b in open(p, 'rb').read()))
 start = lambda func, *args, **kwargs: Thread(target=func, args=args, kwargs=kwargs).start()
 create = lambda file: open(file, 'w').close()
 pprint = lambda *value, file=sys.stdout: print(' '.join(map(str, value)) + '\n', end='', file=file)

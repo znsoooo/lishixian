@@ -38,6 +38,7 @@ setuptools.setup(
     # install_requires=['pkg_name'],
     # extras_requires={'pkg_name': ['pkg_name']},
     license='MIT License',
+    entry_points={'console_scripts': ['{0}={0}.__main__:run'.format(pkg[0])]},
     package_data={'': ['*.*']},
     keywords='lishixian lsx',
 )

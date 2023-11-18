@@ -23,10 +23,12 @@ all = help = None
 from .cls import *
 from .dec import *
 from .new import *
-from .reg import *
 from .line import *
 from .util import *
-from .windll import *
+
+if __import__('platform').system() == 'Windows':
+    from .reg import *
+    from .windll import *
 
 # 3rd-library needed
 from .auto import *

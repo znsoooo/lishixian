@@ -19,7 +19,7 @@ with open('README.md', encoding='u8') as f:
 setuptools.setup(
     name=pkg[0],
     version=version,
-    author='Lishixian(znsoooo)',
+    author='Shixian Li (znsoooo)',
     author_email='lsx7@sina.com',
     description='Lite Software eXtension',
     long_description=long_description,

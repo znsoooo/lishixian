@@ -1,7 +1,8 @@
 :: Update current version to pypi.org
 
+@echo off
 for /f %%a in (VERSION.txt) do (set ver=%%a)
-echo %ver%
+echo Version: %ver%
 
 python -m twine upload dist/lsx-%ver%.tar.gz
 python -m twine upload dist/lishixian-%ver%.tar.gz

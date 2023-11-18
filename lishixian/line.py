@@ -6,6 +6,7 @@ import json
 import uuid
 import random
 import socket
+import struct
 import getpass
 import hashlib
 import binascii
@@ -40,6 +41,11 @@ tuple2item = lambda item: item if len(item) > 1 else item[0]
 unique = lambda arr: sorted(set(arr), key=arr.index)
 flatten = lambda arr: sum(arr[1:], arr[0])
 reshape = lambda arr, width: list(zip(*[iter(arr)]*width))
+
+num2hex = lambda n, fmt='>d': struct.pack(fmt, n).hex()
+hex2num = lambda s, fmt='>d': struct.unpack(fmt, bytes.fromhex(s))[0]
+hex2bin = lambda s: bin(int(s, 16))[2:].zfill(len(s) * 4)
+bin2hex = lambda s: hex(int(s, 2))[2:].zfill(len(s) // 4)
 
 pc_ip = lambda: socket.gethostbyname(socket.gethostname())
 pc_mac = lambda: '-'.join(re.findall('..', uuid.uuid1().hex[-12:].upper()))

@@ -4,6 +4,7 @@ import os
 import re
 import pdb
 import sys
+import random
 import struct
 import itertools
 import subprocess
@@ -21,6 +22,7 @@ _print, print = print, lambda *value, file=sys.stdout: _print(' '.join(map(str, 
 time = lambda start=0: _time() - start
 infinity = itertools.count
 makedirs = partial(os.makedirs, exist_ok=True)
+randbytes = lambda n: bytes(random.randint(0, 255) for i in range(n))
 breakpoint = lambda: pdb.set_trace()
 # open = partial(open, encoding='u8')
 popen = lambda cmd: subprocess.Popen(cmd, -1, None, -1, -1, -1, shell=True).stdout

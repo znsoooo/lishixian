@@ -25,24 +25,38 @@ def main(fn):
     return fn
 
 
-def parser(fn):
+def fn2parser(fn):
     import inspect
     import argparse
-    if '__main__' == inspect.currentframe().f_back.f_globals['__name__']:
-        def convert(var):
-            try:
-                return eval(var)
-            except Exception:
-                return var
-        varnames = fn.__code__.co_varnames
-        defaults = fn.__defaults__
-        defaults = (None,) * (len(varnames) - len(defaults)) + defaults
-        parser = argparse.ArgumentParser()
-        for varname, default in zip(varnames, defaults):
-            parser.add_argument('--' + varname, default=default)
-        opt = parser.parse_args()
-        kwargs = {k: convert(v) for k, v in vars(opt).items()}
-        fn(**kwargs)
+    if '__main__' != inspect.currentframe().f_back.f_globals['__name__']:
+        return fn
+    varnames = fn.__code__.co_varnames
+    defaults = fn.__defaults__ or ()
+    nargs = len(varnames) - len(defaults)
+    parser = argparse.ArgumentParser()
+    for i, varname in enumerate(varnames):
+        help = None if i < nargs else 'default: ' + repr(defaults[i-nargs])
+        parser.add_argument(nargs='?',      dest='pos_' + varname, help=help, metavar=varname)
+        parser.add_argument('--' + varname, dest='key_' + varname, help=help, metavar=varname.upper())
+    opt = parser.parse_args()
+    args = [eval(v) for k, v in vars(opt).items() if k.startswith('p') and v is not None]
+    kwargs = {k[4:]: eval(v) for k, v in vars(opt).items() if k.startswith('k') and v is not None}
+    fn(*args, **kwargs)
+    return fn
+
+
+def fn2input(fn):
+    import inspect
+    if '__main__' != inspect.currentframe().f_back.f_globals['__name__']:
+        return fn
+    varnames = fn.__code__.co_varnames
+    defaults = fn.__defaults__ or ()
+    nargs = len(varnames) - len(defaults)
+    print(fn.__code__.co_name + '(', end='\n' if varnames else '')
+    args = [eval(input('  %s = ' % k)) for k in varnames[:nargs]]
+    kwargs = {k: eval(input('  %s = %s or ' % (k, repr(v))) or 'v') for k, v in zip(varnames[nargs:], defaults)}
+    print(')\n')
+    fn(*args, **kwargs)
     return fn
 
 

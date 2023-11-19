@@ -125,12 +125,11 @@ path_safe = lambda p, repl=None: p.translate({ord(c): urllib.parse.quote_plus(c)
 path_split = lambda p: (os.path.dirname(p), *os.path.splitext(os.path.basename(p)))
 
 
-def path_unique(p, dash='-'):
+def path_unique(p, dash='-', start=2):
     root, ext = os.path.splitext(p)
-    n = 0
     while os.path.exists(p):
-        n += 1
-        p = '%s%s%d%s' % (root, dash, n, ext)
+        p = '%s%s%d%s' % (root, dash, start, ext)
+        start += 1
     return p
 
 
@@ -200,27 +199,9 @@ def findpair(s, p1='(', p2=')', st=0):
             return st + n
 
 
-def bytes_format(data, n=16):
-    '''TEST: bytes_format(bytes(range(128)))'''
-    s = ''.join('\\x%02x' % c for c in data)
-    return "(b'%s')" % "'\n b'".join(s[i:i+n*4] for i in range(0, len(s), n * 4))
-
-
-def bytes_print(data, n=16):
-    print(bytes_format(data, n))
-
-
-def bytes_hex(data, offset=0, length=-1, slice=-1):
-    s = ' '.join('%02X' % c for c in data)
-    s = ['%08X ' % i + s[i*3:(i+16)*3] for i in range(0, len(data), 16)]
-    s = '\n'.join(s)
-    return s
-
-
-def install(path, block=False):
-    p = os.popen('pip install "%s"' % path)
-    if block:
-        return p.read()
+def install(path):
+    import pip
+    pip.main(['install', path])
 
 
 def input_wait(msg):

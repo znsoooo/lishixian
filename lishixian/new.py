@@ -6,23 +6,22 @@ import pdb
 import sys
 import random
 import struct
+import builtins
 import itertools
 import subprocess
 from functools import partial
 from contextlib import suppress
 from time import time as _time
 
-_open = open
-
 
 __all__ = list(globals())
 
 
-_print, print = print, lambda *value, file=sys.stdout: _print(' '.join(map(str, value)) + '\n', end='', file=file)
+print = lambda *value, file=sys.stdout: builtins.print(' '.join(map(str, value)) + '\n', end='', file=file)
 time = lambda start=0: _time() - start
 infinity = itertools.count
 makedirs = partial(os.makedirs, exist_ok=True)
-randbytes = lambda n: bytes(random.randint(0, 255) for i in range(n))
+randbytes = lambda n: builtins.bytes(random.randint(0, 255) for i in range(n))
 breakpoint = lambda: pdb.set_trace()
 # open = partial(open, encoding='u8')
 popen = lambda cmd: subprocess.Popen(cmd, -1, None, -1, -1, -1, shell=True).stdout
@@ -35,7 +34,7 @@ unpack = lambda fmt, string: struct.unpack_from(fmt, string) + (string[struct.ca
 
 def detect(file):
     import chardet
-    with _open(file, 'rb') as f:
+    with builtins.open(file, 'rb') as f:
         b = f.read()
     return chardet.detect(b)['encoding'] or 'utf-8'
 
@@ -54,6 +53,17 @@ def walk(paths='.', exts=''):
                     yield os.path.join(root, file)
 
 
+def bytes(data, width=16):
+    s = ''.join('\\x%02x' % c for c in data)
+    s = "(b'%s')" % "'\n b'".join(s[i: i + width * 4] for i in range(0, len(s), width * 4))
+    return s if len(data) > width else s.strip('()')
+
+
+def memoryview(data, width=16, offset=0):
+    s = ' '.join('%02X' % c for c in data)
+    return '\n'.join('%08X ' % (i + offset) + s[i * 3: (i + width) * 3] for i in range(0, len(data), width))
+
+
 class open:
     def __init__(self, file):
         self.p = file
@@ -62,21 +72,21 @@ class open:
         if not os.path.isfile(self.p):
             return None
         with suppress(UnicodeDecodeError):
-            with _open(self.p, encoding='u8') as f:
+            with builtins.open(self.p, encoding='u8') as f:
                 return f.read()
         with suppress(UnicodeDecodeError):
-            with _open(self.p, encoding='gbk') as f:
+            with builtins.open(self.p, encoding='gbk') as f:
                 return f.read()
-        with _open(self.p, 'rb') as f:
+        with builtins.open(self.p, 'rb') as f:
             return f.read()
 
     def write(self, data, mode='w'):
         root = os.path.dirname(self.p)
         if root and not os.path.exists(root):
             os.makedirs(root)
-        if isinstance(data, bytes):
+        if isinstance(data, builtins.bytes):
             mode += 'b'
-        with _open(self.p, mode, encoding='u8') as f:
+        with builtins.open(self.p, mode, encoding='u8') as f:
             f.write(data)
 
     def append(self, data):

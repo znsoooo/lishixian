@@ -20,21 +20,22 @@ __version__ = '0.2.5'
 all = help = None
 
 # base on built-in library
-from .cls import *
-from .dec import *
 from .new import *
 from .line import *
 from .util import *
+from .dec import *
+from .cls import *
 
+# only work on windows platform
 if __import__('platform').system() == 'Windows':
     from .reg import *
     from .windll import *
 
 # 3rd-library needed
-from .auto import *
 from .doc import *
-from .gui import *
 from .np import *
+from .auto import *
+from .gui import *
 
 
 def all():

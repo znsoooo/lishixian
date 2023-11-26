@@ -30,23 +30,6 @@ lsx.help()
 - all()
 - help()
 
-### Module 'cls'
-- Config(path, section='default', encoding='u8')
-- Thread(target, *args, **kwargs)
-- Tcp(addr, port)
-- Udp(addr, port)
-
-### Module 'dec'
-- main(fn)
-- fn2parser(fn)
-- fn2input(fn)
-- timeit(fn)
-- tracer(fn)
-- protect(fn)
-- surround(before=(), after=())
-- hotkey(key='F12')
-- threads(cnt)
-
 ### Module 'new'
 - print(*value, file=sys.stdout)
 - time(start=0)
@@ -65,13 +48,6 @@ lsx.help()
 - bytes(data, width=16)
 - memoryview(data, width=16, offset=0)
 - open(file)
-
-### Module 'reg'
-- GetDir(name, local=False)
-- DeleteRecu(key)
-- DeleteKey(key, name='')
-- SetKey(key, name='', val='')
-- NewFilePy()
 
 ### Module 'line'
 - s128 = bytes(range(128)).decode()
@@ -137,17 +113,35 @@ lsx.help()
 - Catch(log='log.txt')
 - catch = <Catch object>
 
+### Module 'dec'
+- main(fn)
+- fn2parser(fn)
+- fn2input(fn)
+- timeit(fn)
+- tracer(fn)
+- protect(fn)
+- surround(before=(), after=())
+- hotkey(key='F12')
+- threads(cnt)
+
+### Module 'cls'
+- Config(path, section='default', encoding='u8')
+- Thread(target, *args, **kwargs)
+- Tcp(addr, port)
+- Udp(addr, port)
+
+### Module 'reg'
+- GetDir(name, local=False)
+- DeleteRecu(key)
+- DeleteKey(key, name='')
+- SetKey(key, name='', val='')
+- NewFilePy()
+
 ### Module 'windll'
 - MessageBox(info, title='Message', style=0)
 - DirDialog(message=None)
 - OpenFileDialog(title=None, filter='', path='')
 - SaveFileDialog(title=None, filter='', path='')
-
-### Module 'auto'
-- shortcut(p=None, make=True)
-- copy(word, tab=0)
-- Monitor(func)
-- Recoder(complete=False)
 
 ### Module 'doc'
 - readb(p)
@@ -171,6 +165,19 @@ lsx.help()
 - File2Csv(file, merge_x=True, merge_y=True, strip_x=False)
 - ReadFiles(files, merge_x=True, merge_y=True, strip_x=False)
 
+### Module 'np'
+- imread(file)
+- imwrite(file, im)
+- imshow(img, delay=50, title='')
+- imsave(file)
+- imiter(file_or_id)
+
+### Module 'auto'
+- shortcut(p=None, make=True)
+- copy(word, tab=0)
+- Monitor(func)
+- Recoder(complete=False)
+
 ### Module 'gui'
 - center(top)
 - WrapBox(parent, w, label='')
@@ -178,13 +185,6 @@ lsx.help()
 - SetClipboard(text)
 - Mover(parent, widget)
 - EventThread(parent, id, target=bool, *args, **kwargs)
-
-### Module 'np'
-- imread(file)
-- imwrite(file, im)
-- imshow(img, delay=50, title='')
-- imsave(file)
-- imiter(file_or_id)
 
 
 ## Comment

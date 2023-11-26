@@ -1,3 +1,5 @@
+"""Console Scripts"""
+
 def run():
     import sys
     import inspect

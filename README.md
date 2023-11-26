@@ -1,6 +1,6 @@
 # Lite Software eXtension
 
-Contain 11 modules and 136 functions.
+Contain 11 modules and 134 functions.
 
 
 ## About
@@ -50,26 +50,24 @@ lsx.help()
 - open(file)
 
 ### Module 'line'
-- s128 = bytes(range(128)).decode()
-- s127 = bytes(range(32, 127)).decode()
-- empty(*v, **kv)
+- fake(*v, **kv)
+- start(fn, *v, **kv)
 - freeze(fn, *v, **kv)
-- t(arr)
+- pprint(*value, file=sys.stdout)
 - crc(b)
 - md5(b)
 - inv(p)
-- start(func, *args, **kwargs)
 - create(file)
-- pprint(*value, file=sys.stdout)
-- dumps(data)
-- sort_kv(d, reverse=False)
-- sort_key(d, reverse=False)
-- sort_num(s)
-- str2dict(s)
-- tuple2item(item)
 - unique(arr)
 - flatten(arr)
 - reshape(arr, width)
+- transpose(arr)
+- join(*s, sp='')
+- dumps(data)
+- str2dict(s)
+- sort_kv(d, reverse=False)
+- sort_key(d, reverse=False)
+- sort_num(s)
 - num2hex(n, fmt='>d')
 - hex2num(s, fmt='>d')
 - hex2bin(s)
@@ -77,7 +75,7 @@ lsx.help()
 - pc_ip()
 - pc_mac()
 - pc_user()
-- join(*s, sp='')
+- tuple2item(item)
 
 ### Module 'util'
 - pause()

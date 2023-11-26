@@ -120,9 +120,9 @@ file_mtime = lambda p: time.localtime(os.stat(p).st_mtime)[:6]
 file_ctime = lambda p: time.localtime(os.stat(p).st_ctime)[:6]
 file_utime = lambda p, date: os.utime(p, (time.mktime((tuple(date) + (0,) * 6)[:9]),) * 2)
 
-path_mark = lambda p, mark='.bak': '{0}{2}{1}'.format(*os.path.splitext(p), mark)
+path_mark = lambda p, mark='.bak': '{0}{2}{1}'.format(*(os.path.splitext(p) + (mark,)))
 path_safe = lambda p, repl=None: p.translate({ord(c): urllib.parse.quote_plus(c) if repl is None else repl for c in '\r\n\t\\/:*?"<>|'})
-path_split = lambda p: (os.path.dirname(p), *os.path.splitext(os.path.basename(p)))
+path_split = lambda p: (os.path.dirname(p),) + os.path.splitext(os.path.basename(p))
 
 
 def path_unique(p, dash='-', start=2):

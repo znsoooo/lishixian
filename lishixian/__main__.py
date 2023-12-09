@@ -1,5 +1,6 @@
 """Console Scripts"""
 
+
 def run():
     import sys
     import inspect
@@ -10,7 +11,7 @@ def run():
 
     pkg = __import__
 
-    help = lambda: 'Commands: ' + ' '.join(reversed(funcs))
+    help = lambda: 'Commands: ' + ' '.join(funcs)
     version = lambda: __version__
 
     ip = lambda: pkg('socket').gethostbyname(pkg('socket').gethostname())
@@ -23,6 +24,8 @@ def run():
     create = lambda p: open(p, 'w').close()
     detect = lambda p: pkg('chardet').detect(open(p, 'rb').read())['encoding'] or 'utf-8'
 
+    half2hex = lambda num: pkg('struct').pack('>e', float(num)).hex()
+    hex2half = lambda hex: pkg('struct').unpack('>e', bytes.fromhex(hex))[0]
     float2hex = lambda num: pkg('struct').pack('>f', float(num)).hex()
     hex2float = lambda hex: pkg('struct').unpack('>f', bytes.fromhex(hex))[0]
     double2hex = lambda num: pkg('struct').pack('>d', float(num)).hex()

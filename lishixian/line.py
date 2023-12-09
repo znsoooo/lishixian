@@ -42,15 +42,19 @@ sort_key = lambda d, reverse=False: sorted(d, key=d.__getitem__, reverse=reverse
 sort_num = lambda s: [(s, int(n)) for s, n in re.findall(r'(\D+)(\d+)', 'a%s0' % s)]
 
 # number convert
-num2hex = lambda n, fmt='>d': struct.pack(fmt, n).hex()
-hex2num = lambda s, fmt='>d': struct.unpack(fmt, bytes.fromhex(s))[0]
 hex2bin = lambda s: bin(int(s, 16))[2:].zfill(len(s) * 4)
 bin2hex = lambda s: hex(int(s, 2))[2:].zfill(len(s) // 4)
+half2hex = lambda n: struct.pack('>e', n).hex()
+hex2half = lambda s: struct.unpack('>e', bytes.fromhex(s))[0]
+float2hex = lambda n: struct.pack('>f', n).hex()
+hex2float = lambda s: struct.unpack('>f', bytes.fromhex(s))[0]
+double2hex = lambda n: struct.pack('>d', n).hex()
+hex2double = lambda s: struct.unpack('>d', bytes.fromhex(s))[0]
 
 # pc tools
-pc_ip = lambda: socket.gethostbyname(socket.gethostname())
-pc_mac = lambda: '-'.join(re.findall('..', uuid.uuid1().hex[-12:].upper()))
-pc_user = lambda: getpass.getuser()
+ip = lambda: socket.gethostbyname(socket.gethostname())
+mac = lambda: '-'.join(re.findall('..', uuid.uuid1().hex[-12:].upper()))
+user = lambda: getpass.getuser()
 
 # others
 tuple2item = lambda item: item if len(item) > 1 else item[0]

@@ -33,7 +33,7 @@ def fn2parser(fn):
     varnames = fn.__code__.co_varnames
     defaults = fn.__defaults__ or ()
     nargs = len(varnames) - len(defaults)
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description=fn.__doc__)
     for i, varname in enumerate(varnames):
         help = None if i < nargs else 'default: ' + repr(defaults[i-nargs])
         parser.add_argument(nargs='?',      dest='pos_' + varname, help=help, metavar=varname)

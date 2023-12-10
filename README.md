@@ -1,6 +1,6 @@
 # Lite Software eXtension
 
-Contain 11 modules and 134 functions.
+Contain 11 modules and 138 functions.
 
 
 ## About
@@ -68,13 +68,17 @@ lsx.help()
 - sort_kv(d, reverse=False)
 - sort_key(d, reverse=False)
 - sort_num(s)
-- num2hex(n, fmt='>d')
-- hex2num(s, fmt='>d')
 - hex2bin(s)
 - bin2hex(s)
-- pc_ip()
-- pc_mac()
-- pc_user()
+- half2hex(n)
+- hex2half(s)
+- float2hex(n)
+- hex2float(s)
+- double2hex(n)
+- hex2double(s)
+- ip()
+- mac()
+- user()
 - tuple2item(item)
 
 ### Module 'util'

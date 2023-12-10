@@ -3,7 +3,7 @@
 @echo off
 set python=py -3.6
 
-for /f %%a in (VERSION.txt) do (set ver=%%a)
+for /f %%i in (VERSION.txt) do (set ver=%%i)
 echo Version: %ver%
 
 %python% -m twine upload dist/lsx-%ver%.tar.gz

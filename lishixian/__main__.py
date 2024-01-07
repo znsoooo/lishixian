@@ -2,6 +2,7 @@
 
 
 def run():
+    import os
     import sys
     import inspect
 
@@ -12,7 +13,7 @@ def run():
     pkg = __import__
 
     help = lambda: 'Commands: ' + ' '.join(funcs)
-    version = lambda: __version__
+    version = lambda: '%s %s from "%s" (python %d.%d.%d)' % ((__package__, __version__, os.path.dirname(__file__)) + sys.version_info[:3])
 
     ip = lambda: pkg('socket').gethostbyname(pkg('socket').gethostname())
     mac = lambda: '-'.join(pkg('re').findall('..', pkg('uuid').uuid1().hex[-12:].upper()))

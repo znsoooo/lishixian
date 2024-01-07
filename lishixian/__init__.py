@@ -17,7 +17,7 @@ __version__ = '0.3.1'
 
 
 # top module functions
-all = help = None
+all = help = version = None
 
 # base on built-in library
 from .new import *
@@ -81,6 +81,12 @@ def help():
                 except (TypeError, ValueError) as e:
                     print("- %s = %r" % (k, v))
     print("\nLibrary lishixian-%s contain %d modules and %d functions." % (__version__, n1, n2))
+
+
+def version():
+    import os
+    import sys
+    return '%s %s from "%s" (python %d.%d.%d)' % ((__package__, __version__, os.path.dirname(__file__)) + sys.version_info[:3])
 
 
 __all__ = all()

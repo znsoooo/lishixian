@@ -1,9 +1,11 @@
 """Lambda Functions"""
 
+import os
 import re
 import sys
 import json
 import uuid
+import shutil
 import socket
 import struct
 import getpass
@@ -17,13 +19,13 @@ __all__ = list(globals())
 fake = lambda *v, **kv: None
 start = lambda fn, *v, **kv: Thread(target=fn, args=v, kwargs=kv).start()
 freeze = lambda fn, *v, **kv: (lambda: fn(*v, **kv))
-pprint = lambda *value, file=sys.stdout: print(' '.join(map(str, value)) + '\n', end='', file=file)
 
 # file function
 crc = lambda b: '0x%04X' % binascii.crc_hqx(b if isinstance(b, bytes) else open(b, 'rb').read(), 0)
 md5 = lambda b: hashlib.md5(b if isinstance(b, bytes) else open(b, 'rb').read()).hexdigest()
 inv = lambda p: open(p + '.inv', 'wb').write(bytes(255 - b for b in open(p, 'rb').read()))
-create = lambda file: open(file, 'w').close()
+create = lambda p: os.path.dirname(p) and os.makedirs(os.path.dirname(p), exist_ok=True) or os.path.basename(p) and open(p, 'w').close()
+delete = lambda p: os.remove(p) if os.path.isfile(p) else shutil.rmtree(p) if os.path.isdir(p) else None
 
 # data resort
 unique = lambda arr: sorted(set(arr), key=arr.index)
@@ -34,7 +36,7 @@ transpose = lambda arr: list(zip(*arr))
 # string function
 join = lambda *s, sp='': sp.join(s)
 dumps = lambda data: json.dumps(data, ensure_ascii=False, indent=2)
-str2dict = lambda s: dict(re.findall(r'(.*?):(.*)', s))
+str2dict = lambda s: dict(re.findall(r'(.*?): *(.*)', s))
 
 # sorting
 sort_kv  = lambda d, reverse=False: sorted(d.items(), key=lambda item: item[1], reverse=reverse)

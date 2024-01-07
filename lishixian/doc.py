@@ -37,24 +37,29 @@ def read(file, encoding='u8'):
     if not encoding:
         with open(file, 'rb') as f:
             return f.read()
-    try:
-        with open(file, encoding=encoding) as f:
-            return f.read()
-    except UnicodeDecodeError:
-        with open(file) as f:
-            return f.read()
+    for en in [encoding, 'u8', 'u16', None]:
+        try:
+            with open(file, encoding=en) as f:
+                return f.read()
+        except UnicodeError:
+            pass
+    with open(file, encoding=encoding) as f:
+        return f.read()
 
 
 def write(file, data, encoding='u8'):
     root = os.path.dirname(file)
     if root and not os.path.exists(root):
         os.makedirs(root)
-    if isinstance(data, str):
-        with open(file, 'w', encoding=encoding) as f:
-            f.write(data)
-    else:
+    if isinstance(data, bytes):
         with open(file, 'wb') as f:
             f.write(data)
+    elif isinstance(data, list):
+        with open(file, 'w', encoding=encoding) as f:
+            f.write('\n'.join(map(str, data)))
+    else:
+        with open(file, 'w', encoding=encoding) as f:
+            f.write(str(data))
 
 
 def ReadIni(file, encoding='u8'):
@@ -74,9 +79,14 @@ def WriteIni(file, dic, encoding='u8'):
         p.write(f, False)
 
 
-def WriteTxt(file, data, encoding='utf-8-sig'):
+def ReadTxt(file, encoding='u8', sep=None):
+    with open(file, 'r', encoding=encoding) as f:
+        return [line.split(sep) for line in f.read().splitlines()]
+
+
+def WriteTxt(file, data, encoding='u8', sep=' '):
     with open(file, 'w', encoding=encoding) as f:
-        f.write('\n'.join(','.join(str(cell) for cell in row) for row in data))
+        f.write('\n'.join(sep.join(str(cell) for cell in row) for row in data))
 
 
 def ReadCsv(file, encoding='utf-8-sig'):

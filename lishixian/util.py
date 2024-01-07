@@ -169,8 +169,10 @@ quote = urllib.parse.quote_plus  # quote every word include '/'
 unquote = urllib.parse.unquote
 
 
-def urlopen(url, timeout=5):
-    request = urllib.request.Request(url)
+def urlopen(url, base='', data=None, headers={}, method=None, timeout=10):
+    headers = headers or {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36'}
+    url = urllib.parse.urljoin(base, url)
+    request = urllib.request.Request(url, data, headers, method=method)
     response = urllib.request.urlopen(request, timeout=timeout)
     return response.read()
 

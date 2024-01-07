@@ -17,9 +17,9 @@ from time import time as _time
 __all__ = list(globals())
 
 
-print = lambda *value, file=sys.stdout: builtins.print(' '.join(map(str, value)) + '\n', end='', file=file)
+print = lambda *value, file=True: builtins.print(' '.join(map(str, value)) + '\n', end='', file={True: sys.stdout, False: sys.stderr}.get(file, file))
 time = lambda start=0: _time() - start
-infinity = itertools.count
+loop = itertools.count
 makedirs = partial(os.makedirs, exist_ok=True)
 randbytes = lambda n: builtins.bytes(random.randint(0, 255) for i in range(n))
 breakpoint = lambda: pdb.set_trace()

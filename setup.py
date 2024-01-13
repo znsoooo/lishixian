@@ -1,28 +1,19 @@
-import os
 import shutil
 import setuptools
 
 pkg = setuptools.find_packages()
+pkg_name = pkg[0]
 
-keys = ['readme', 'license', 'todo', 'version']
-os.makedirs(pkg[0] + '/docs', exist_ok=True)
-for file in os.listdir():
-    if any(file.lower().startswith(k) for k in keys):
-        shutil.copy(file, pkg[0] + '/docs/' + file.lower())
-
-with open('VERSION.txt') as f:
-    version = f.read().strip()
-
-with open('README.md', encoding='u8') as f:
-    long_description = f.read()
+shutil.copy('README.md', pkg_name + '/docs/README.md')
+shutil.copy('LICENSE.txt', pkg_name + '/docs/LICENSE.txt')
 
 setuptools.setup(
-    name=pkg[0],
-    version=version,
+    name=pkg_name,
+    version=__import__(pkg_name).__version__,
     author='Shixian Li (znsoooo)',
     author_email='lsx7@sina.com',
     description='Lite Software eXtension',
-    long_description=long_description,
+    long_description=open('README.md', encoding='u8').read(),
     long_description_content_type='text/markdown',
     url='https://github.com/znsoooo/lishixian',
     project_urls={
@@ -38,7 +29,7 @@ setuptools.setup(
     # install_requires=['pkg_name'],
     # extras_requires={'pkg_name': ['pkg_name']},
     license='MIT License',
-    entry_points={'console_scripts': ['{0}={0}.__main__:run'.format(pkg[0])]},
+    entry_points={'console_scripts': ['{0}={0}.__main__:run'.format(pkg_name)]},
     package_data={'': ['*.*']},
     keywords='lishixian lsx',
 )

@@ -13,7 +13,7 @@ License:
 __author__  = 'Shixian Li <lsx7@sina.com>'
 __credits__ = 'https://github.com/znsoooo/lishixian'
 __date__    = '2024'
-__version__ = '0.3.1'
+from .version import __version__
 
 
 # top module functions

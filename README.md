@@ -4,25 +4,49 @@ Contain 11 modules and 144 functions.
 
 
 ## About
+
 - __Author:__ Lishixian
 - __QQ:__ 11313213
 - __Email:__ lsx7@sina.com
 - __Github:__ https://github.com/znsoooo/lishixian
-- __License:__ MIT License. Copyright (c) 2021-2023 Shixian Li (znsoooo). All rights reserved.
+- __License:__ MIT License. Copyright (c) 2021-2024 Shixian Li (znsoooo). All rights reserved.
 
 
 ## Install
+
+Install on pip:
+
 ```bash
 pip install lishixian --upgrade
 ```
 
+Install on Github:
+
+```bash
+git clone https://github.com/znsoooo/lishixian
+cd lishixian
+pip install -e .
+```
+
 
 ## Usage
+
+Use it in Python script:
+
 ```python
 import lishixian as lsx
 lsx.help()
 ```
 
+The package can also be used in console, it takes one or zero parameter:
+
+```bash
+$ lishixian help
+Commands: help version ip mac user crc md5 inv create delete detect half2hex hex2half float2hex hex2float double2hex hex2double escape unescape quote unquote
+
+$ lishixian float2hex 1.0
+3f800000
+```
 
 ## Modules
 
@@ -195,6 +219,6 @@ lsx.help()
 - EventThread(parent, id, target=bool, *args, **kwargs)
 
 
-## Comment
-1. Lib `lsx` is same as `lishixian` in `pypi.org`.
-2. If you **really** need domain `lsx` in `pypi.org`, contact me with `Email`.
+## Extra
+
+- Library [lsx](https://pypi.org/project/lsx) is as same as [lishixian](https://pypi.org/project/lishixian) in [pypi.org](https://pypi.org).

@@ -17,6 +17,7 @@ __all__ = list(globals())
 
 # quick function
 fake = lambda *v, **kv: None
+pause = lambda: input('Press enter to continue: ')
 start = lambda fn, *v, **kv: Thread(target=fn, args=v, kwargs=kv).start()
 freeze = lambda fn, *v, **kv: (lambda: fn(*v, **kv))
 
@@ -35,7 +36,9 @@ transpose = lambda arr: list(zip(*arr))
 
 # string function
 join = lambda *s, sp='': sp.join(s)
+wash = lambda func, arr: [wash(func, v) for v in arr] if isinstance(arr, (list, tuple)) else func(arr)
 dumps = lambda data: json.dumps(data, ensure_ascii=False, indent=2)
+indent = lambda width, text: '\n'.join((' ' * width + line)[min(max(0, -width), len(line) - len(line.lstrip())):].rstrip() for line in text.split('\n')[1:-1])
 str2dict = lambda s: dict(re.findall(r'(.*?): *(.*)', s))
 
 # sorting

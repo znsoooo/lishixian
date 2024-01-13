@@ -16,9 +16,6 @@ __all__ = list(globals())
 # ---------------------------------------------------------------------------
 
 
-pause = lambda: input('Press enter to continue: ')
-
-
 def log(*value, file='log.txt'):
     string = ' '.join(map(str, value)) + '\n'
     header = time.strftime('[%Y-%m-%d %H:%M:%S] ')
@@ -27,13 +24,12 @@ def log(*value, file='log.txt'):
         f.write(header + string)
 
 
-_last = 0
-def progress(*value, interval=1):
-    global _last
-    now = time.time()
-    if interval == 0 or now - _last > interval:
-        _last = now
-        print(*value)
+def sudo():
+    import sys, ctypes
+    if not ctypes.windll.shell32.IsUserAnAdmin():
+        args = ' '.join('"' + arg + '"' for arg in sys.argv)
+        ok = ctypes.windll.shell32.ShellExecuteW(None, 'runas', sys.executable, args, None, 1) > 32
+        exit()
 
 
 def check(obj, patt='.*', stdout=True):
@@ -63,6 +59,36 @@ def check(obj, patt='.*', stdout=True):
             print('\n' + key, end='')
             print(result, file=stdout, end='')
     print()
+
+
+def print_paths():
+    import os, sys, inspect
+    print('\nWORK:\n' + os.getcwd())
+    print('\nPATH:\n' + '\n'.join(sys.path))
+    print('\nFILE:\n' + inspect.currentframe().f_back.f_globals['__file__'])
+    print('\nARGS:\n' + '\n'.join(sys.argv))
+
+
+def print_lines(lines):
+    print('\n'.join(map(str, lines)))
+
+
+def print_table(table):
+    cols = max(len(row) for row in table)
+    table = [[str(cell) for cell in row] + [''] * (cols - len(row)) for row in table]
+    widths = [max(len(item) for item in column) for column in zip(*table)]
+    for row in table:
+        line = [item.ljust(width) for item, width in zip(row, widths)]
+        print(' | '.join(line))
+
+
+_last = 0
+def progress(*value, interval=1):
+    global _last
+    now = time.time()
+    if interval == 0 or now - _last > interval:
+        _last = now
+        print(*value)
 
 
 _fps_n = -1

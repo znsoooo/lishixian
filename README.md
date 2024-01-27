@@ -1,6 +1,6 @@
 # Lite Software eXtension
 
-Contain 11 modules and 144 functions.
+Contain 11 modules and 153 functions.
 
 
 ## About
@@ -116,11 +116,15 @@ $ lishixian float2hex 1.0
 - print_table(table)
 - progress(*value, interval=1)
 - fps()
-- count(value=None, target=None)
+- count(add=1, name='default')
 - recent(iterable, max=0)
 - parser2opt(parser, opt='opt')
-- ext(p)
-- stem(p)
+- p1 = dirname(path, new='')
+- p2 = stem(path)
+- p3 = ext(path)
+- p12 = root(path, new='')
+- p23 = basename(path, new='')
+- p123(path, new='')
 - select(p)
 - file_mtime(p)
 - file_ctime(p)
@@ -135,14 +139,14 @@ $ lishixian float2hex 1.0
 - unescape(s)
 - quote(string, safe='', encoding=None, errors=None)
 - unquote(string, encoding='utf-8', errors='replace')
-- urlopen(url, base='', data=None, headers={}, method=None, timeout=10)
+- urlopen(url, base='', query=None, fragment=None, data=None, headers=None, method=None, retry=1, timeout=10, strict=True)
 - scan(format, string)
-- findpair(s, p1='(', p2=')', st=0)
+- findpair(text, pair='()', start=0)
 - install(path)
 - input_wait(msg)
 - input_default(msg, default)
 - Catch(log='log.txt')
-- catch = <Catch object>
+- catch = \<Catch object\>
 
 ### Module 'dec'
 - main(fn)
@@ -176,7 +180,7 @@ $ lishixian float2hex 1.0
 
 ### Module 'doc'
 - readb(p)
-- read(file, encoding='u8')
+- read(file, encoding='u8', strict=True)
 - write(file, data, encoding='u8')
 - ReadIni(file, encoding='u8')
 - WriteIni(file, dic, encoding='u8')

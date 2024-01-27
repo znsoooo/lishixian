@@ -10,12 +10,6 @@ License:
     Copyright (c) 2021-2023 Shixian Li (znsoooo). All rights reserved.
 """
 
-__author__  = 'Shixian Li <lsx7@sina.com>'
-__credits__ = 'https://github.com/znsoooo/lishixian'
-__date__    = '2024'
-from .version import __version__
-
-
 # top module functions
 all = help = version = None
 
@@ -36,6 +30,12 @@ from .doc import *
 from .np import *
 from .auto import *
 from .gui import *
+
+
+__author__  = 'Shixian Li <lsx7@sina.com>'
+__credits__ = 'https://github.com/znsoooo/lishixian'
+__date__    = '2024'
+from .version import __version__
 
 
 def all():

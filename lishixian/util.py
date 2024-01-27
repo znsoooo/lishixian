@@ -5,7 +5,6 @@ import html
 import time
 import traceback
 import urllib.parse
-import urllib.request
 
 
 __all__ = list(globals())
@@ -63,10 +62,11 @@ def check(obj, patt='.*', stdout=True):
 
 def print_paths():
     import os, sys, inspect
-    print('\nWORK:\n' + os.getcwd())
-    print('\nPATH:\n' + '\n'.join(sys.path))
-    print('\nFILE:\n' + inspect.currentframe().f_back.f_globals['__file__'])
-    print('\nARGS:\n' + '\n'.join(sys.argv))
+    print('\nEXE:\n  ' + sys.executable)
+    print('\nWORK:\n  ' + os.getcwd())
+    print('\nPATH:\n  ' + '\n  '.join(sys.path))
+    print('\nFILE:\n  ' + inspect.currentframe().f_back.f_globals['__file__'])
+    print('\nARGS:\n  ' + '\n  '.join(sys.argv))
 
 
 def print_lines(lines):
@@ -108,12 +108,9 @@ def fps():
 
 
 _count_dict = {}
-def count(value=None, target=None):
-    if value not in _count_dict:
-        _count_dict[value] = 0
-    if target is None or value == target:
-        _count_dict[value] += 1
-    return _count_dict[value]
+def count(add=1, name='default'):
+    _count_dict[name] = _count_dict.get(name, 0) + add
+    return _count_dict[name]
 
 
 def recent(iterable, max=0):
@@ -138,8 +135,13 @@ def parser2opt(parser, opt='opt'):
 # ---------------------------------------------------------------------------
 
 
-ext = lambda p: os.path.splitext(p)[1].lower()
-stem = lambda p: os.path.splitext(os.path.basename(p))[0]
+p1 = dirname = lambda path, new='': os.path.join(os.path.dirname(path), new)
+p2 = stem = lambda path: os.path.splitext(os.path.basename(path))[0]
+p3 = ext = lambda path: os.path.splitext(path)[1].lower()
+p12 = root = lambda path, new='': os.path.splitext(path)[0] + new
+p23 = basename = lambda path, new='': os.path.join(new, os.path.basename(path))
+p123 = lambda path, new='': os.path.splitext(path)[0] + new + os.path.splitext(path)[1]
+
 select = lambda p: os.popen('explorer /select, "%s"' % os.path.abspath(p))
 
 file_mtime = lambda p: time.localtime(os.stat(p).st_mtime)[:6]
@@ -195,12 +197,24 @@ quote = urllib.parse.quote_plus  # quote every word include '/'
 unquote = urllib.parse.unquote
 
 
-def urlopen(url, base='', data=None, headers={}, method=None, timeout=10):
+def urlopen(url, base='', query=None, fragment=None, data=None, headers=None, method=None, retry=1, timeout=10, strict=True):
+    import re, urllib.parse, urllib.request
     headers = headers or {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36'}
     url = urllib.parse.urljoin(base, url)
+    url += '?' + urllib.parse.urlencode(query) if query else ''
+    url += '#' + str(fragment) if fragment else ''
+    data = data.encode() if isinstance(data, str) else data
+    headers = dict(re.findall(r'(.*?):\s*(.*)', headers)) if isinstance(headers, str) else headers
     request = urllib.request.Request(url, data, headers, method=method)
-    response = urllib.request.urlopen(request, timeout=timeout)
-    return response.read()
+    for i in range(retry - 1):
+        try:
+            return urllib.request.urlopen(request, timeout=timeout).read()
+        except Exception:
+            pass
+    try:
+        return urllib.request.urlopen(request, timeout=timeout).read()
+    except UserWarning if strict else Exception:
+        return b''
 
 
 # ---------------------------------------------------------------------------
@@ -218,13 +232,13 @@ def scan(format, string):
     return [fun_map[fmt.lower()](s) for fmt, s in zip(formats, match.groups())]
 
 
-def findpair(s, p1='(', p2=')', st=0):
+def findpair(text, pair='()', start=0):
     n1 = n2 = 0
-    for n, c in enumerate(s[st:]):
-        n1 += c in p1
-        n2 += c in p2
+    for n, c in enumerate(text[start:]):
+        n1 += c in pair[0]
+        n2 += c in pair[1]
         if n1 and n1 == n2:
-            return st + n
+            return start + n
 
 
 def install(path):

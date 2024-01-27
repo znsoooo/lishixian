@@ -2,7 +2,6 @@
 
 import os
 import re
-import sys
 import json
 import uuid
 import shutil
@@ -11,6 +10,7 @@ import struct
 import getpass
 import hashlib
 import binascii
+import textwrap
 from threading import Thread
 
 __all__ = list(globals())
@@ -25,7 +25,7 @@ freeze = lambda fn, *v, **kv: (lambda: fn(*v, **kv))
 crc = lambda b: '0x%04X' % binascii.crc_hqx(b if isinstance(b, bytes) else open(b, 'rb').read(), 0)
 md5 = lambda b: hashlib.md5(b if isinstance(b, bytes) else open(b, 'rb').read()).hexdigest()
 inv = lambda p: open(p + '.inv', 'wb').write(bytes(255 - b for b in open(p, 'rb').read()))
-create = lambda p: os.path.dirname(p) and os.makedirs(os.path.dirname(p), exist_ok=True) or os.path.basename(p) and open(p, 'w').close()
+create = lambda p: os.path.dirname(p) and os.makedirs(os.path.dirname(p), exist_ok=True) or os.path.basename(p) and open(p, 'ab').close()
 delete = lambda p: os.remove(p) if os.path.isfile(p) else shutil.rmtree(p) if os.path.isdir(p) else None
 
 # data resort
@@ -38,8 +38,8 @@ transpose = lambda arr: list(zip(*arr))
 join = lambda *s, sp='': sp.join(s)
 wash = lambda func, arr: [wash(func, v) for v in arr] if isinstance(arr, (list, tuple)) else func(arr)
 dumps = lambda data: json.dumps(data, ensure_ascii=False, indent=2)
-indent = lambda width, text: '\n'.join((' ' * width + line)[min(max(0, -width), len(line) - len(line.lstrip())):].rstrip() for line in text.split('\n')[1:-1])
-str2dict = lambda s: dict(re.findall(r'(.*?): *(.*)', s))
+indent = lambda width, text: textwrap.indent(textwrap.dedent(text)[1:-1], ' ' * width)
+str2dict = lambda s: dict(re.findall(r'(.*?):\s*(.*)', s))
 
 # sorting
 sort_kv  = lambda d, reverse=False: sorted(d.items(), key=lambda item: item[1], reverse=reverse)

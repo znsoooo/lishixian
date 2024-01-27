@@ -33,18 +33,21 @@ __all__ = list(globals())
 readb = lambda p: (lambda f: [f.read(), f.close()][0])(open(p, 'rb'))
 
 
-def read(file, encoding='u8'):
-    if not encoding:
-        with open(file, 'rb') as f:
-            return f.read()
-    for en in [encoding, 'u8', 'u16', None]:
-        try:
-            with open(file, encoding=en) as f:
+def read(file, encoding='u8', strict=True):
+    try:
+        if not encoding:
+            with open(file, 'rb') as f:
                 return f.read()
-        except UnicodeError:
-            pass
-    with open(file, encoding=encoding) as f:
-        return f.read()
+        for en in [encoding, 'u8', 'u16', 'gbk', None]:
+            try:
+                with open(file, encoding=en) as f:
+                    return f.read()
+            except UnicodeError:
+                pass
+        with open(file, encoding=encoding) as f:
+            return f.read()
+    except UserWarning if strict else Exception:
+        return '' if encoding else b''
 
 
 def write(file, data, encoding='u8'):

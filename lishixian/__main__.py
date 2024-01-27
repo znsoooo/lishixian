@@ -22,7 +22,7 @@ def run():
     crc = lambda p: '0x%04X' % pkg('binascii').crc_hqx(open(p, 'rb').read(), 0)
     md5 = lambda p: pkg('hashlib').md5(open(p, 'rb').read()).hexdigest()
     inv = lambda p: open(p + '.inv', 'wb').write(bytes(255 - b for b in open(p, 'rb').read()))
-    create = lambda p: os.path.dirname(p) and os.makedirs(os.path.dirname(p), exist_ok=True) or os.path.basename(p) and open(p, 'w').close()
+    create = lambda p: os.path.dirname(p) and os.makedirs(os.path.dirname(p), exist_ok=True) or os.path.basename(p) and open(p, 'ab').close()
     delete = lambda p: os.remove(p) if os.path.isfile(p) else pkg('shutil').rmtree(p) if os.path.isdir(p) else None
     detect = lambda p: pkg('chardet').detect(open(p, 'rb').read())['encoding'] or 'utf-8'
 
@@ -43,7 +43,7 @@ def run():
     if len(sys.argv) == 1:
         sys.argv.append('help')
     name, *args = sys.argv[1:]
-    print(vars()[name](*args))
+    print(vars()[name](*args) or '')
 
 
 if __name__ == '__main__':

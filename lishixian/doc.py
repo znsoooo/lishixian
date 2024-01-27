@@ -30,75 +30,75 @@ __all__ = list(globals())
 # ---------------------------------------------------------------------------
 
 
-readb = lambda p: (lambda f: [f.read(), f.close()][0])(open(p, 'rb'))
+readb = lambda path: (lambda f: [f.read(), f.close()][0])(open(path, 'rb'))
 
 
-def read(file, encoding='u8', strict=True):
+def read(path, encoding='u8', strict=True):
     try:
         if not encoding:
-            with open(file, 'rb') as f:
+            with open(path, 'rb') as f:
                 return f.read()
         for en in [encoding, 'u8', 'u16', 'gbk', None]:
             try:
-                with open(file, encoding=en) as f:
+                with open(path, encoding=en) as f:
                     return f.read()
             except UnicodeError:
                 pass
-        with open(file, encoding=encoding) as f:
+        with open(path, encoding=encoding) as f:
             return f.read()
     except UserWarning if strict else Exception:
         return '' if encoding else b''
 
 
-def write(file, data, encoding='u8'):
-    root = os.path.dirname(file)
-    if root and not os.path.exists(root):
-        os.makedirs(root)
+def write(path, data, encoding='u8'):
+    folder = os.path.dirname(path)
+    if folder and not os.path.exists(folder):
+        os.makedirs(folder)
     if isinstance(data, bytes):
-        with open(file, 'wb') as f:
+        with open(path, 'wb') as f:
             f.write(data)
     elif isinstance(data, list):
-        with open(file, 'w', encoding=encoding) as f:
+        with open(path, 'w', encoding=encoding) as f:
             f.write('\n'.join(map(str, data)))
     else:
-        with open(file, 'w', encoding=encoding) as f:
+        with open(path, 'w', encoding=encoding) as f:
             f.write(str(data))
 
 
-def ReadIni(file, encoding='u8'):
+def ReadIni(path, encoding='u8'):
     import configparser
-    p = configparser.ConfigParser()
-    p.optionxform = str  # fix opinion can't read key with upper case
-    p.read(file, encoding=encoding)
-    return {s: dict(p.items(s)) for s in p.sections()}
+    parser = configparser.ConfigParser()
+    parser.optionxform = str  # fix opinion can't read key with upper case
+    parser.read(path, encoding=encoding)
+    return {section: dict(parser.items(section)) for section in parser.sections()}
 
 
-def WriteIni(file, dic, encoding='u8'):
+def WriteIni(path, dic, encoding='u8'):
     import configparser
-    p = configparser.ConfigParser()
-    p.optionxform = str  # fix opinion can't read key with upper case
-    p.read_dict(dic)
-    with open(file, 'w', encoding=encoding) as f:
-        p.write(f, False)
+    parser = configparser.ConfigParser()
+    parser.optionxform = str  # fix opinion can't read key with upper case
+    parser.read_dict(dic)
+    with open(path, 'w', encoding=encoding) as f:
+        parser.write(f, False)
 
 
-def ReadTxt(file, encoding='u8', sep=None):
-    with open(file, 'r', encoding=encoding) as f:
+def ReadTxt(path, encoding='u8', sep=None):
+    with open(path, 'r', encoding=encoding) as f:
         return [line.split(sep) for line in f.read().splitlines()]
 
 
-def WriteTxt(file, data, encoding='u8', sep=' '):
-    with open(file, 'w', encoding=encoding) as f:
+def WriteTxt(path, data, encoding='u8', sep=' '):
+    with open(path, 'w', encoding=encoding) as f:
         f.write('\n'.join(sep.join(str(cell) for cell in row) for row in data))
 
 
-def ReadCsv(file, encoding='utf-8-sig'):
-    with open(file, encoding=encoding) as f:
+def ReadCsv(path, encoding='utf-8-sig'):
+    with open(path, encoding=encoding) as f:
         return list(csv.reader(f))
 
 
-def WriteCsv(file, data, encoding='utf-8-sig', errors='ignore'):
-    with open(file, 'w', newline='', encoding=encoding, errors=errors) as f:
+def WriteCsv(path, data, encoding='utf-8-sig', errors='ignore'):
+    with open(path, 'w', newline='', encoding=encoding, errors=errors) as f:
         writer = csv.writer(f)
         writer.writerows(data)
 
@@ -108,21 +108,21 @@ def WriteCsv(file, data, encoding='utf-8-sig', errors='ignore'):
 # ---------------------------------------------------------------------------
 
 
-def WriteExcel(file, data, new_sheet='sheet1'):
+def WriteExcel(path, data, new_sheet='sheet1'):
     import xlwt
     xls = xlwt.Workbook('u8')
     sheet = xls.add_sheet(new_sheet, True)
     for r, row in enumerate(data):
         for c, cell in enumerate(row):
             sheet.write(r, c, cell)
-    xls.save(file)
+    xls.save(path)
 
 
-def OpenExcel(file):
+def OpenExcel(path):
     import xlrd
     import xlutils.filter
 
-    rb = xlrd.open_workbook(file, formatting_info=True)
+    rb = xlrd.open_workbook(path, formatting_info=True)
 
     # 参考xlutils.copy库内的用法 参考xlutils.filter内的参数定义style_list
     w = xlutils.filter.XLWTWriter()
@@ -160,12 +160,12 @@ def MergeCell(data, merge, merge_x=True, merge_y=True, strip_x=False):
     return data2
 
 
-def ReadExcel(file, merge_x=True, merge_y=True, strip_x=False):
+def ReadExcel(path, merge_x=True, merge_y=True, strip_x=False):
     import xlrd
     try:
-        xls = xlrd.open_workbook(file, formatting_info=True)
+        xls = xlrd.open_workbook(path, formatting_info=True)
     except xlrd.biffh.XLRDError:
-        xls = xlrd.open_workbook(file)
+        xls = xlrd.open_workbook(path)
 
     data = []
     for sheet in xls.sheets():
@@ -182,9 +182,9 @@ def ReadExcel(file, merge_x=True, merge_y=True, strip_x=False):
     return data, merge
 
 
-def ReadSheet(file, index=0):
+def ReadSheet(path, index=0):
     import xlrd
-    xls = xlrd.open_workbook(file)
+    xls = xlrd.open_workbook(path)
     sheet = xls.sheet_by_index(index)
     return [list(map(num2str, sheet.row_values(row))) for row in range(sheet.nrows)]
 
@@ -194,23 +194,23 @@ def ReadSheet(file, index=0):
 # ---------------------------------------------------------------------------
 
 
-def Doc2Docx(file, overwrite=False):
-    root, ext = os.path.splitext(file)
-    file2 = root + '.docx.temp'
-    if overwrite or not os.path.exists(file2):
+def Doc2Docx(path, overwrite=False):
+    root, ext = os.path.splitext(path)
+    path2 = root + '.docx.temp'
+    if overwrite or not os.path.exists(path2):
         from win32com import client
         word = client.Dispatch('Word.Application')
-        doc = word.Documents.Open(file)
-        doc.SaveAs(file2, 16)
+        doc = word.Documents.Open(path)
+        doc.SaveAs(path2, 16)
         doc.Close()
-    return file2
+    return path2
 
 
-def OpenDocx(file):
+def OpenDocx(path):
     import docx
     data = []
     merge = []
-    doc = docx.Document(file)
+    doc = docx.Document(path)
     for table in doc.tables:
         cells  = table._cells  # see usage at `docx.table.Table._cells`
         cols   = table._column_count
@@ -240,18 +240,18 @@ def OpenDocx(file):
     return data, merge
 
 
-def ReadWordTexts(file):
+def ReadWordTexts(path):
     import docx
-    if file.endswith('.doc'):
-        file = Doc2Docx(file)
-    doc = docx.Document(file)
+    if path.endswith('.doc'):
+        path = Doc2Docx(path)
+    doc = docx.Document(path)
     return [p.text for p in doc.paragraphs]
 
 
-def ReadWord(file, merge_x=True, merge_y=True, strip_x=False):
-    if file.endswith('.doc'):
-        file = Doc2Docx(file)
-    data, merge = OpenDocx(file)
+def ReadWord(path, merge_x=True, merge_y=True, strip_x=False):
+    if path.endswith('.doc'):
+        path = Doc2Docx(path)
+    data, merge = OpenDocx(path)
     data2 = MergeCell(data, merge, merge_x, merge_y, strip_x)
     return data2
 
@@ -261,28 +261,28 @@ def ReadWord(file, merge_x=True, merge_y=True, strip_x=False):
 # ---------------------------------------------------------------------------
 
 
-def ReadFile(file, merge_x=True, merge_y=True, strip_x=False):
-    ext = os.path.splitext(file)[1]
-    if ext in ('.csv', '.txt'):
-        return ReadCsv(file)
-    elif ext in ('.xls', '.xlsx'):
-        return ReadExcel(file, merge_x, merge_y, strip_x)
-    elif ext in ('.doc', '.docx'):
-        return ReadWord(file, merge_x, merge_y, strip_x)
+def ReadFile(path, merge_x=True, merge_y=True, strip_x=False):
+    ext = os.path.splitext(path)[1]
+    if ext in ['.csv', '.txt']:
+        return ReadCsv(path)
+    elif ext in ['.xls', '.xlsx']:
+        return ReadExcel(path, merge_x, merge_y, strip_x)
+    elif ext in ['.doc', '.docx']:
+        return ReadWord(path, merge_x, merge_y, strip_x)
 
 
-def File2Csv(file, merge_x=True, merge_y=True, strip_x=False):
-    root, ext = os.path.splitext(file)
-    data = ReadFile(file, merge_x, merge_y, strip_x)
+def File2Csv(path, merge_x=True, merge_y=True, strip_x=False):
+    root, ext = os.path.splitext(path)
+    data = ReadFile(path, merge_x, merge_y, strip_x)
     WriteCsv(data, root + '.csv')
     return data
 
 
-def ReadFiles(files, merge_x=True, merge_y=True, strip_x=False):
+def ReadFiles(paths, merge_x=True, merge_y=True, strip_x=False):
     data = []
-    for file in files:
-        path, filename = os.path.split(file)
-        data.extend([[path, filename] + row for row in ReadFile(file, merge_x, merge_y, strip_x)])
+    for path in paths:
+        folder, filename = os.path.split(path)
+        data.extend([[folder, filename] + row for row in ReadFile(path, merge_x, merge_y, strip_x)])
     return data
 
 

@@ -28,9 +28,9 @@ pack = lambda fmt, values: struct.pack(fmt, *values)
 unpack = lambda fmt, string: struct.unpack_from(fmt, string) + (string[struct.calcsize(fmt):],)
 
 
-def detect(file):
+def detect(path):
     import chardet
-    with builtins.open(file, 'rb') as f:
+    with builtins.open(path, 'rb') as f:
         b = f.read()
     return chardet.detect(b)['encoding'] or 'utf-8'
 

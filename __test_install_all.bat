@@ -5,21 +5,21 @@ echo lsx version:
 echo   %ver%
 echo.
 
-echo python version:
+echo python versions:
 py -0
 echo.
 
 pause
 echo.
 
-for /f %%j in ('py -0') do (
+for /f %%i in ('py -0') do (
     echo ====================
     echo.
-    echo pip install on python %%j ...
+    echo pip install on python %%i ...
     echo.
-    py %%j -m pip install dist\lsx-%ver%.tar.gz -U
+    py %%i -m pip install dist\lsx-%ver%.tar.gz -U
     echo.
-    py %%j -c "print('import lsx-%%s on python-%%s' %% (__import__('lsx').__version__, __import__('sys').version.split()[0]))"
+    py %%i -c "print('import lsx-%%s on python-%%s' %% (__import__('lsx').__version__, __import__('sys').version.split()[0]))"
     echo.
 )
 echo ====================

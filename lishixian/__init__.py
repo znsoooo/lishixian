@@ -7,7 +7,7 @@ Usage:
 
 License:
     MIT license.
-    Copyright (c) 2021-2023 Shixian Li (znsoooo). All rights reserved.
+    Copyright (c) 2021-2024 Shixian Li (znsoooo). All rights reserved.
 """
 
 # top module functions

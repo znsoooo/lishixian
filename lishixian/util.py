@@ -3,6 +3,7 @@
 import os
 import html
 import time
+import base64
 import traceback
 import urllib.parse
 
@@ -195,6 +196,8 @@ escape = html.escape
 unescape = html.unescape
 quote = urllib.parse.quote_plus  # quote every word include '/'
 unquote = urllib.parse.unquote
+b64encode = base64.b64encode
+b64decode = lambda s: base64.b64decode(s + '==')
 
 
 def urlopen(url, base='', query=None, fragment=None, data=None, headers=None, method=None, retry=1, timeout=10, strict=True):

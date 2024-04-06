@@ -12,15 +12,15 @@ def imread(file):
     return cv2.imdecode(np.fromfile(file, np.uint8), -1)
 
 
-def imwrite(file, im):
+def imwrite(file, img):
     import cv2
-    cv2.imencode('.jpg', im)[1].tofile(file)
+    cv2.imencode('.jpg', img)[1].tofile(file)
 
 
 def imshow(img, delay=50, title=''): # for test
     import cv2
-    cv2.namedWindow(title)
-    cv2.imshow(title, img)
+    cv2.imshow('', img)
+    cv2.setWindowTitle('', title)
     cv2.waitKey(delay)
 
 

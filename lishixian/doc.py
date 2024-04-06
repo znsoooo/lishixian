@@ -139,20 +139,22 @@ def OpenExcel(path):
 
 
 def MergeCell(data, merge, merge_x=True, merge_y=True, strip_x=False):
+    import copy
     data2 = []
     for sheet_data, sheet_merge in zip(data, merge):
+        sheet_data2 = copy.deepcopy(sheet_data)
         # merge cell
         for r1, r2, c1, c2 in sheet_merge:
             for r in range(r1, r2):
                 for c in range(c1, c2):
                     if (not merge_x and c > c1) or (not merge_y and r > r1):
-                        sheet_data[r][c] = None if strip_x else ''
+                        sheet_data2[r][c] = None if strip_x else ''
                     else:
-                        sheet_data[r][c] = sheet_data[r1][c1]
+                        sheet_data2[r][c] = sheet_data[r1][c1]
         # strip x
         if strip_x:
-            sheet_data = [[cell for cell in row if cell is not None] for row in sheet_data]
-        data2.append(sheet_data)
+            sheet_data2 = [[cell for cell in row if cell is not None] for row in sheet_data2]
+        data2.append(sheet_data2)
         # remove blanks in tail
         # for row in sheet_data:
         #     while len(row) and row[-1] == '':  # Good!
@@ -169,17 +171,15 @@ def ReadExcel(path, merge_x=True, merge_y=True, strip_x=False):
 
     data = []
     for sheet in xls.sheets():
-        sheet_name = sheet.name
         sheet_data = []
         for row in range(sheet.nrows):
-            rows = [sheet_name] + sheet.row_values(row)
-            sheet_data.append(list(map(num2str, rows)))
+            sheet_data.append(list(map(num2str, sheet.row_values(row))))
         data.append(sheet_data)
 
     # only ".xls" type contain merge_info
     merge = [sorted(sheet.merged_cells) for sheet in xls.sheets()]
     data2 = MergeCell(data, merge, merge_x, merge_y, strip_x)
-    return data, merge
+    return data2, merge
 
 
 def ReadSheet(path, index=0):

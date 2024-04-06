@@ -19,7 +19,7 @@ __all__ = list(globals())
 fake = lambda *v, **kv: None
 pause = lambda: input('Press enter to continue: ')
 start = lambda fn, *v, **kv: Thread(target=fn, args=v, kwargs=kv).start()
-freeze = lambda fn, *v, **kv: (lambda: fn(*v, **kv))
+freeze = lambda fn, *v, **kv: (lambda *v2, **kv2: fn(*v, **kv))
 
 # file function
 crc = lambda path: '0x%04X' % binascii.crc_hqx(path if isinstance(path, bytes) else open(path, 'rb').read(), 0)

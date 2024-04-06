@@ -1,6 +1,6 @@
 # Lite Software eXtension
 
-Contain 11 modules and 153 functions.
+Contain 11 modules and 155 functions.
 
 
 ## About
@@ -139,6 +139,8 @@ $ lishixian float2hex 1.0
 - unescape(s)
 - quote(string, safe='', encoding=None, errors=None)
 - unquote(string, encoding='utf-8', errors='replace')
+- b64encode(s)
+- b64decode(s)
 - urlopen(url, base='', query=None, fragment=None, data=None, headers=None, method=None, retry=1, timeout=10, strict=True)
 - scan(format, string)
 - findpair(text, pair='()', start=0)
@@ -203,7 +205,7 @@ $ lishixian float2hex 1.0
 
 ### Module 'np'
 - imread(file)
-- imwrite(file, im)
+- imwrite(file, img)
 - imshow(img, delay=50, title='')
 - imsave(file)
 - imiter(file_or_id)

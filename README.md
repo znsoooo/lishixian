@@ -25,7 +25,7 @@ Install on Github:
 ```bash
 git clone https://github.com/znsoooo/lishixian
 cd lishixian
-pip install -e .
+pip install .
 ```
 
 
@@ -42,7 +42,7 @@ The package can also be used in console, it takes one or zero parameter:
 
 ```bash
 $ lishixian help
-Commands: help version ip mac user crc md5 inv create delete detect half2hex hex2half float2hex hex2float double2hex hex2double escape unescape quote unquote
+Commands: help version ip mac user crc md5 inv create delete detect hex2bin bin2hex half2hex hex2half float2hex hex2float double2hex hex2double escape unescape quote unquote / \ \\
 
 $ lishixian float2hex 1.0
 3f800000

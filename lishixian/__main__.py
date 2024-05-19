@@ -26,6 +26,8 @@ def run():
     delete = lambda p: os.remove(p) if os.path.isfile(p) else pkg('shutil').rmtree(p) if os.path.isdir(p) else None
     detect = lambda p: pkg('chardet').detect(open(p, 'rb').read())['encoding'] or 'utf-8'
 
+    hex2bin = lambda hex: bin(int(hex, 16))[2:].zfill(len(hex) * 4)
+    bin2hex = lambda bin: hex(int(bin, 2))[2:].zfill(len(bin) // 4)
     half2hex = lambda num: pkg('struct').pack('>e', float(num)).hex()
     hex2half = lambda hex: pkg('struct').unpack('>e', bytes.fromhex(hex))[0]
     float2hex = lambda num: pkg('struct').pack('>f', float(num)).hex()
@@ -38,12 +40,20 @@ def run():
     quote = urllib.parse.quote_plus
     unquote = urllib.parse.unquote
 
-    funcs = [k for k, v in vars().copy().items() if inspect.isfunction(v)]
+    funcs = {k: v for k, v in vars().copy().items() if inspect.isfunction(v)}
 
-    if len(sys.argv) == 1:
-        sys.argv.append('help')
-    name, *args = sys.argv[1:]
-    print(vars()[name](*args) or '')
+    funcs['/']    = lambda s: pkg('re').sub(r'[\\/]+', r'/', s)
+    funcs['\\']   = lambda s: pkg('re').sub(r'[\\/]+', r'\\', s)
+    funcs['\\\\'] = lambda s: pkg('re').sub(r'[\\/]+', r'\\\\', s)
+
+    func = funcs[sys.argv[1]] if len(sys.argv) > 1 else help
+    args = sys.argv[2:]
+
+    if args:
+        for arg in args:
+            print(func(arg) or '')
+    else:
+        print(func() or '')
 
 
 if __name__ == '__main__':

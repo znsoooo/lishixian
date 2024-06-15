@@ -18,10 +18,10 @@ __all__ = list(globals())
 
 def log(*value, file='log.txt'):
     string = ' '.join(map(str, value)) + '\n'
-    header = time.strftime('[%Y-%m-%d %H:%M:%S] ')
+    prefix = time.strftime('[%Y-%m-%d %H:%M:%S] ')
     print(string, end='')
     with open(file, 'a', encoding='u8') as f:
-        f.write(header + string)
+        f.write(prefix + string)
 
 
 def sudo():
@@ -264,14 +264,15 @@ class Catch:
     def __enter__(self):
         pass
 
-    def __exit__(self, *args):
-        if any(args):
-            traceback.print_exc()
-            error = traceback.format_exc()
-            tt = time.strftime('[%Y-%m-%d %H:%M:%S] ')
-            with open(self.log, 'a', encoding='u8') as f:
-                f.write(tt + error + '\n')
-        return True
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if not exc_type:
+            return True
+        traceback.print_exc()
+        error = traceback.format_exc()
+        prefix = time.strftime('[%Y-%m-%d %H:%M:%S] ')
+        with open(self.log, 'a', encoding='u8') as f:
+            f.write(prefix + error + '\n')
+        return exc_type is not KeyboardInterrupt
 
 
 catch = Catch()

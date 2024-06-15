@@ -12,14 +12,15 @@ __all__ = list(globals())
 
 def main(fn):
     import inspect
+    import traceback
     if '__main__' == inspect.currentframe().f_back.f_globals['__name__']:
         try:
-            if len(sys.argv) == 1:
-                fn()
-            for v in sys.argv[1:]:
-                fn(v)
-        except Exception:
-            import traceback
+            for arg in sys.argv[1:] or [None]:
+                try:
+                    fn() if arg is None else fn(arg)
+                except Exception:
+                    traceback.print_exc()
+        except KeyboardInterrupt:
             traceback.print_exc()
         input('Press enter to exit: ')
     return fn
@@ -92,7 +93,7 @@ def protect(fn):
     def wrapper(*args, **kwargs):
         try:
             return fn(*args, **kwargs)
-        except Exception as e:
+        except Exception:
             msg = traceback.format_exc()
             print(msg, file=sys.stderr)
             return msg
@@ -136,7 +137,7 @@ def threads(cnt):
             def th():
                 try:
                     fn(*args, **kwargs)
-                except:
+                except Exception:
                     raise
                 finally:
                     counter.release()

@@ -6,29 +6,37 @@ import os
 __all__ = list(globals())
 
 
-def imread(file):
-    import cv2
-    import numpy as np
-    return cv2.imdecode(np.fromfile(file, np.uint8), -1)
+def imread(path):
+    import os, cv2, numpy
+    ext = os.path.splitext(path)[1].lower()
+    data = numpy.fromfile(path, numpy.uint8)
+    img = cv2.imdecode(data, -1) if ext != '.bin' else data
+    assert img is not None, 'File is not a image: "%s"' % path
+    return img
 
 
-def imwrite(file, img):
-    import cv2
-    cv2.imencode('.jpg', img)[1].tofile(file)
+def imwrite(path, img):
+    import os, cv2
+    folder = os.path.dirname(path)
+    if folder and not os.path.exists(folder):
+        os.makedirs(folder)
+    ext = os.path.splitext(path)[1].lower()
+    data = cv2.imencode(ext, img)[1] if ext != '.bin' else img
+    data.tofile(path)
 
 
-def imshow(img, delay=50, title=''): # for test
+def imshow(img, delay=50, title=''):  # for test
     import cv2
     cv2.imshow('', img)
     cv2.setWindowTitle('', title)
     cv2.waitKey(delay)
 
 
-def imsave(file): # for test
+def imsave(path):  # for test
     import cv2
-    folder = os.path.splitext(file)[0]
+    folder = os.path.splitext(path)[0]
     os.makedirs(folder, exist_ok=True)
-    for n, img in enumerate(imiter(file)):
+    for n, img in enumerate(imiter(path)):
         cv2.imwrite('%s/img_%04d.png' % (folder, n), img)
 
 

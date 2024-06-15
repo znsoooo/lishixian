@@ -111,6 +111,12 @@ class Tcp:
     def recv(self, length):
         return self.client.recv(length)
 
+    def sendrecv(self, data, size):
+        return [self.send(data), self.recv(size)][1]
+
+    def recvsend(self, size, data):
+        return [self.recv(size), self.send(data)][0]
+
     def sendlong(self, data):
         data = data.encode() if isinstance(data, str) else data
         assert len(data) < 1 << 32  # max 4GB
@@ -148,6 +154,12 @@ class Udp:
     def recv(self, size):
         data, (self.addr, self.port) = self.s.recvfrom(size)
         return data
+
+    def sendrecv(self, data, size):
+        return [self.send(data), self.recv(size)][1]
+
+    def recvsend(self, size, data):
+        return [self.recv(size), self.send(data)][0]
 
     def sendlong(self, data):
         data = data.encode() if isinstance(data, str) else data

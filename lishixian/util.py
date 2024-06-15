@@ -24,6 +24,37 @@ def log(*value, file='log.txt'):
         f.write(prefix + string)
 
 
+def redirect(file='log.txt', prefix='[%Y-%m-%d %H:%M:%S]'):
+    def log_write(text):
+        nonlocal newline, prefix_last
+        lock.acquire()
+        prefix_text = time.strftime(prefix)
+        prefix_blank = ' ' * len(prefix_text)
+        with open(file, 'a', encoding='u8') as f:
+            for line in text.splitlines(True):
+                if newline:
+                    if prefix_last != prefix_text:
+                        prefix_last = prefix_text
+                        f.write(prefix_text + ' | ')
+                    else:
+                        f.write(prefix_blank + ' | ')
+                f.write(line)
+                newline = line[-1:] in '\r\n'
+        lock.release()
+
+    import sys
+    from threading import Lock
+
+    newline = True
+    prefix_last = None
+    lock = Lock()
+
+    stdout_write = sys.stdout.write
+    stderr_write = sys.stderr.write
+    sys.stdout.write = lambda text: [stdout_write(text), log_write(text)]
+    sys.stderr.write = lambda text: [stderr_write(text), log_write(text)]
+
+
 def sudo():
     import sys, ctypes
     if not ctypes.windll.shell32.IsUserAnAdmin():
@@ -258,8 +289,8 @@ input_default = lambda msg, default: input('input <%s>, keep <%s> press enter: '
 
 
 class Catch:
-    def __init__(self, log='log.txt'):
-        self.log = log
+    def __init__(self):
+        pass
 
     def __enter__(self):
         pass
@@ -268,10 +299,6 @@ class Catch:
         if not exc_type:
             return True
         traceback.print_exc()
-        error = traceback.format_exc()
-        prefix = time.strftime('[%Y-%m-%d %H:%M:%S] ')
-        with open(self.log, 'a', encoding='u8') as f:
-            f.write(prefix + error + '\n')
         return exc_type is not KeyboardInterrupt
 
 

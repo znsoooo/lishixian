@@ -55,11 +55,11 @@ sort_num = lambda text: [(s, int(n)) for s, n in re.findall(r'(\D+)(\d+)', 'a%s0
 # number convert
 hex2bin = lambda hex: bin(int(hex, 16))[2:].zfill(len(hex) * 4)
 bin2hex = lambda bin: hex(int(bin, 2))[2:].zfill(len(bin) // 4)
-half2hex = lambda num: struct.pack('>e', num).hex()
+half2hex = lambda num: struct.pack('>e', float(num)).hex()
 hex2half = lambda hex: struct.unpack('>e', bytes.fromhex(hex))[0]
-float2hex = lambda num: struct.pack('>f', num).hex()
+float2hex = lambda num: struct.pack('>f', float(num)).hex()
 hex2float = lambda hex: struct.unpack('>f', bytes.fromhex(hex))[0]
-double2hex = lambda num: struct.pack('>d', num).hex()
+double2hex = lambda num: struct.pack('>d', float(num)).hex()
 hex2double = lambda hex: struct.unpack('>d', bytes.fromhex(hex))[0]
 
 # pc tools

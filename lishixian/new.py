@@ -9,14 +9,12 @@ import struct
 import builtins
 import itertools
 import subprocess
-from time import time as _time
 
 
 __all__ = list(globals())
 
 
 print = lambda *value, file=True: builtins.print(' '.join(map(str, value)) + '\n', end='', file={True: sys.stdout, False: sys.stderr}.get(file, file))
-time = lambda start=0: _time() - start
 loop = itertools.count
 randbytes = lambda n: builtins.bytes(random.randint(0, 255) for i in range(n))
 breakpoint = lambda: pdb.set_trace()

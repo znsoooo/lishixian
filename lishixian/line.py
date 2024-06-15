@@ -11,6 +11,7 @@ import getpass
 import hashlib
 import binascii
 import textwrap
+from time import strftime
 from threading import Thread
 
 __all__ = list(globals())
@@ -40,6 +41,11 @@ wash = lambda func, arr: [wash(func, v) for v in arr] if isinstance(arr, (list, 
 dumps = lambda data: json.dumps(data, ensure_ascii=False, indent=2)
 indent = lambda width, text: textwrap.indent(textwrap.dedent(text)[1:-1], ' ' * width)
 str2dict = lambda text: dict(re.findall(r'(.*?):\s*(.*)', text))
+
+# time stamp
+time = lambda sep='': strftime('%H{0}%M{0}%S').format(sep)
+date = lambda sep='': strftime('%Y{0}%m{0}%d').format(sep)
+stamp = lambda fmt: strftime(re.sub(r'%(.+?)%', lambda m: re.sub(r'([A-Za-z])', r'%\1', m.group(1)), fmt))  # e.g. stamp('folder/%Ymd_HMS%_68.3%%.txt')
 
 # sorting
 sort_kv  = lambda dic, reverse=False: sorted(dic.items(), key=lambda item: item[1], reverse=reverse)

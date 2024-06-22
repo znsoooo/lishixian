@@ -74,6 +74,7 @@ def check(obj, patt='.*', stdout=True):
     import re
     import sys
     import inspect
+    import traceback
     patt = re.compile(patt)
     stdout = {True: sys.stdout, False: sys.stderr}.get(stdout, stdout)
     print('obj: %r' % obj, end='')
@@ -84,18 +85,14 @@ def check(obj, patt='.*', stdout=True):
         except (TypeError, ValueError):
             pass
         if patt.fullmatch(key):
-            key = '.' + key
+            print('\n.' + key, end='')  # 调用属性可能导致程序退出，所以先打印属性名
             if not callable(attr):
-                result = repr(attr)
-                key += ' = '
+                print(' = ' + repr(attr), file=stdout, end='')
             else:
                 try:
-                    result = repr(attr())
-                    key += ' = '
+                    print(' = ' + repr(attr()), file=stdout, end='')
                 except Exception:
-                    result = ''
-            print('\n' + key, end='')
-            print(result, file=stdout, end='')
+                    print(' = ' + traceback.format_exc(0).strip(), file=stdout, end='')
     print()
 
 

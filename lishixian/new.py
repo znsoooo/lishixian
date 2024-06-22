@@ -22,6 +22,7 @@ popen = lambda cmd: subprocess.Popen(cmd, -1, None, -1, -1, -1, shell=True).stdo
 listdir = lambda *paths: os.listdir(os.path.join(*paths))
 findall = lambda pattern, string, flags=0: [(m.start(), m.end(), m.group()) for m in re.finditer(pattern, string, flags)]
 split = lambda arr, cols: [arr[i:i+cols] for i in range(0, len(arr), cols)]
+sum = lambda seq: ''.join(seq) if isinstance(seq[0], str) else b''.join(seq) if isinstance(seq[0], (builtins.bytes, builtins.bytearray)) else builtins.sum(seq[1:], seq[0])
 pack = lambda fmt, values: struct.pack(fmt, *values)
 unpack = lambda fmt, string: struct.unpack_from(fmt, string) + (string[struct.calcsize(fmt):],)
 

@@ -63,11 +63,26 @@ def sudo():
         exit()
 
 
-def kill_threads():
-    import ctypes, threading
-    for th in threading.enumerate():
-        if th is not threading.main_thread() and th.name != 'SockThread':  # IDLE Thread name is 'SockThread'
-            ctypes.pythonapi.PyThreadState_SetAsyncExc(th.ident, ctypes.py_object(SystemExit))
+def kill(ths=None):
+    import re, ctypes, threading
+    if isinstance(ths, int):  # find as ident
+        ctypes.pythonapi.PyThreadState_SetAsyncExc(ths, ctypes.py_object(SystemExit))
+    elif isinstance(ths, threading.Thread):  # find as Thread object
+        kill(ths.ident)
+    elif isinstance(ths, str):  # find as pattern
+        for th in threading.enumerate():
+            if re.fullmatch(ths, th.name):
+                kill(th.ident)
+    elif isinstance(ths, (list, tuple)):  # iterate finding
+        for th in ths:
+            kill(th)
+    elif ths is None:  # kill all but main
+        main = threading.main_thread()
+        for th in threading.enumerate():
+            if th is not main and th.name != 'SockThread':  # IDLE Thread name is 'SockThread'
+                kill(th.ident)
+    else:
+        raise TypeError(type(ths))
 
 
 def check(obj, patt='.*', stdout=True):

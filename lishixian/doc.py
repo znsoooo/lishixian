@@ -50,11 +50,11 @@ def read(path, encoding='u8', strict=True):
         return '' if encoding else b''
 
 
-def write(path, data, encoding='u8'):
+def write(path, data='', encoding='u8'):
     folder = os.path.dirname(path)
     if folder and not os.path.exists(folder):
         os.makedirs(folder)
-    if isinstance(data, bytes):
+    if isinstance(data, (bytes, bytearray)):
         with open(path, 'wb') as f:
             f.write(data)
     elif isinstance(data, list):

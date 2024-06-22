@@ -21,7 +21,7 @@ def shortcut(p=None, make=True):  # get_path: desktop/programs/startup/...
         os.remove(target)
 
 
-def copy(word, tab=0):
+def paste(word, tab=0):
     import pyautogui
     import pyperclip
     for i in range(tab):

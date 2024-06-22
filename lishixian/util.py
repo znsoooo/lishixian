@@ -63,6 +63,13 @@ def sudo():
         exit()
 
 
+def kill_threads():
+    import ctypes, threading
+    for th in threading.enumerate():
+        if th is not threading.main_thread() and th.name != 'SockThread':  # IDLE Thread name is 'SockThread'
+            ctypes.pythonapi.PyThreadState_SetAsyncExc(th.ident, ctypes.py_object(SystemExit))
+
+
 def check(obj, patt='.*', stdout=True):
     import re
     import sys

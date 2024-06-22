@@ -200,6 +200,32 @@ def path_unique(path, dash='-', start=2):
     return path
 
 
+def copy(src, dst, overwrite=True):
+    import os, shutil
+    osp = os.path
+    os.makedirs(dst if osp.isdir(src) else osp.dirname(dst), exist_ok=True)
+    if osp.isdir(src):
+        for name in os.listdir(src):
+            copy(osp.join(src, name), osp.join(dst, name), overwrite)
+    elif overwrite or not osp.exists(dst):
+        shutil.copy2(src, dst)
+
+
+def move(src, dst, overwrite=True):
+    import os
+    osp = os.path
+    os.makedirs(dst if osp.isdir(src) else osp.dirname(dst), exist_ok=True)
+    if osp.isdir(src):
+        for name in os.listdir(src):
+            move(osp.join(src, name), osp.join(dst, name), overwrite)
+        if not os.listdir(src):
+            os.rmdir(src)
+    elif overwrite or not osp.exists(dst):
+        if osp.exists(dst):
+            os.remove(dst)
+        os.rename(src, dst)
+
+
 # ---------------------------------------------------------------------------
 # Math
 # ---------------------------------------------------------------------------

@@ -278,12 +278,12 @@ b64decode = lambda s: base64.b64decode(s + '==')
 
 def urlopen(url, base='', query=None, fragment=None, data=None, headers=None, method=None, retry=1, timeout=10, strict=True):
     import re, urllib.parse, urllib.request
-    headers = headers or {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36'}
     url = urllib.parse.urljoin(base, url)
     url += '?' + urllib.parse.urlencode(query) if query else ''
     url += '#' + str(fragment) if fragment else ''
     data = data.encode() if isinstance(data, str) else data
-    headers = dict(re.findall(r'(.*?):\s*(.*)', headers)) if isinstance(headers, str) else headers
+    headers = headers or {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36'}
+    headers = dict(re.findall(r'^\s*(.*?)\s*:\s*(.*?)\s*$', headers, re.M)) if isinstance(headers, str) else headers
     request = urllib.request.Request(url, data, headers, method=method)
     for i in range(retry - 1):
         try:

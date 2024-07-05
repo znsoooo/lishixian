@@ -40,7 +40,7 @@ join = lambda *string, sep='': sep.join(string)
 wash = lambda func, arr: [wash(func, v) for v in arr] if isinstance(arr, (list, tuple)) else func(arr)
 dumps = lambda data: json.dumps(data, ensure_ascii=False, indent=2)
 indent = lambda width, text: textwrap.indent(textwrap.dedent(text)[1:-1], ' ' * width)
-str2dict = lambda text: dict(re.findall(r'(.*?):\s*(.*)', text))
+str2dict = lambda text: dict(re.findall(r'^\s*(.*?)\s*:\s*(.*?)\s*$', text, re.M))
 
 # time stamp
 time = lambda sep='': strftime('%H{0}%M{0}%S').format(sep)

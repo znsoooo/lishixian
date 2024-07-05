@@ -1,6 +1,6 @@
 # Lite Software eXtension
 
-Contain 11 modules and 155 functions.
+Contain 11 modules and 162 functions.
 
 
 ## About
@@ -42,7 +42,7 @@ The package can also be used in console, it takes one or zero parameter:
 
 ```bash
 $ lishixian help
-Commands: help version ip mac user crc md5 inv create delete detect hex2bin bin2hex half2hex hex2half float2hex hex2float double2hex hex2double escape unescape quote unquote / \ \\
+Commands: help version ip mac user crc md5 inv create delete detect escape unescape quote unquote hex2bin bin2hex hex2half half2hex hex2float float2hex hex2double double2hex / \ \\
 
 $ lishixian float2hex 1.0
 3f800000
@@ -57,7 +57,6 @@ $ lishixian float2hex 1.0
 
 ### Module 'new'
 - print(*value, file=True)
-- time(start=0)
 - loop(start=0, step=1)
 - randbytes(n)
 - breakpoint()
@@ -65,6 +64,7 @@ $ lishixian float2hex 1.0
 - listdir(*paths)
 - findall(pattern, string, flags=0)
 - split(arr, cols)
+- sum(seq)
 - pack(fmt, values)
 - unpack(fmt, string)
 - detect(path)
@@ -91,6 +91,9 @@ $ lishixian float2hex 1.0
 - dumps(data)
 - indent(width, text)
 - str2dict(text)
+- time(sep='')
+- date(sep='')
+- stamp(fmt)
 - sort_kv(dic, reverse=False)
 - sort_key(dic, reverse=False)
 - sort_num(text)
@@ -109,7 +112,9 @@ $ lishixian float2hex 1.0
 
 ### Module 'util'
 - log(*value, file='log.txt')
+- redirect(file='log.txt', prefix='[%Y-%m-%d %H:%M:%S]')
 - sudo()
+- kill(ths=None)
 - check(obj, patt='.*', stdout=True)
 - print_paths()
 - print_lines(lines)
@@ -133,6 +138,8 @@ $ lishixian float2hex 1.0
 - path_safe(path, repl=None)
 - path_split(path)
 - path_unique(path, dash='-', start=2)
+- copy(src, dst, overwrite=True)
+- move(src, dst, overwrite=True)
 - factorize(num)
 - primes(max)
 - escape(s, quote=True)
@@ -147,7 +154,7 @@ $ lishixian float2hex 1.0
 - install(path)
 - input_wait(msg)
 - input_default(msg, default)
-- Catch(log='log.txt')
+- Catch()
 - catch = \<Catch object\>
 
 ### Module 'dec'
@@ -183,7 +190,7 @@ $ lishixian float2hex 1.0
 ### Module 'doc'
 - readb(path)
 - read(path, encoding='u8', strict=True)
-- write(path, data, encoding='u8')
+- write(path, data='', encoding='u8')
 - ReadIni(path, encoding='u8')
 - WriteIni(path, dic, encoding='u8')
 - ReadTxt(path, encoding='u8', sep=None)
@@ -204,15 +211,15 @@ $ lishixian float2hex 1.0
 - ReadFiles(paths, merge_x=True, merge_y=True, strip_x=False)
 
 ### Module 'np'
-- imread(file)
-- imwrite(file, img)
+- imread(path)
+- imwrite(path, img)
 - imshow(img, delay=50, title='')
-- imsave(file)
+- imsave(path)
 - imiter(file_or_id)
 
 ### Module 'auto'
 - shortcut(p=None, make=True)
-- copy(word, tab=0)
+- paste(word, tab=0)
 - Monitor(func)
 - Recoder(complete=False)
 

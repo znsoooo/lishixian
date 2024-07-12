@@ -31,7 +31,7 @@ delete = lambda path: os.remove(path) if os.path.isfile(path) else shutil.rmtree
 
 # data resort
 unique = lambda arr: sorted(set(arr), key=arr.index)
-flatten = lambda arr: arr if all(not isinstance(one, (list, tuple)) for one in arr) else flatten(sum([one if isinstance(one, (list, tuple)) else [one] for one in arr], []))
+flatten = lambda arr: flatten(sum([list(one) if isinstance(one, (list, tuple)) else [one] for one in arr], [])) if any(isinstance(one, (list, tuple)) for one in arr) else arr
 reshape = lambda arr, width: list(zip(*[iter(arr)]*width))
 transpose = lambda arr: list(zip(*arr))
 

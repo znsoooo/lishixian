@@ -18,7 +18,7 @@ print = lambda *value, file=True: builtins.print(' '.join(map(str, value)) + '\n
 loop = itertools.count
 randbytes = lambda n: builtins.bytes(random.randint(0, 255) for i in range(n))
 breakpoint = lambda: pdb.set_trace()
-popen = lambda cmd: subprocess.Popen(cmd, -1, None, -1, -1, -1, shell=True).stdout
+popen = lambda cmd: subprocess.Popen(cmd, -1, None, -1, -1, -2, shell=True).stdout
 listdir = lambda *paths: os.listdir(os.path.join(*paths))
 findall = lambda pattern, string, flags=0: [(m.start(), m.end(), m.group()) for m in re.finditer(pattern, string, flags)]
 split = lambda arr, cols: [arr[i:i+cols] for i in range(0, len(arr), cols)]

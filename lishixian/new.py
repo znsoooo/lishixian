@@ -4,6 +4,7 @@ import os
 import re
 import pdb
 import sys
+import locale
 import random
 import struct
 import builtins
@@ -18,7 +19,7 @@ print = lambda *value, file=True: builtins.print(' '.join(map(str, value)) + '\n
 loop = itertools.count
 randbytes = lambda n: builtins.bytes(random.randint(0, 255) for i in range(n))
 breakpoint = lambda: pdb.set_trace()
-popen = lambda cmd, encoding='gbk': subprocess.Popen(cmd, stdout=-1, stderr=-2, shell=True, encoding=encoding).stdout.read()
+popen = lambda cmd, encoding=None: subprocess.Popen(cmd, stdout=-1, stderr=-2, shell=True, encoding=encoding or locale.getpreferredencoding(False)).stdout.read()
 listdir = lambda *paths: os.listdir(os.path.join(*paths))
 findall = lambda pattern, string, flags=0: [(m.start(), m.end(), m.group()) for m in re.finditer(pattern, string, flags)]
 split = lambda arr, cols: [arr[i:i+cols] for i in range(0, len(arr), cols)]
@@ -27,14 +28,15 @@ pack = lambda fmt, values: struct.pack(fmt, *values)
 unpack = lambda fmt, string: struct.unpack_from(fmt, string) + (string[struct.calcsize(fmt):],)
 
 
-def system(cmd, encoding='gbk'):
-    import sys, threading, subprocess
+def system(cmd, encoding=None):
+    import sys, locale, builtins, threading, subprocess
 
     def pipe_print(pipe, file):
         for line in iter(pipe.readline, ''):
             builtins.print(line, end='', file=file)
         pipe.close()
 
+    encoding = encoding or locale.getpreferredencoding(False)
     pipe = subprocess.Popen(cmd, stdout=-1, stderr=-1, shell=True, encoding=encoding)
     th1 = threading.Thread(target=pipe_print, args=(pipe.stdout, sys.stdout))
     th2 = threading.Thread(target=pipe_print, args=(pipe.stderr, sys.stderr))

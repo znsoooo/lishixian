@@ -1,6 +1,6 @@
 # Lite Software eXtension
 
-Contain 11 modules and 162 functions.
+Contain 11 modules and 163 functions.
 
 
 ## About
@@ -60,13 +60,14 @@ $ lishixian float2hex 1.0
 - loop(start=0, step=1)
 - randbytes(n)
 - breakpoint()
-- popen(cmd)
+- popen(cmd, encoding=None)
 - listdir(*paths)
 - findall(pattern, string, flags=0)
 - split(arr, cols)
 - sum(seq)
 - pack(fmt, values)
 - unpack(fmt, string)
+- system(cmd, encoding=None)
 - detect(path)
 - walk(paths='.', exts='')
 - bytes(data, width=16)

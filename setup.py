@@ -1,5 +1,10 @@
+import os
+import sys
 import shutil
 import setuptools
+
+# fix to import module in current directory (cwd not include in sys.path in embedded python)
+sys.path.insert(0, os.getcwd())
 
 pkg = setuptools.find_packages()
 pkg_name = pkg[0]

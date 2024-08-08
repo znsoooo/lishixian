@@ -164,11 +164,12 @@ def count(add=1, name='default'):
     return _count_dict[name]
 
 
-def recent(iterable, max=0):
+def recent(iterable, max=0, strict=False):
     history = []
     for item in iterable:
         history.append(item)
-        yield history
+        if not strict or len(history) == max:
+            yield tuple(history)
         if len(history) == max:
             history.pop(0)
 

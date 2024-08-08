@@ -166,7 +166,8 @@ def ReadExcel(path, merge_x=True, merge_y=True, strip_x=False):
     import xlrd
     try:
         xls = xlrd.open_workbook(path, formatting_info=True)
-    except xlrd.biffh.XLRDError:
+    except Exception:
+        # Read ".xlsx" file need use xlrd-1.2.0
         xls = xlrd.open_workbook(path)
 
     data = []
@@ -200,8 +201,8 @@ def Doc2Docx(path, overwrite=False):
     if overwrite or not os.path.exists(path2):
         from win32com import client
         word = client.Dispatch('Word.Application')
-        doc = word.Documents.Open(path)
-        doc.SaveAs(path2, 16)
+        doc = word.Documents.Open(os.path.abspath(path))
+        doc.SaveAs(os.path.abspath(path2), 16)
         doc.Close()
     return path2
 

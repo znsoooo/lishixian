@@ -86,28 +86,23 @@ def kill(ths=None):
 
 
 def check(obj, patt='.*', stdout=True):
-    import re
-    import sys
-    import inspect
-    import traceback
+    import re, sys, inspect, traceback
     patt = re.compile(patt)
     stdout = {True: sys.stdout, False: sys.stderr}.get(stdout, stdout)
     print('obj: %r' % obj, end='')
     for key in sorted(dir(obj)):
-        attr = getattr(obj, key)
-        try:
-            key += str(inspect.signature(attr))
-        except (TypeError, ValueError):
-            pass
         if patt.fullmatch(key):
-            print('\n.' + key, end='')  # 调用属性可能导致程序退出，所以先打印属性名
-            if not callable(attr):
-                print(' = ' + repr(attr), file=stdout, end='')
-            else:
+            print('\n.' + key, end='')
+            try:
+                attr = getattr(obj, key)  # getter might raise error
                 try:
-                    print(' = ' + repr(attr()), file=stdout, end='')
+                    print(inspect.signature(attr), end='')
                 except Exception:
-                    print(' = ' + traceback.format_exc(0).strip(), file=stdout, end='')
+                    pass
+                result = repr(attr() if callable(attr) else attr)
+            except Exception:
+                result = traceback.format_exc(0).strip()
+            print(' = ' + result, file=stdout, end='')
     print()
 
 
@@ -133,19 +128,33 @@ def print_table(table):
         print(' | '.join(line))
 
 
-_last = 0
+_clock_start = None
+def clock():
+    global _clock_start
+    if _clock_start is None:
+        _clock_start = time.time()
+    return time.time() - _clock_start
+
+
+_timer_last = time.time()
+def timer():
+    global _timer_last
+    _timer_last2, _timer_last = _timer_last, time.time()
+    return _timer_last - _timer_last2
+
+
+_progress_last = 0
 def progress(*value, interval=1):
-    global _last
+    global _progress_last
     now = time.time()
-    if interval == 0 or now - _last > interval:
-        _last = now
+    if interval == 0 or now - _progress_last > interval:
+        _progress_last = now
         print(*value)
 
 
 _fps_n = -1
 _fps_t1 = 0
 def fps():
-    import time
     global _fps_n, _fps_t1
     _fps_n += 1
     fps_t2 = time.time()

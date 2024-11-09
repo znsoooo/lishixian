@@ -30,7 +30,7 @@ __all__ = list(globals())
 # ---------------------------------------------------------------------------
 
 
-readb = lambda path: (lambda f: [f.read(), f.close()][0])(open(path, 'rb'))
+readb = lambda path, size=-1: (lambda f: [f.read(size), f.close()][0])(open(path, 'rb'))
 
 
 def read(path, encoding='u8', strict=True):
@@ -57,9 +57,13 @@ def write(path, data='', encoding='u8'):
     if isinstance(data, (bytes, bytearray)):
         with open(path, 'wb') as f:
             f.write(data)
-    elif isinstance(data, list):
-        with open(path, 'w', encoding=encoding) as f:
-            f.write('\n'.join(map(str, data)))
+    elif isinstance(data, (list, tuple)):
+        if all(isinstance(v, (bytes, bytearray)) for v in data):
+            with open(path, 'wb') as f:
+                f.write(b''.join(data))
+        else:
+            with open(path, 'w', encoding=encoding) as f:
+                f.write('\n'.join(map(str, data)))
     else:
         with open(path, 'w', encoding=encoding) as f:
             f.write(str(data))

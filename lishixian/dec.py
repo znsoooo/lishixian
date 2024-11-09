@@ -31,14 +31,15 @@ def fn2parser(fn):
     import argparse
     if '__main__' != inspect.currentframe().f_back.f_globals['__name__']:
         return fn
-    varnames = fn.__code__.co_varnames
-    defaults = fn.__defaults__ or ()
+    spec = inspect.getfullargspec(fn)
+    varnames = spec.args + spec.kwonlyargs
+    defaults = list(spec.defaults) + [spec.kwonlydefaults[arg] for arg in spec.kwonlyargs]
     nargs = len(varnames) - len(defaults)
     parser = argparse.ArgumentParser(description=fn.__doc__)
     for i, varname in enumerate(varnames):
-        help = None if i < nargs else 'default: ' + repr(defaults[i-nargs])
-        parser.add_argument(nargs='?',      dest='pos_' + varname, help=help, metavar=varname)
-        parser.add_argument('--' + varname, dest='key_' + varname, help=help, metavar=varname.upper())
+        help = None if i < nargs else '[default: %r]' % defaults[i-nargs]
+        parser.add_argument(nargs='?', dest='pos_' + varname, help=help, metavar=varname)
+        parser.add_argument('--' + varname.replace('_', '-'), dest='key_' + varname, help=help, metavar=varname.upper())
     opt = parser.parse_args()
     args = [eval(v) for k, v in vars(opt).items() if k.startswith('p') and v is not None]
     kwargs = {k[4:]: eval(v) for k, v in vars(opt).items() if k.startswith('k') and v is not None}
@@ -50,8 +51,9 @@ def fn2input(fn):
     import inspect
     if '__main__' != inspect.currentframe().f_back.f_globals['__name__']:
         return fn
-    varnames = fn.__code__.co_varnames
-    defaults = fn.__defaults__ or ()
+    spec = inspect.getfullargspec(fn)
+    varnames = spec.args + spec.kwonlyargs
+    defaults = list(spec.defaults) + [spec.kwonlydefaults[arg] for arg in spec.kwonlyargs]
     nargs = len(varnames) - len(defaults)
     print(fn.__code__.co_name + '(', end='\n' if varnames else '')
     args = [eval(input('  %s = ' % k)) for k in varnames[:nargs]]

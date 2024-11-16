@@ -1,3 +1,3 @@
-@ pip config set install.no-index true
-@ pip config set install.find-links %cd%
+@ pip config set global.no-index true
+@ pip config set global.find-links "%cd%"
 @ pause

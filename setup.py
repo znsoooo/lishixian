@@ -6,11 +6,19 @@ import setuptools
 # fix to import module in current directory (cwd not include in sys.path in embedded python)
 sys.path.insert(0, os.getcwd())
 
-pkg = setuptools.find_packages()
-pkg_name = pkg[0]
+# setup packages names
+pkg_name = setuptools.find_packages()[0]
+pkgs = [pkg_name, pkg_name + '.docs', pkg_name + '.scripts']
 
+# clean up last run
+shutil.rmtree(pkg_name + '/docs', ignore_errors=True)
+shutil.rmtree(pkg_name + '/scripts', ignore_errors=True)
+
+# prepare files
+os.makedirs(pkg_name + '/docs')
 shutil.copy('README.md', pkg_name + '/docs/README.md')
 shutil.copy('LICENSE.txt', pkg_name + '/docs/LICENSE.txt')
+shutil.copytree('scripts', pkg_name + '/scripts')
 
 setuptools.setup(
     name=pkg_name,
@@ -29,7 +37,7 @@ setuptools.setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
     ],
-    packages=pkg,
+    packages=pkgs,
 
     # install_requires=['pkg_name'],
     # extras_requires={'pkg_name': ['pkg_name']},
@@ -38,3 +46,7 @@ setuptools.setup(
     package_data={'': ['*.*']},
     keywords='lishixian lsx',
 )
+
+# clean up
+shutil.rmtree(pkg_name + '/docs', ignore_errors=True)
+shutil.rmtree(pkg_name + '/scripts', ignore_errors=True)

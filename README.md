@@ -1,6 +1,6 @@
 # Lite Software eXtension
 
-Contain 11 modules and 163 functions.
+Contain 11 modules and 165 functions.
 
 
 ## About
@@ -120,10 +120,12 @@ $ lishixian float2hex 1.0
 - print_paths()
 - print_lines(lines)
 - print_table(table)
+- clock()
+- timer()
 - progress(*value, interval=1)
 - fps()
 - count(add=1, name='default')
-- recent(iterable, max=0)
+- recent(iterable, max=0, strict=False)
 - parser2opt(parser, opt='opt')
 - p1 = dirname(path, new='')
 - p2 = stem(path)
@@ -189,7 +191,7 @@ $ lishixian float2hex 1.0
 - SaveFileDialog(title=None, filter='', path='')
 
 ### Module 'doc'
-- readb(path)
+- readb(path, size=-1)
 - read(path, encoding='u8', strict=True)
 - write(path, data='', encoding='u8')
 - ReadIni(path, encoding='u8')

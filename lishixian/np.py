@@ -18,8 +18,7 @@ def imread(path):
 def imwrite(path, img):
     import os, cv2
     folder = os.path.dirname(path)
-    if folder and not os.path.exists(folder):
-        os.makedirs(folder)
+    folder and os.makedirs(folder, exist_ok=True)
     ext = os.path.splitext(path)[1].lower()
     data = cv2.imencode(ext, img)[1] if ext != '.bin' else img
     data.tofile(path)
@@ -32,12 +31,13 @@ def imshow(img, delay=50, title=''):  # for test
     cv2.waitKey(delay)
 
 
-def imsave(path):  # for test
-    import cv2
+def imsave(path, start=0, step=1, stop=float('inf')):  # for test
     folder = os.path.splitext(path)[0]
-    os.makedirs(folder, exist_ok=True)
     for n, img in enumerate(imiter(path)):
-        cv2.imwrite('%s/img_%04d.png' % (folder, n), img)
+        if n >= stop:
+            return
+        if n >= start and (n - start) % step == 0:
+            imwrite('%s/img_%05d.png' % (folder, n), img)
 
 
 def imiter(file_or_id):

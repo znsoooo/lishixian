@@ -129,18 +129,21 @@ def print_table(table):
 
 
 _clock_start = None
-def clock():
+def clock(reset=False):
     global _clock_start
-    if _clock_start is None:
+    if _clock_start is None or reset:
         _clock_start = time.time()
     return time.time() - _clock_start
 
 
-_timer_last = time.time()
-def timer():
-    global _timer_last
-    _timer_last2, _timer_last = _timer_last, time.time()
-    return _timer_last - _timer_last2
+_timer_start = _timer_end = time.time()
+def timer(reset=True):
+    global _timer_start, _timer_end
+    _timer_end = time.time()
+    ret = _timer_end - _timer_start
+    if reset:
+        _timer_start = _timer_end
+    return ret
 
 
 _progress_last = 0

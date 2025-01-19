@@ -1,6 +1,6 @@
 # Lite Software eXtension
 
-Contain 11 modules and 165 functions.
+Contain 11 modules and 166 functions.
 
 
 ## About
@@ -9,7 +9,7 @@ Contain 11 modules and 165 functions.
 - __QQ:__ 11313213
 - __Email:__ lsx7@sina.com
 - __Github:__ https://github.com/znsoooo/lishixian
-- __License:__ MIT License. Copyright (c) 2021-2024 Shixian Li (znsoooo). All rights reserved.
+- __License:__ MIT License. Copyright (c) 2021-2025 Shixian Li (znsoooo). All rights reserved.
 
 
 ## Install
@@ -117,11 +117,12 @@ $ lishixian float2hex 1.0
 - sudo()
 - kill(ths=None)
 - check(obj, patt='.*', stdout=True)
+- imports(path)
 - print_paths()
 - print_lines(lines)
 - print_table(table)
-- clock()
-- timer()
+- clock(reset=False)
+- timer(reset=True)
 - progress(*value, interval=1)
 - fps()
 - count(add=1, name='default')
@@ -165,11 +166,11 @@ $ lishixian float2hex 1.0
 - fn2parser(fn)
 - fn2input(fn)
 - timeit(fn)
-- tracer(fn)
+- trace(fn)
 - protect(fn)
 - surround(before=(), after=())
 - hotkey(key='F12')
-- threads(cnt)
+- threads(cnt=-1, order=True)
 
 ### Module 'cls'
 - Config(path, section='default', encoding='u8')
@@ -217,7 +218,7 @@ $ lishixian float2hex 1.0
 - imread(path)
 - imwrite(path, img)
 - imshow(img, delay=50, title='')
-- imsave(path)
+- imsave(path, start=0, step=1, stop=inf)
 - imiter(file_or_id)
 
 ### Module 'auto'

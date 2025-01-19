@@ -106,6 +106,16 @@ def check(obj, patt='.*', stdout=True):
     print()
 
 
+def imports(path):
+    import os, sys, importlib.util
+    name = os.path.splitext(os.path.basename(path))[0]
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
 def print_paths():
     import os, sys, inspect
     print('\nEXE:\n  ' + sys.executable)

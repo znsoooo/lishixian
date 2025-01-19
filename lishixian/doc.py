@@ -63,7 +63,7 @@ def write(path, data='', encoding='u8'):
                 f.write(b''.join(data))
         else:
             with open(path, 'w', encoding=encoding) as f:
-                f.write('\n'.join(map(str, data)))
+                f.write('\n'.join(map(str, data)) + '\n')
     else:
         with open(path, 'w', encoding=encoding) as f:
             f.write(str(data))

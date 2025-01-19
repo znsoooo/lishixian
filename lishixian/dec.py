@@ -66,26 +66,26 @@ def fn2input(fn):
 def timeit(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
-        s = time.time()
+        t1 = time.time()
         ret = fn(*args, **kwargs)
-        e = time.time()
-        print('Running <%s>: %.4f' % (fn.__name__, e - s))
+        t2 = time.time()
+        print("finished '%s' in %.4fs" % (fn.__name__, t2 - t1))
         return ret
     return wrapper
 
 
-def tracer(fn):
+def trace(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
-        print('Enter function:', fn.__name__)
-        if args:
-            print('args:', args)
-        if kwargs:
-            print('kwargs:', kwargs)
-        s = time.time()
+        args_str = ', '.join(repr(arg) for arg in args)
+        kwargs_str = ', '.join('%s=%r' % (key, value) for key, value in kwargs.items())
+        comma_str = ', ' if args and kwargs else ''
+        call_str = '%s(%s%s%s)' % (fn.__name__, args_str, comma_str, kwargs_str)
+        print('[ENTER] %s' % call_str)
+        t1 = time.time()
         ret = fn(*args, **kwargs)
-        e = time.time()
-        print('Leave function:', e - s)
+        t2 = time.time()
+        print('[LEAVE] %s = %r @ %.4fs' % (call_str, ret, t2 - t1))
         return ret
     return wrapper
 
@@ -97,8 +97,7 @@ def protect(fn):
             return fn(*args, **kwargs)
         except Exception:
             msg = traceback.format_exc()
-            print(msg, file=sys.stderr)
-            return msg
+            print(msg + '\n', file=sys.stderr, end='')
     return wrapper
 
 
@@ -130,22 +129,96 @@ def hotkey(key='F12'):
     return decorator
 
 
-def threads(cnt):
+def threads(cnt=-1, order=True):
+    """
+    @threads(8)
+    def foo(arg):
+        ...
+
+    for i in range(20):
+        if ret := foo(i):
+            print(ret)
+    for ret in foo(...):
+        print(ret)
+
+    """
+
     import threading
-    counter = threading.BoundedSemaphore(cnt)
+    from functools import wraps
+
+    if callable(cnt):  # use @threads directly
+        return threads(-1, order)(cnt)
+
+    class Counter:
+        def __init__(self, cnt):
+            self.counter = threading.BoundedSemaphore(cnt) if cnt >= 0 else None
+
+        def acquire(self):
+            self.counter and self.counter.acquire()
+
+        def release(self):
+            self.counter and self.counter.release()
+
+    class Task:
+        def __init__(self, fn, *args, **kwargs):
+            self.fn = fn
+            self.args = args
+            self.kwargs = kwargs
+            self.result = None
+            self.finish = False
+            threading.Thread(target=self.run).start()
+
+        def run(self):
+            try:
+                self.result = self.fn(*self.args, **self.kwargs)
+            except Exception:
+                raise
+            finally:
+                self.finish = True
+                counter.release()
+
+    class Tasks:
+        def __init__(self, fn):
+            self.fn = fn
+            self.tasks = []
+            self.pop = self.pop_next if order else self.pop_any
+
+        def run(self, *args, **kwargs):
+            if (args, kwargs) == ((...,), {}):
+                return self.pop_last()
+
+            counter.acquire()
+            task = Task(self.fn, *args, **kwargs)
+            self.tasks.append(task)
+            return self.pop()
+
+        def pop_any(self):
+            for task in self.tasks:
+                if task.finish:
+                    self.tasks.remove(task)
+                    return task.result
+
+        def pop_next(self):
+            if self.tasks:
+                task = self.tasks[0]
+                if task.finish:
+                    self.tasks.remove(task)
+                return task.result  # TODO: `task.finish` and `task.result` may out of sync
+
+        def pop_last(self):
+            while self.tasks:
+                result = self.pop()
+                if result:
+                    yield result
+
     def decorator(fn):
+        run = Tasks(fn).run
         @wraps(fn)
         def wrapper(*args, **kwargs):
-            def th():
-                try:
-                    fn(*args, **kwargs)
-                except Exception:
-                    raise
-                finally:
-                    counter.release()
-            counter.acquire()
-            threading.Thread(target=th).start()
+            return run(*args, **kwargs)
         return wrapper
+
+    counter = Counter(cnt)
     return decorator
 
 
@@ -153,14 +226,19 @@ __all__ = [k for k in globals() if k not in __all__]
 
 
 if __name__ == '__main__':
-    import random
-
-    @threads(10)
-    def delay():
-        t = 1 + random.random() / 5
-        assert t < 1.19
+    @threads(8, order=True)
+    def foo(id):
+        import time, random
+        t = random.randint(1, 10) / 2
+        ret = str((id, t))
+        print('In: %s\n' % ret, end='')
         time.sleep(t)
-        print(t)
+        print('Out: %s\n' % ret, end='')
+        return ret
 
-    while 1:
-        delay()
+    for i in range(50):
+        ret = foo(i)
+        if ret:
+            print('Return: %s\n' % ret, end='')
+    for ret in foo(...):
+        print('Last return: %s\n' % ret, end='')

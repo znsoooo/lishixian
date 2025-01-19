@@ -164,17 +164,16 @@ def threads(cnt=-1, order=True):
             self.fn = fn
             self.args = args
             self.kwargs = kwargs
-            self.result = None
-            self.finish = False
+            self.status = False, None  # `finish` and `result`
             threading.Thread(target=self.run).start()
 
         def run(self):
             try:
-                self.result = self.fn(*self.args, **self.kwargs)
+                self.status = True, self.fn(*self.args, **self.kwargs)  # atomic operation ensure sync of `finish` and `result`
             except Exception:
                 raise
             finally:
-                self.finish = True
+                self.status = True, self.status[1]
                 counter.release()
 
     class Tasks:
@@ -194,16 +193,18 @@ def threads(cnt=-1, order=True):
 
         def pop_any(self):
             for task in self.tasks:
-                if task.finish:
+                finish, result = task.status
+                if finish:
                     self.tasks.remove(task)
-                    return task.result
+                    return result
 
         def pop_next(self):
             if self.tasks:
                 task = self.tasks[0]
-                if task.finish:
+                finish, result = task.status
+                if finish:
                     self.tasks.remove(task)
-                return task.result  # TODO: `task.finish` and `task.result` may out of sync
+                return result
 
         def pop_last(self):
             while self.tasks:

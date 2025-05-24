@@ -30,6 +30,7 @@ create = lambda path: os.path.dirname(path) and os.makedirs(os.path.dirname(path
 delete = lambda path: os.remove(path) if os.path.isfile(path) else shutil.rmtree(path) if os.path.isdir(path) else None
 
 # data resort
+shape = lambda arr: (len(arr),) + shape(list(arr.values() if isinstance(arr, dict) else arr)[0]) if isinstance(arr, (list, tuple, dict, set)) else ()
 unique = lambda arr: sorted(set(arr), key=arr.index)
 flatten = lambda arr: flatten(sum([list(one) if isinstance(one, (list, tuple)) else [one] for one in arr], [])) if any(isinstance(one, (list, tuple)) for one in arr) else arr
 reshape = lambda arr, width: list(zip(*[iter(arr)]*width))

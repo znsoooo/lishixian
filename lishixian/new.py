@@ -19,7 +19,7 @@ print = lambda *value, file=True: builtins.print(' '.join(map(str, value)) + '\n
 loop = itertools.count
 randbytes = lambda n: builtins.bytes(random.randint(0, 255) for i in range(n))
 breakpoint = lambda: pdb.set_trace()
-popen = lambda cmd, encoding=None: subprocess.Popen(cmd, stdout=-1, stderr=-2, shell=True, encoding=encoding or locale.getpreferredencoding(False)).stdout.read()
+popen = lambda cmd, encoding=None, **kw: subprocess.Popen(cmd, stdout=-1, stderr=-2, shell=True, encoding=encoding or locale.getpreferredencoding(False), **kw).stdout.read()
 listdir = lambda *paths: os.listdir(os.path.join(*paths))
 findall = lambda pattern, string, flags=0: [(m.start(), m.end(), m.group()) for m in re.finditer(pattern, string, flags)]
 split = lambda arr, cols: [arr[i:i+cols] for i in range(0, len(arr), cols)]
@@ -78,6 +78,12 @@ def bytes(data, width=16):
 def memoryview(data, width=16, offset=0):
     s = ' '.join('%02X' % c for c in data)
     return '\n'.join('%08X ' % (i + offset) + s[i * 3: (i + width) * 3] for i in range(0, len(data), width))
+
+
+def suppress(func, *args, **kwargs):
+    from contextlib import suppress
+    with suppress(Exception):
+        return func(*args, **kwargs)
 
 
 __all__ = [k for k in globals() if k not in __all__]

@@ -1,6 +1,6 @@
 # Lite Software eXtension
 
-Contain 11 modules and 166 functions.
+Contain 11 modules and 168 functions.
 
 
 ## About
@@ -60,7 +60,7 @@ $ lishixian float2hex 1.0
 - loop(start=0, step=1)
 - randbytes(n)
 - breakpoint()
-- popen(cmd, encoding=None)
+- popen(cmd, encoding=None, **kw)
 - listdir(*paths)
 - findall(pattern, string, flags=0)
 - split(arr, cols)
@@ -72,6 +72,7 @@ $ lishixian float2hex 1.0
 - walk(paths='.', exts='')
 - bytes(data, width=16)
 - memoryview(data, width=16, offset=0)
+- suppress(func, *args, **kwargs)
 
 ### Module 'line'
 - fake(*v, **kv)
@@ -83,6 +84,7 @@ $ lishixian float2hex 1.0
 - inv(path)
 - create(path)
 - delete(path)
+- shape(arr)
 - unique(arr)
 - flatten(arr)
 - reshape(arr, width)
@@ -111,7 +113,7 @@ $ lishixian float2hex 1.0
 - user()
 - tuple2item(item)
 
-### Module 'util'
+## Module 'util'
 - log(*value, file='log.txt')
 - redirect(file='log.txt', prefix='[%Y-%m-%d %H:%M:%S]')
 - sudo()

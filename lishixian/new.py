@@ -80,6 +80,17 @@ def memoryview(data, width=16, offset=0):
     return '\n'.join('%08X ' % (i + offset) + s[i * 3: (i + width) * 3] for i in range(0, len(data), width))
 
 
+def expandtabs(text, tabsize=4):
+    lines = []
+    for line in text.splitlines(True):
+        try:
+            line = line.encode('ansi').expandtabs(tabsize).decode('ansi')
+        except UnicodeError:
+            line = line.expandtabs(tabsize)
+        lines.append(line)
+    return ''.join(lines)
+
+
 def suppress(func, *args, **kwargs):
     from contextlib import suppress
     with suppress(Exception):

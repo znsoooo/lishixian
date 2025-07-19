@@ -106,6 +106,19 @@ def check(obj, patt='.*', stdout=True):
     print()
 
 
+def varname(var):
+    import inspect
+    frame = inspect.currentframe()
+    frames = []
+    while frame:
+        frames.append(frame)
+        frame = frame.f_back
+    for frame in reversed(frames):
+        for key, value in reversed(list(frame.f_locals.items())):  # find last location
+            if value is var:
+                return key
+
+
 def imports(path):
     import os, sys, importlib.util
     name = os.path.splitext(os.path.basename(path))[0]
@@ -279,11 +292,20 @@ def factorize(num):
 
 
 def primes(max):
-    ps = []
-    for n in range(2, max):
-        if all(n % p for p in ps):
-            ps.append(n)
-    return ps
+    primes = []
+    for num in range(2, max):
+        if all(num % prime for prime in primes):
+            primes.append(num)
+    return primes
+
+
+def randlog(min, max):
+    import math, random
+    min, max = sorted([min, max])
+    log_min = math.log(min)
+    log_max = math.log(max)
+    rand_log = random.uniform(log_min, log_max)
+    return math.exp(rand_log)
 
 
 # ---------------------------------------------------------------------------
@@ -295,7 +317,7 @@ escape = html.escape
 unescape = html.unescape
 quote = urllib.parse.quote_plus  # quote every word include '/'
 unquote = urllib.parse.unquote
-b64encode = base64.b64encode
+b64encode = lambda s: base64.b64encode(s).decode()
 b64decode = lambda s: base64.b64decode(s + '==')
 
 

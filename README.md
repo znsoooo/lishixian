@@ -1,6 +1,6 @@
 # Lite Software eXtension
 
-Contain 11 modules and 168 functions.
+Contain 11 modules and 172 functions.
 
 
 ## About
@@ -72,6 +72,7 @@ $ lishixian float2hex 1.0
 - walk(paths='.', exts='')
 - bytes(data, width=16)
 - memoryview(data, width=16, offset=0)
+- expandtabs(text, tabsize=4)
 - suppress(func, *args, **kwargs)
 
 ### Module 'line'
@@ -113,12 +114,13 @@ $ lishixian float2hex 1.0
 - user()
 - tuple2item(item)
 
-## Module 'util'
+### Module 'util'
 - log(*value, file='log.txt')
 - redirect(file='log.txt', prefix='[%Y-%m-%d %H:%M:%S]')
 - sudo()
 - kill(ths=None)
 - check(obj, patt='.*', stdout=True)
+- varname(var)
 - imports(path)
 - print_paths()
 - print_lines(lines)
@@ -148,6 +150,7 @@ $ lishixian float2hex 1.0
 - move(src, dst, overwrite=True)
 - factorize(num)
 - primes(max)
+- randlog(min, max)
 - escape(s, quote=True)
 - unescape(s)
 - quote(string, safe='', encoding=None, errors=None)
@@ -217,9 +220,10 @@ $ lishixian float2hex 1.0
 - ReadFiles(paths, merge_x=True, merge_y=True, strip_x=False)
 
 ### Module 'np'
-- imread(path)
-- imwrite(path, img)
-- imshow(img, delay=50, title='')
+- imcvt(img, size=None, color=None)
+- imread(path, size=None, color=None)
+- imwrite(path, img, size=None, color=None)
+- imshow(img, delay=50, title='', size=None, color=None)
 - imsave(path, start=0, step=1, stop=inf)
 - imiter(file_or_id)
 

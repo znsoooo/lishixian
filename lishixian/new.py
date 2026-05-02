@@ -26,6 +26,8 @@ split = lambda arr, cols: [arr[i:i+cols] for i in range(0, len(arr), cols)]
 sum = lambda seq: ''.join(seq) if isinstance(seq[0], str) else b''.join(seq) if isinstance(seq[0], (builtins.bytes, builtins.bytearray)) else builtins.sum(seq[1:], seq[0])
 pack = lambda fmt, values: struct.pack(fmt, *values)
 unpack = lambda fmt, string: struct.unpack_from(fmt, string) + (string[struct.calcsize(fmt):],)
+ljust = lambda text, width: text.encode('gbk').ljust(width).decode('gbk')
+rjust = lambda text, width: text.encode('gbk').rjust(width).decode('gbk')
 
 
 def system(cmd, encoding=None):

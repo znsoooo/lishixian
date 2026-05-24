@@ -64,7 +64,8 @@ double2hex = lambda num: struct.pack('>d', float(num)).hex()
 hex2double = lambda hex: struct.unpack('>d', bytes.fromhex(hex))[0]
 
 # pc tools
-ip = lambda: socket.gethostbyname(socket.gethostname())
+ip = lambda: socket.gethostbyname_ex(socket.gethostname())[2]
+ipv6 = lambda: [addr[4][0] for addr in socket.getaddrinfo(socket.gethostname(), None)]
 mac = lambda: '-'.join(re.findall('..', uuid.uuid1().hex[-12:].upper()))
 user = lambda: getpass.getuser()
 

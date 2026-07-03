@@ -66,6 +66,8 @@ def walk(paths='.', exts=''):
             if any(path.lower().endswith(ext) for ext in exts):
                 yield path
         for root, folders, files in os.walk(path):
+            folders.sort()
+            files.sort()
             for file in files:
                 if any(file.lower().endswith(ext) for ext in exts):
                     yield os.path.join(root, file)

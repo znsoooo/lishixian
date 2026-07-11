@@ -1,5 +1,6 @@
 """Useful Classes"""
 
+import re
 import ctypes
 import threading
 import configparser
@@ -179,6 +180,265 @@ class Udp:
             data.extend(self.recv(self.buffsize))
             self.send(b'echo')
         return bytes(data)
+
+
+class Table(list):
+    def __getitem__(self, key):
+        if isinstance(key, str):
+            return self[key, :]
+        elif isinstance(key, tuple):
+            row_key, col_key = key
+            if isinstance(row_key, str):
+                row_key = self[:, 0].index(row_key)
+            if isinstance(col_key, str):
+                col_key = self[0].index(col_key)
+            rows_data = self[row_key]
+            if isinstance(row_key, int):
+                return rows_data[col_key]
+            elif isinstance(row_key, slice):
+                result = [row[col_key] for row in rows_data]
+                return Table(result) if isinstance(col_key, slice) else result
+        result = super().__getitem__(key)
+        return Table(result) if isinstance(key, slice) else result
+
+    def __setitem__(self, key, value):
+        if isinstance(key, tuple):
+            row_key, col_key = key
+            if isinstance(row_key, str):
+                row_key = self[:, 0].index(row_key)
+            if isinstance(col_key, str):
+                col_key = self[0].index(col_key)
+            rows_data = self[row_key]
+            if isinstance(row_key, int):
+                rows_data[col_key] = value
+            elif isinstance(row_key, slice):
+                for row, row_value in zip(rows_data, value):
+                    row[col_key] = row_value
+            self[row_key] = rows_data
+        else:
+            super().__setitem__(key, value)
+
+    def __invert__(self):
+        return Table([[row[c] for row in self] for c in range(len(self[0]))])
+
+    def __contains__(self, other):
+        return any(other in row for row in self)
+
+    def __add__(self, other):
+        return Table(list(self) + list(other))
+
+    def __or__(self, other):
+        data = self.copy()
+        for r, row in enumerate(other):
+            data[r].extend(row)
+        return Table(data)
+
+    def __repr__(self):
+        return '[%s]' % ',\n '.join(map(str, self))
+
+    def copy(self):
+        return self[:, :]
+
+    def rappend(self, row):
+        self.rinsert(self.rows(), row)
+
+    def cappend(self, col):
+        self.cinsert(self.cols(), col)
+
+    def rextend(self, rows):
+        [self.rappend(row) for row in rows]
+
+    def cextend(self, cols):
+        [self.cappend(col) for col in cols]
+
+    def rindex(self, header):
+        return header if isinstance(header, int) else self[:, 0].index(header)
+
+    def cindex(self, header):
+        return header if isinstance(header, int) else self[0, :].index(header)
+
+    def rinsert(self, idx, row):
+        idx = self.rindex(idx)
+        self.insert(idx, row)
+
+    def cinsert(self, idx, col):
+        idx = self.cindex(idx)
+        [row.insert(idx, val) for row, val in zip(self, col)]
+
+    def rpop(self, idx=-1):
+        idx = self.rindex(idx)
+        return self.pop(idx)
+
+    def cpop(self, idx=-1):
+        idx = self.cindex(idx)
+        return [row.pop(idx) for row in self]
+
+    def index(self, val):
+        for r, row in enumerate(self):
+            for c, value in enumerate(row):
+                if val == value:
+                    return (r, c)
+        raise ValueError('%r is not in table' % val)
+
+    def count(self, val):
+        return sum(row.count(val) for row in self)
+
+    def rows(self):
+        return len(self[:, 0])
+
+    def cols(self):
+        return len(self[0, :])
+
+
+class String(str):
+    class Match:
+        def __init__(self, match):
+            self.m = match
+
+        def __bool__(self):
+            return bool(self.m)
+
+        def __repr__(self):
+            return repr(self.m)
+
+        def __getitem__(self, group):
+            if not isinstance(group, tuple):
+                group = group,
+            return String.Wash(self.m.group(*group))
+
+        def expand(self, template):
+            return String.Wash(self.m.expand(template))
+
+        def group(self, *group):
+            return String.Wash(self.m.group(*group))
+
+        def groups(self, default=None):
+            return String.Wash(self.m.groups(default))
+
+        def groupdict(self, default=None):
+            return String.Wash(self.m.groupdict(default))
+
+        def start(self, group=0):
+            return self.m.start(group)
+
+        def end(self, group=0):
+            return self.m.end(group)
+
+        def span(self, group=0):
+            return self.m.span(group)
+
+    @staticmethod
+    def Wash(value):
+        if isinstance(value, String):
+            return value
+        if isinstance(value, str):
+            return String(value)
+        if isinstance(value, (list, tuple, set)):
+            return type(value)(String.Wash(v) for v in value)
+        if isinstance(value, dict):
+            return {String.Wash(k): String.Wash(v) for k, v in value.items()}
+        return value
+
+    def reflags(self, flags):
+        if isinstance(flags, int):
+            return flags
+        result = 0
+        for ch in flags.upper():
+            result |= getattr(re, ch)
+        return result
+
+    def rematch(self, pattern, flags='m'):
+        flags = self.reflags(flags)
+        m = re.match(pattern, self, flags)
+        return String.Match(m)
+
+    def refullmatch(self, pattern, flags='m'):
+        flags = self.reflags(flags)
+        m = re.fullmatch(pattern, self, flags)
+        return String.Match(m)
+
+    def research(self, pattern, flags='m'):
+        flags = self.reflags(flags)
+        m = re.search(pattern, self, flags)
+        return String.Match(m)
+
+    def resub(self, pattern, repl, count=0, flags='m'):
+        flags = self.reflags(flags)
+        new_str = re.sub(pattern, repl, self, count=count, flags=flags)
+        return String(new_str)
+
+    def resubn(self, pattern, repl, count=0, flags='m'):
+        flags = self.reflags(flags)
+        new_str, n = re.subn(pattern, repl, self, count=count, flags=flags)
+        return String(new_str), n
+
+    def resplit(self, pattern, maxsplit=0, flags='m'):
+        flags = self.reflags(flags)
+        parts = re.split(pattern, self, maxsplit=maxsplit, flags=flags)
+        return [String(p) for p in parts]
+
+    def refind(self, pattern, flags='m'):
+        return self.refindall(pattern, flags)[0]
+
+    def refindall(self, pattern, flags='m'):
+        flags = self.reflags(flags)
+        return String.Wash(re.findall(pattern, self, flags))
+
+    def refinditer(self, pattern, flags='m'):
+        flags = self.reflags(flags)
+        for m in re.finditer(pattern, self, flags):
+            yield String.Match(m)
+
+    def __add__(self, other):
+        return String(super().__add__(other))
+
+    def __radd__(self, other):
+        return String(other + str(self))
+
+    def __mul__(self, other):
+        return String(super().__mul__(other))
+
+    def __rmul__(self, other):
+        return String(super().__rmul__(other))
+
+    def __mod__(self, other):
+        return String(super().__mod__(other))
+
+    def __getitem__(self, index):
+        return String(super().__getitem__(index))
+
+    def lower(self):
+        return String(super().lower())
+
+    def upper(self):
+        return String(super().upper())
+
+    def strip(self, chars=None):
+        return String(super().strip(chars))
+
+    def lstrip(self, chars=None):
+        return String(super().lstrip(chars))
+
+    def rstrip(self, chars=None):
+        return String(super().rstrip(chars))
+
+    def replace(self, old, new, count=-1):
+        return String(super().replace(old, new, count))
+
+    def split(self, sep=None, maxsplit=-1):
+        parts = super().split(sep, maxsplit)
+        return [String(p) for p in parts]
+
+    def rsplit(self, sep=None, maxsplit=-1):
+        parts = super().rsplit(sep, maxsplit)
+        return [String(p) for p in parts]
+
+    def splitlines(self, keepends=False):
+        lines = super().splitlines(keepends)
+        return [String(line) for line in lines]
+
+    def join(self, iterable):
+        return String(super().join(iterable))
 
 
 __all__ = [k for k in globals() if k not in __all__]

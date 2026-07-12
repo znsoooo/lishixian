@@ -1,6 +1,6 @@
 # Lite Software eXtension
 
-Contain 11 modules and 172 functions.
+Contain 11 modules and 180 functions.
 
 
 ## About
@@ -9,7 +9,7 @@ Contain 11 modules and 172 functions.
 - __QQ:__ 11313213
 - __Email:__ lsx7@sina.com
 - __Github:__ https://github.com/znsoooo/lishixian
-- __License:__ MIT License. Copyright (c) 2021-2025 Shixian Li (znsoooo). All rights reserved.
+- __License:__ MIT License. Copyright (c) 2021-2026 Shixian Li (znsoooo). All rights reserved.
 
 
 ## Install
@@ -42,7 +42,7 @@ The package can also be used in console, it takes one or zero parameter:
 
 ```bash
 $ lishixian help
-Commands: help version ip mac user crc md5 inv create delete detect escape unescape quote unquote hex2bin bin2hex hex2half half2hex hex2float float2hex hex2double double2hex / \ \\
+Commands: help version ip ipv6 mac user crc16 crc32 md5 sha1 sha256 inv create delete detect escape unescape quote unquote hex2bin bin2hex hex2half half2hex hex2float float2hex hex2double double2hex / \ \\
 
 $ lishixian float2hex 1.0
 3f800000
@@ -67,6 +67,8 @@ $ lishixian float2hex 1.0
 - sum(seq)
 - pack(fmt, values)
 - unpack(fmt, string)
+- ljust(text, width)
+- rjust(text, width)
 - system(cmd, encoding=None)
 - detect(path)
 - walk(paths='.', exts='')
@@ -80,8 +82,11 @@ $ lishixian float2hex 1.0
 - pause()
 - start(fn, *v, **kv)
 - freeze(fn, *v, **kv)
-- crc(path)
+- crc16(path)
+- crc32(path)
 - md5(path)
+- sha1(path)
+- sha256(path)
 - inv(path)
 - create(path)
 - delete(path)
@@ -110,6 +115,7 @@ $ lishixian float2hex 1.0
 - double2hex(num)
 - hex2double(hex)
 - ip()
+- ipv6()
 - mac()
 - user()
 - tuple2item(item)
@@ -155,7 +161,7 @@ $ lishixian float2hex 1.0
 - unescape(s)
 - quote(string, safe='', encoding=None, errors=None)
 - unquote(string, encoding='utf-8', errors='replace')
-- b64encode(s)
+- b64encode(b)
 - b64decode(s)
 - urlopen(url, base='', query=None, fragment=None, data=None, headers=None, method=None, retry=1, timeout=10, strict=True)
 - scan(format, string)
@@ -182,6 +188,8 @@ $ lishixian float2hex 1.0
 - Thread(target, *args, **kwargs)
 - Tcp(addr, port)
 - Udp(addr, port)
+- Table
+- String
 
 ### Module 'reg'
 - GetDir(name, local=False)

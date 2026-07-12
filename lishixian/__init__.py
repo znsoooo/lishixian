@@ -7,7 +7,7 @@ Usage:
 
 License:
     MIT license.
-    Copyright (c) 2021-2025 Shixian Li (znsoooo). All rights reserved.
+    Copyright (c) 2021-2026 Shixian Li (znsoooo). All rights reserved.
 """
 
 # top module functions
@@ -34,7 +34,7 @@ from .gui import *
 
 __author__  = 'Shixian Li <lsx7@sina.com>'
 __credits__ = 'https://github.com/znsoooo/lishixian'
-__date__    = '2025'
+__date__    = '2026'
 from .version import __version__
 
 

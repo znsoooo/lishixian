@@ -42,7 +42,7 @@ transpose = lambda arr: list(zip(*arr))
 
 # string function
 join = lambda *string, sep='': sep.join(string)
-wash = lambda func, arr: [wash(func, v) for v in arr] if isinstance(arr, (list, tuple)) else func(arr)
+wash = lambda func, arr: type(arr)((v, wash(func, arr[v])) if isinstance(arr, dict) else wash(func, v) for v in arr) if isinstance(arr, (list, tuple, set, dict)) else func(arr)
 dumps = lambda data: json.dumps(data, ensure_ascii=False, indent=2)
 indent = lambda width, text: textwrap.indent(textwrap.dedent(text)[1:-1], ' ' * width)
 str2dict = lambda text: dict(re.findall(r'^\s*(.*?)\s*:\s*(.*?)\s*$', text, re.M))

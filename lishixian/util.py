@@ -317,7 +317,7 @@ escape = html.escape
 unescape = html.unescape
 quote = urllib.parse.quote_plus  # quote every word include '/'
 unquote = urllib.parse.unquote
-b64encode = lambda s: base64.b64encode(s).decode()
+b64encode = lambda b: base64.b64encode(b).decode()
 b64decode = lambda s: base64.b64decode(s + '==')
 
 

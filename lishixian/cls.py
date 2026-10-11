@@ -290,7 +290,7 @@ class Table(list):
         return len(self[0, :])
 
 
-class String(str):
+class Re(str):
     class Match:
         def __init__(self, match):
             self.m = match
@@ -304,19 +304,19 @@ class String(str):
         def __getitem__(self, group):
             if not isinstance(group, tuple):
                 group = group,
-            return String.Wash(self.m.group(*group))
+            return Re.Wash(self.m.group(*group))
 
         def expand(self, template):
-            return String.Wash(self.m.expand(template))
+            return Re.Wash(self.m.expand(template))
 
         def group(self, *group):
-            return String.Wash(self.m.group(*group))
+            return Re.Wash(self.m.group(*group))
 
         def groups(self, default=None):
-            return String.Wash(self.m.groups(default))
+            return Re.Wash(self.m.groups(default))
 
         def groupdict(self, default=None):
-            return String.Wash(self.m.groupdict(default))
+            return Re.Wash(self.m.groupdict(default))
 
         def start(self, group=0):
             return self.m.start(group)
@@ -329,14 +329,14 @@ class String(str):
 
     @staticmethod
     def Wash(value):
-        if isinstance(value, String):
+        if isinstance(value, Re):
             return value
         if isinstance(value, str):
-            return String(value)
+            return Re(value)
         if isinstance(value, (list, tuple, set)):
-            return type(value)(String.Wash(v) for v in value)
+            return type(value)(Re.Wash(v) for v in value)
         if isinstance(value, dict):
-            return {String.Wash(k): String.Wash(v) for k, v in value.items()}
+            return {Re.Wash(k): Re.Wash(v) for k, v in value.items()}
         return value
 
     def reflags(self, flags):
@@ -350,95 +350,95 @@ class String(str):
     def rematch(self, pattern, flags='m'):
         flags = self.reflags(flags)
         m = re.match(pattern, self, flags)
-        return String.Match(m)
+        return Re.Match(m)
 
     def refullmatch(self, pattern, flags='m'):
         flags = self.reflags(flags)
         m = re.fullmatch(pattern, self, flags)
-        return String.Match(m)
+        return Re.Match(m)
 
     def research(self, pattern, flags='m'):
         flags = self.reflags(flags)
         m = re.search(pattern, self, flags)
-        return String.Match(m)
+        return Re.Match(m)
 
     def resub(self, pattern, repl, count=0, flags='m'):
         flags = self.reflags(flags)
         new_str = re.sub(pattern, repl, self, count=count, flags=flags)
-        return String(new_str)
+        return Re(new_str)
 
     def resubn(self, pattern, repl, count=0, flags='m'):
         flags = self.reflags(flags)
         new_str, n = re.subn(pattern, repl, self, count=count, flags=flags)
-        return String(new_str), n
+        return Re(new_str), n
 
     def resplit(self, pattern, maxsplit=0, flags='m'):
         flags = self.reflags(flags)
         parts = re.split(pattern, self, maxsplit=maxsplit, flags=flags)
-        return [String(p) for p in parts]
+        return [Re(p) for p in parts]
 
     def refind(self, pattern, flags='m'):
         return self.refindall(pattern, flags)[0]
 
     def refindall(self, pattern, flags='m'):
         flags = self.reflags(flags)
-        return String.Wash(re.findall(pattern, self, flags))
+        return Re.Wash(re.findall(pattern, self, flags))
 
     def refinditer(self, pattern, flags='m'):
         flags = self.reflags(flags)
         for m in re.finditer(pattern, self, flags):
-            yield String.Match(m)
+            yield Re.Match(m)
 
     def __add__(self, other):
-        return String(super().__add__(other))
+        return Re(super().__add__(other))
 
     def __radd__(self, other):
-        return String(other + str(self))
+        return Re(other + str(self))
 
     def __mul__(self, other):
-        return String(super().__mul__(other))
+        return Re(super().__mul__(other))
 
     def __rmul__(self, other):
-        return String(super().__rmul__(other))
+        return Re(super().__rmul__(other))
 
     def __mod__(self, other):
-        return String(super().__mod__(other))
+        return Re(super().__mod__(other))
 
     def __getitem__(self, index):
-        return String(super().__getitem__(index))
+        return Re(super().__getitem__(index))
 
     def lower(self):
-        return String(super().lower())
+        return Re(super().lower())
 
     def upper(self):
-        return String(super().upper())
+        return Re(super().upper())
 
     def strip(self, chars=None):
-        return String(super().strip(chars))
+        return Re(super().strip(chars))
 
     def lstrip(self, chars=None):
-        return String(super().lstrip(chars))
+        return Re(super().lstrip(chars))
 
     def rstrip(self, chars=None):
-        return String(super().rstrip(chars))
+        return Re(super().rstrip(chars))
 
     def replace(self, old, new, count=-1):
-        return String(super().replace(old, new, count))
+        return Re(super().replace(old, new, count))
 
     def split(self, sep=None, maxsplit=-1):
         parts = super().split(sep, maxsplit)
-        return [String(p) for p in parts]
+        return [Re(p) for p in parts]
 
     def rsplit(self, sep=None, maxsplit=-1):
         parts = super().rsplit(sep, maxsplit)
-        return [String(p) for p in parts]
+        return [Re(p) for p in parts]
 
     def splitlines(self, keepends=False):
         lines = super().splitlines(keepends)
-        return [String(line) for line in lines]
+        return [Re(line) for line in lines]
 
     def join(self, iterable):
-        return String(super().join(iterable))
+        return Re(super().join(iterable))
 
 
 __all__ = [k for k in globals() if k not in __all__]

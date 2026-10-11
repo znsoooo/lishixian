@@ -2,8 +2,11 @@
 
 import re
 import ctypes
+import socket
+import struct
 import threading
 import configparser
+from io import BytesIO
 
 
 __all__ = list(globals())
@@ -81,9 +84,6 @@ class Thread(threading.Thread):
 
 
 class Tcp:
-    import socket
-    import struct
-
     def __init__(self, addr, port):
         self.host = not addr
         self.addr = addr
@@ -92,12 +92,12 @@ class Tcp:
 
     def connect(self):
         if self.host:
-            self.server = self.socket.socket()
+            self.server = socket.socket()
             self.server.bind(('', self.port))
             self.server.listen(5)
             self.client, (addr, port) = self.server.accept()
         else:
-            self.client = self.socket.socket()
+            self.client = socket.socket()
             self.client.connect((self.addr, self.port))
 
     def close(self):
@@ -121,10 +121,10 @@ class Tcp:
     def sendlong(self, data):
         data = data.encode() if isinstance(data, str) else data
         assert len(data) < 1 << 32  # max 4GB
-        self.send(self.struct.pack('I', len(data)) + data)
+        self.send(struct.pack('I', len(data)) + data)
 
     def recvlong(self):
-        length = self.struct.unpack('I', self.recv(4))[0]  # max 4GB
+        length = struct.unpack('I', self.recv(4))[0]  # max 4GB
         data = bytearray()
         while len(data) < length:
             chunk = self.client.recv(length - len(data))
@@ -135,16 +135,12 @@ class Tcp:
 
 
 class Udp:
-    import socket
-    import struct
-    from io import BytesIO
-
     def __init__(self, addr, port):
         self.host = not addr
         self.addr = addr
         self.port = port
         self.buffsize = 64000
-        self.s = self.socket.socket(self.socket.AF_INET, self.socket.SOCK_DGRAM)
+        self.s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         if self.host:
             self.s.bind(('', port))
 
@@ -168,15 +164,15 @@ class Udp:
     def sendlong(self, data):
         data = data.encode() if isinstance(data, str) else data
         count = -(-len(data) // self.buffsize)
-        self.send(self.struct.pack('I', count))
+        self.send(struct.pack('I', count))
         self.recv(4)
-        f = self.BytesIO(data)
+        f = BytesIO(data)
         for i in range(count):
             self.send(f.read(self.buffsize))
             self.recv(4)
 
     def recvlong(self):
-        count = self.struct.unpack('I', self.recv(4))[0]
+        count = struct.unpack('I', self.recv(4))[0]
         self.send(b'echo')
         data = bytearray()
         for i in range(count):

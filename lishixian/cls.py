@@ -107,7 +107,7 @@ class Tcp:
 
     def send(self, data):
         data = data.encode() if isinstance(data, str) else data
-        self.client.send(data)
+        self.client.sendall(data)
 
     def recv(self, length):
         return self.client.recv(length)
@@ -121,13 +121,16 @@ class Tcp:
     def sendlong(self, data):
         data = data.encode() if isinstance(data, str) else data
         assert len(data) < 1 << 32  # max 4GB
-        self.client.send(self.struct.pack('I', len(data)) + data)
+        self.send(self.struct.pack('I', len(data)) + data)
 
     def recvlong(self):
         length = self.struct.unpack('I', self.recv(4))[0]  # max 4GB
         data = bytearray()
         while len(data) < length:
-            data.extend(self.client.recv(length - len(data)))
+            chunk = self.client.recv(length - len(data))
+            if not chunk:
+                raise ConnectionError
+            data.extend(chunk)
         return bytes(data)
 
 

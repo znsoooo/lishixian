@@ -17,7 +17,7 @@ def str2value(s):
             v = int(v)
     except ValueError:
         v = {'none': None, 'null': None, '': None,
-             'true': True, 'flase': False
+             'true': True, 'false': False
         }.get(s.lower(), s)
     return v
 

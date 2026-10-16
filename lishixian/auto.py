@@ -9,16 +9,16 @@ from threading import Thread
 __all__ = list(globals())
 
 
-def shortcut(p=None, make=True):  # get_path: desktop/programs/startup/...
+def shortcut(to=None, create=True):  # get_path: desktop/programs/startup/...
     import winshell
-    p = p or winshell.desktop()
-    path = sys.argv[0]
-    name = os.path.splitext(os.path.basename(path))[0]
-    target = os.path.join(p, name)
-    if make:
+    folder = to or winshell.desktop()
+    target = sys.argv[0]
+    name = os.path.splitext(os.path.basename(target))[0]
+    path = os.path.join(folder, name + '.lnk')
+    if create:
         winshell.CreateShortcut(path, target)
-    elif os.path.exists(target): # no use
-        os.remove(target)
+    elif os.path.exists(path):  # remove shortcut
+        os.remove(path)
 
 
 def paste(word, tab=0):

@@ -33,7 +33,7 @@ def fn2parser(fn):
         return fn
     spec = inspect.getfullargspec(fn)
     varnames = spec.args + spec.kwonlyargs
-    defaults = list(spec.defaults) + [spec.kwonlydefaults[arg] for arg in spec.kwonlyargs]
+    defaults = list(spec.defaults or []) + [(spec.kwonlydefaults or {}).get(arg) for arg in spec.kwonlyargs]
     nargs = len(varnames) - len(defaults)
     parser = argparse.ArgumentParser(description=fn.__doc__)
     for i, varname in enumerate(varnames):
@@ -53,7 +53,7 @@ def fn2input(fn):
         return fn
     spec = inspect.getfullargspec(fn)
     varnames = spec.args + spec.kwonlyargs
-    defaults = list(spec.defaults) + [spec.kwonlydefaults[arg] for arg in spec.kwonlyargs]
+    defaults = list(spec.defaults or []) + [(spec.kwonlydefaults or {}).get(arg) for arg in spec.kwonlyargs]
     nargs = len(varnames) - len(defaults)
     print(fn.__code__.co_name + '(', end='\n' if varnames else '')
     args = [eval(input('  %s = ' % k)) for k in varnames[:nargs]]

@@ -1,6 +1,6 @@
 # Lite Software eXtension
 
-Contain 11 modules and 180 functions.
+Contain 11 modules and 182 functions.
 
 
 ## About
@@ -42,7 +42,7 @@ The package can also be used in console, it takes one or zero parameter:
 
 ```bash
 $ lishixian help
-Commands: help version ip ipv6 mac user crc16 crc32 md5 sha1 sha256 inv create delete detect escape unescape quote unquote hex2bin bin2hex hex2half half2hex hex2float float2hex hex2double double2hex / \ \\
+Commands: help version ip ipv6 mac user crc16 crc32 md5 sha1 sha256 checksum inv create delete detect escape unescape quote unquote hex2bin bin2hex hex2half half2hex hex2float float2hex hex2double double2hex / \ \\
 
 $ lishixian float2hex 1.0
 3f800000
@@ -87,6 +87,7 @@ $ lishixian float2hex 1.0
 - md5(path)
 - sha1(path)
 - sha256(path)
+- checksum(path)
 - inv(path)
 - create(path)
 - delete(path)
@@ -188,8 +189,9 @@ $ lishixian float2hex 1.0
 - Thread(target, *args, **kwargs)
 - Tcp(addr, port)
 - Udp(addr, port)
-- Table
-- String
+- Table(iterable)
+- Re(object='')
+- File(path)
 
 ### Module 'reg'
 - GetDir(name, local=False)
@@ -236,7 +238,7 @@ $ lishixian float2hex 1.0
 - imiter(file_or_id)
 
 ### Module 'auto'
-- shortcut(p=None, make=True)
+- shortcut(to=None, create=True)
 - paste(word, tab=0)
 - Monitor(func)
 - Recoder(complete=False)

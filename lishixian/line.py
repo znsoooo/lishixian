@@ -24,11 +24,12 @@ freeze = lambda fn, *v, **kv: (lambda *v2, **kv2: fn(*v, **kv))
 
 # file function
 _read = lambda path: path if isinstance(path, bytes) else open(path, 'rb').read()
-crc16 = lambda path: '0x%04X' % binascii.crc_hqx(_read(path), 0)
-crc32 = lambda path: '0x%08X' % binascii.crc32(_read(path))
+crc16 = lambda path: '%04x' % binascii.crc_hqx(_read(path), 0)
+crc32 = lambda path: '%08x' % binascii.crc32(_read(path))
 md5 = lambda path: hashlib.md5(_read(path)).hexdigest()
 sha1 = lambda path: hashlib.sha1(_read(path)).hexdigest()
 sha256 = lambda path: hashlib.sha256(_read(path)).hexdigest()
+checksum = lambda path: sum(_read(path))
 inv = lambda path: open(path + '.inv', 'wb').write(bytes(255 - b for b in open(path, 'rb').read()))
 create = lambda path: os.path.dirname(path) and os.makedirs(os.path.dirname(path), exist_ok=True) or os.path.basename(path) and open(path, 'ab').close()
 delete = lambda path: os.remove(path) if os.path.isfile(path) else shutil.rmtree(path) if os.path.isdir(path) else None

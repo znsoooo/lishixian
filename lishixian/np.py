@@ -28,8 +28,7 @@ def imread(path, size=None, color=None):
 def imwrite(path, img, size=None, color=None):
     import os, cv2
     img = imcvt(img, size, color)
-    folder = os.path.dirname(path)
-    folder and os.makedirs(folder, exist_ok=True)
+    os.makedirs(os.path.dirname(path) or '.', exist_ok=True)
     ext = os.path.splitext(path)[1].lower()
     data = cv2.imencode(ext, img)[1] if ext not in BIN_EXTS else img
     data.tofile(path)

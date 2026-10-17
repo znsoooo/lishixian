@@ -10,7 +10,7 @@ def run():
 
     from . import version
     from . import ip, ipv6, mac, user
-    from . import crc16, crc32, md5, sha1, sha256, inv, create, delete, detect
+    from . import crc16, crc32, md5, sha1, sha256, checksum, inv, create, delete, detect
     from . import escape, unescape, quote, unquote
     from . import hex2bin, bin2hex, hex2half, half2hex, hex2float, float2hex, hex2double, double2hex
 

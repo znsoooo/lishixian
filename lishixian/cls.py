@@ -1,9 +1,14 @@
 """Useful Classes"""
 
+import os
 import re
+import json
 import ctypes
 import socket
 import struct
+import shutil
+import hashlib
+import binascii
 import threading
 import configparser
 from io import BytesIO
@@ -132,6 +137,32 @@ class Tcp:
                 raise ConnectionError
             data.extend(chunk)
         return bytes(data)
+
+    def sendjson(self, *obj):
+        obj = obj[0] if len(obj) == 1 else obj
+        self.sendlong(json.dumps(obj, ensure_ascii=False))
+
+    def recvjson(self):
+        return json.loads(self.recvlong())
+
+    def sendfile(self, path, size, chunk=1<<20):
+        sent = 0
+        with open(path, 'rb') as f:
+            while sent < size:
+                data = f.read(chunk)
+                if not data:
+                    break
+                self.send(data)
+                sent += len(data)
+
+    def recvfile(self, path, size):
+        received = 0
+        os.makedirs(os.path.dirname(path) or '.', exist_ok=True)
+        with open(path, 'wb') as f:
+            while received < size:
+                chunk = self.recv(size - received)
+                f.write(chunk)
+                received += len(chunk)
 
 
 class Udp:
@@ -438,6 +469,141 @@ class Re(str):
 
     def join(self, iterable):
         return Re(super().join(iterable))
+
+
+class File:
+    def __init__(self, path):
+        self.init(path)
+        self.info = {}
+
+    def __bool__(self):
+        return self.exists()
+
+    def __repr__(self):
+        return "File('%s')" % self.path
+
+    def __str__(self):
+        return self.path
+
+    def init(self, path):
+        self.path = os.path.abspath(path).replace(os.sep, '/')
+        self.dir, self.base = os.path.split(self.path)
+        self.stem, self.ext = os.path.splitext(self.base)
+
+    def hash(self, algo):
+        def iter_chunk():
+            with open(self.path, 'rb') as f:
+                yield from iter(lambda: f.read(8192), b'')
+        if algo not in self.info:
+            result = 0
+            if algo == 'checksum':
+                for chunk in iter_chunk():
+                    result += sum(chunk)
+            elif algo.startswith('crc'):
+                crc_func = binascii.crc_hqx if algo == 'crc16' else binascii.crc32
+                for chunk in iter_chunk():
+                    result = crc_func(chunk, result)
+                result = ('%04x' if algo == 'crc16' else '%08x') % result
+            else:
+                h = hashlib.new(algo)
+                for chunk in iter_chunk():
+                    h.update(chunk)
+                result = h.hexdigest()
+            self.info[algo] = result
+        return self.info[algo]
+
+    @property
+    def checksum(self):
+        return self.hash('checksum')
+
+    @property
+    def crc16(self):
+        return self.hash('crc16')
+
+    @property
+    def crc32(self):
+        return self.hash('crc32')
+
+    @property
+    def md5(self):
+        return self.hash('md5')
+
+    @property
+    def sha1(self):
+        return self.hash('sha1')
+
+    @property
+    def sha256(self):
+        return self.hash('sha256')
+
+    @property
+    def size(self):
+        if 'size' not in self.info:
+            self.info['size'] = os.path.getsize(self.path)
+        return self.info['size']
+
+    @property
+    def atime(self):
+        if 'atime' not in self.info:
+            self.info['atime'] = os.path.getatime(self.path)
+        return self.info['atime']
+
+    @atime.setter
+    def atime(self, value):
+        os.utime(self.path, (value, os.path.getmtime(self.path)))
+        self.info['atime'] = value
+
+    @property
+    def ctime(self):
+        if 'ctime' not in self.info:
+            self.info['ctime'] = os.path.getctime(self.path)
+        return self.info['ctime']
+
+    @property
+    def mtime(self):
+        if 'mtime' not in self.info:
+            self.info['mtime'] = os.path.getmtime(self.path)
+        return self.info['mtime']
+
+    @mtime.setter
+    def mtime(self, value):
+        os.utime(self.path, (os.path.getatime(self.path), value))
+        self.info['mtime'] = value
+
+    def refresh(self):
+        self.info = {}
+
+    def exists(self):
+        return os.path.exists(self.path)
+
+    def delete(self):
+        os.remove(self.path)
+        self.refresh()
+        return self
+
+    def move(self, dst):
+        os.makedirs(os.path.dirname(dst) or '.', exist_ok=True)
+        shutil.move(self.path, dst)
+        self.init(dst)
+        return self
+
+    def rename(self, name):
+        return self.move(os.path.join(self.dir, name))
+
+    def copy(self, dst):
+        os.makedirs(os.path.dirname(dst) or '.', exist_ok=True)
+        shutil.copy2(self.path, dst)
+        return File(dst)
+
+    def read(self, encoding='u8'):
+        with open(self.path, 'r' if encoding else 'rb', encoding=encoding or None) as f:
+            return f.read()
+
+    def write(self, data, encoding='u8'):
+        os.makedirs(os.path.dirname(self.path) or '.', exist_ok=True)
+        with open(self.path, 'w' if isinstance(data, str) else 'wb', encoding=encoding if isinstance(data, str) else None) as f:
+            f.write(data)
+        self.refresh()
 
 
 __all__ = [k for k in globals() if k not in __all__]
